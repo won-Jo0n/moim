@@ -12,4 +12,8 @@ public class UserService {
     public int join(UserDTO userDTO) {
         return userRepository.join(userDTO);
     }
+
+    public UserDTO login(UserDTO userDTO) {
+        return userRepository.login(userDTO);
+    }
 }

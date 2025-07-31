@@ -17,9 +17,9 @@
         <div style="color:blue;">로그아웃 되었습니다.</div>
     </c:if>
 
-    <form action="/login" method="post">
-        <label for="username">아이디:</label>
-        <input type="text" name="username" id="username" />
+    <form action="/user/login" method="post">
+        <label for="loginId">아이디:</label>
+        <input type="text" name="loginId" id="loginId" />
         <br />
         <label for="password">비밀번호:</label>
         <input type="password" name="password" id="password" />

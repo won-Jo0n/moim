@@ -4,10 +4,9 @@ import com.spring.user.dto.UserDTO;
 import com.spring.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/user")
@@ -27,11 +26,27 @@ public class UserController {
 
     @PostMapping("/join")
     public String join(@ModelAttribute UserDTO userDTO){
-        System.out.println(userDTO.getRegion());
+        System.out.println(userDTO.getPassword());
         int result = userService.join(userDTO);
 
         return "redirect:/";
+    }
+
+    @PostMapping("/login")
+    public String login(@ModelAttribute UserDTO userDTO, HttpSession session){
+
+        UserDTO loginUser = userService.login(userDTO);
+
+        if(loginUser != null){
+            session.setAttribute("loginId", loginUser.getLoginId());
+            System.out.println("성공");
+            return "home";
+        }else{
+            System.out.println("실패");
+            return "index";
+        }
 
     }
+
 
 }

@@ -10,10 +10,10 @@ import org.springframework.stereotype.Repository;
 public class UserRepository {
     private final SqlSessionTemplate sql;
     public int join(UserDTO userDTO) {
-        System.out.println(userDTO.getRegion());
-        System.out.println(userDTO.getGender());
-        System.out.println(userDTO.getLoginId());
-        System.out.println(userDTO.getRegion());
         return sql.insert("User.join",userDTO);
+    }
+
+    public UserDTO login(UserDTO userDTO) {
+        return sql.selectOne("User.login",userDTO);
     }
 }

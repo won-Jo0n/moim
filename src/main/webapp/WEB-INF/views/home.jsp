@@ -5,9 +5,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>로그인</title>
+    <title>홈</title>
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 </head>
 <body>
     <p>home</p>
+    <p>${sessionScope.loginId}</p>
 </body>
 </html>
