@@ -3,5 +3,9 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="User">
+    <insert id="join" parameterType="user">
+        INSERT INTO user(loginId, nickName, gender, birthDate, region )
+        VALUES(#{loginId},#{nickName},#{gender},#{birthDate},#{region});
+    </insert>
 
 </mapper>
