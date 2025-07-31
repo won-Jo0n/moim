@@ -6,5 +6,6 @@
 <configuration>
     <typeAliases>
         <typeAlias type="com.spring.user.dto.UserDTO" alias="user"></typeAlias>
+        <typeAlias type="com.spring.user.dto.GroupDTO" alias="group"></typeAlias>
     </typeAliases>
 </configuration>
