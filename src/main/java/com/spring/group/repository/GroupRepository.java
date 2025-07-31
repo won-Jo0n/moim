@@ -5,21 +5,39 @@ import lombok.RequiredArgsConstructor;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @RequiredArgsConstructor
 public class GroupRepository {
-    private final SqlSessionTemplate sqlSessionTemplate;
+    private final SqlSessionTemplate sql;
 
-    public void createGroup(GroupDTO groupDTO) {
-        return sql.insert("Group.createGroup",groupDTO);
+    // 그룹 생성하여 저장
+    public void save(GroupDTO groupDTO) {
+        sql.insert("Group.createGroup",groupDTO);
 
     }
 
+    // 그룹 전체 조회
+    public List<GroupDTO> findAll() {
+        return sql.selectList("Group.findAll");
+    }
+
+    // 그룹 상세 조회
+    public GroupDTO findById(int id) {
+        return sql.selectOne("Group.findById", id);
+    }
+
+    // 그룹 수정
     public int update(GroupDTO groupDTO) {
         return sql.update("Group.update",groupDTO);
     }
 
-    public void delete(int id) {
+    // 그룹 삭제
+    public int delete(int id) {
+
         return sql.delete("Group.delete",id);
     }
+
+
 }

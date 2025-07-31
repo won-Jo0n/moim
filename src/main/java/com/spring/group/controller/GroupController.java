@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -16,7 +17,7 @@ import javax.servlet.http.HttpSession;
 public class GroupController {
     private final GroupService groupService;
 
-    // 그룹 생성 작성폼
+    // 그룹 생성 작성폼 //create.jsp
     @GetMapping("/create")
     public String createForm(){
         return "/group/create";
@@ -24,35 +25,58 @@ public class GroupController {
 
     // 그룹 생성
     @PostMapping("/create")
-    public String createGroup(@ModelAttribute GroupDTO groupDTO){
-        groupService.createGroup(groupDTO);
+    public String createGroup(@ModelAttribute GroupDTO groupDTO, HttpSession session){
+        // 세션에서 로그인 유저 ID 받아와서 leader로 설정
+        int loginId = (int) session.getAttribute("loginId");
+        groupDTO.setLeader(loginId);
+        groupService.save(groupDTO);
         return "redirect:/group/list";
+    }
+
+    // 그룹 목록 보기 //list.jsp
+    @GetMapping("/list")
+    public String groupList(Model model){
+        List<GroupDTO> groupList = groupService.findAll();
+        model.addAttribute("groupList",groupList);
+        return "group/list";
+    }
+
+    // 그룹 상세 보기 // detail.jsp
+    @GetMapping("/detail")
+    public String detail(@RequestParam("id") int id, Model model) {
+        GroupDTO group = groupService.findById(id);
+        model.addAttribute("group", group);
+        return "group/detail";  // detail.jsp
+    }
+
+    // 그룹 수정 작성폼 // update.jsp
+    @GetMapping("/update")
+    public String updateForm(@RequestParam("id") int id, Model model) {
+        GroupDTO group = groupService.findById(id);
+        model.addAttribute("group", group);
+        return "group/update";
     }
 
 
     // 그룹 수정
-    // 모임장만 가능
     @PostMapping("/update")
     public String update(@ModelAttribute GroupDTO groupDTO){
-        boolean result = groupService.update(groupDTO);
-        return "redirect:/";
+        groupService.update(groupDTO);
+        return "redirect:/group/detail?id=" + groupDTO.getId();
 
     }
 
 
-    // 그룹 삭제 // 모임장만 가능
+    // 그룹 삭제
     @GetMapping("/delete")
-    public String findById(@RequestParam("id") int id, HttpSession session){
-        int loginId = session.getAttribute()
+    public String delete(@RequestParam("id") int id, HttpSession session){
+        int loginId = (int) session.getAttribute("loginId");
       groupService.delete(id);
-      return "redirect:/"; // 수정하기
+      return "redirect:/group/list"; // 수정하기
 
     }
 
-
-    // 모임장이 탈퇴하려고 할시에는 위임 후 가능
-
-
+//  로그인 처리 컨트롤러 setAttribute 확인하고 수정하기
 
 
 
