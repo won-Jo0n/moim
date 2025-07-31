@@ -9,7 +9,8 @@
 <body>
     <h2>Hello SpringFramework</h2>
     <form action="/group/create" method="post" target="_blank">
-        <input type="text" name="leader" placeholder="모임장">
+        <input type="hidden" name="leaderId" value="${sessionScope.userId}">
+        <input type="text" name="leaderName" value="${sessionScope.userName}" readOnly>
         <textarea name="description" id="description">모임 소개</textarea>
         <input type="text" name="title" placeholder="모임 이름">
         <select name="" id=""></select>
