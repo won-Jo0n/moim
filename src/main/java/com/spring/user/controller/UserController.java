@@ -4,6 +4,7 @@ import com.spring.user.dto.UserDTO;
 import com.spring.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
@@ -34,19 +35,37 @@ public class UserController {
 
     @PostMapping("/login")
     public String login(@ModelAttribute UserDTO userDTO, HttpSession session){
-
         UserDTO loginUser = userService.login(userDTO);
-
         if(loginUser != null){
-            session.setAttribute("loginId", loginUser.getLoginId());
+            session.setAttribute("userId", loginUser.getId());
             System.out.println("성공");
             return "home";
         }else{
             System.out.println("실패");
             return "index";
         }
-
     }
 
+    @GetMapping("logout")
+    public String logout(HttpSession session){
+        session.invalidate();
+        return "index";
+    }
+
+    @GetMapping("modify")
+    public String modifyForm(HttpSession session, Model model){
+        int userId = (int) session.getAttribute("userId");
+        UserDTO userDTO = userService.getUserById(userId);
+        model.addAttribute("user", userDTO);
+
+        return "/user/modify";
+    }
+
+//    @PostMapping("modify")
+//    public String modify(@ModelAttribute UserDTO userDTO){
+////        int result = userService.modify(userDTO);
+//
+////        if(result >= 1) return "";
+//    }
 
 }

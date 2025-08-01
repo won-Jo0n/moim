@@ -10,7 +10,9 @@
 </head>
 <body>
     <p>home</p>
-    <p>${sessionScope.loginId}</p>
+    <p>${sessionScope.userId}</p>
+    <a href="/user/modify">수정하기</a>
+    <a href="/user/logout">로그아웃</a>
     <a href="/group/create">그룹생성</a>
 </body>
 </html>
