@@ -16,4 +16,8 @@ public class UserService {
     public UserDTO login(UserDTO userDTO) {
         return userRepository.login(userDTO);
     }
+
+    public UserDTO getUserById(int userId) {
+        return userRepository.getUserById(userId);
+    }
 }
