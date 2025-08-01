@@ -23,7 +23,7 @@ public class GroupService {
         return groupRepository.findAll();
     }
 
-    // 그룹 상세 조회
+    // 그룹 상세 조회 // 모임장 권한 체크에 필요
     public GroupDTO findById(int id) {
         return groupRepository.findById(id);
     }

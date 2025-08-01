@@ -26,9 +26,13 @@ public class GroupController {
     // 그룹 생성
     @PostMapping("/create")
     public String createGroup(@ModelAttribute GroupDTO groupDTO, HttpSession session){
+
         // 세션에서 로그인 유저 ID 받아와서 leader로 설정
-        int loginId = (int) session.getAttribute("loginId");
-        groupDTO.setLeader(loginId);
+        String loginId = (String) session.getAttribute("loginId");
+        if (loginId == null) {
+            return "redirect:/user/login";  // 또는 index.jsp로 이동
+        }
+
         groupService.save(groupDTO);
         return "redirect:/group/list";
     }
@@ -60,7 +64,13 @@ public class GroupController {
 
     // 그룹 수정
     @PostMapping("/update")
-    public String update(@ModelAttribute GroupDTO groupDTO){
+    public String update(@ModelAttribute GroupDTO groupDTO, HttpSession session){
+        Integer loginId = (Integer) session.getAttribute("loginId");
+        GroupDTO group = groupService.findById(groupDTO.getId());
+        // 사용자가 모임장이 아닐경우 수정 차단
+        /*if(group.getLeader() != loginId){
+            return "error/unauthorized";
+        }*/
         groupService.update(groupDTO);
         return "redirect:/group/detail?id=" + groupDTO.getId();
 
@@ -70,9 +80,17 @@ public class GroupController {
     // 그룹 삭제
     @GetMapping("/delete")
     public String delete(@RequestParam("id") int id, HttpSession session){
-        int loginId = (int) session.getAttribute("loginId");
-      groupService.delete(id);
-      return "redirect:/group/list"; // 수정하기
+        int loginId  = (int) session.getAttribute("loginId ");
+        GroupDTO group = groupService.findById(id);  // 그룹 조회
+
+
+        // 로그인한 유저가 모인장이 아닐때 삭제 차단
+        /*if(group.getLeader() != loginId){
+            return "error/unauthorized";
+        }*/
+
+        groupService.delete(id);
+        return "redirect:/group/list"; // 수정하기
 
     }
 
