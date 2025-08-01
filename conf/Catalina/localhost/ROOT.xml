@@ -2,6 +2,7 @@
 <Context docBase="C:/spring_workspace/project/springframework_project/src/main/webapp">
   <Resources cacheMaxSize="10240">
     <PreResources base="C:/spring_workspace/project/springframework_project/target/classes" className="org.apache.catalina.webresources.DirResourceSet" webAppMount="/WEB-INF/classes"/>
+    <PostResources base="C:/Users/keduit/.m2/repository/org/json/json/20210307/json-20210307.jar" className="org.apache.catalina.webresources.FileResourceSet" webAppMount="/WEB-INF/lib/json-20210307.jar"/>
     <PostResources base="C:/Users/keduit/.m2/repository/org/springframework/security/spring-security-core/5.7.5/spring-security-core-5.7.5.jar" className="org.apache.catalina.webresources.FileResourceSet" webAppMount="/WEB-INF/lib/spring-security-core-5.7.5.jar"/>
     <PostResources base="C:/Users/keduit/.m2/repository/org/springframework/security/spring-security-crypto/5.7.5/spring-security-crypto-5.7.5.jar" className="org.apache.catalina.webresources.FileResourceSet" webAppMount="/WEB-INF/lib/spring-security-crypto-5.7.5.jar"/>
     <PostResources base="C:/Users/keduit/.m2/repository/org/springframework/spring-aop/5.3.23/spring-aop-5.3.23.jar" className="org.apache.catalina.webresources.FileResourceSet" webAppMount="/WEB-INF/lib/spring-aop-5.3.23.jar"/>

@@ -29,5 +29,8 @@
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
     </form>
     <a href="/user/join">회원가입</a>
+    <a href="/oauthLogin">
+        <img height="50" src="https://static.nid.naver.com/oauth/small_g_in.PNG"/>
+    </a>
 </body>
 </html>
