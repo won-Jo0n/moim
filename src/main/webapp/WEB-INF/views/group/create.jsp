@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>모임 만들기</title>
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 </head>
 <body>
     <h2>모임 만들기</h2>
@@ -12,6 +13,7 @@
             <!-- 제목 -->
             <label for="title">모임 이름</label><br>
             <input type="text" id="title" name="title" placeholder="모임 이름을 입력하세요" required><br><br>
+            <input type="hidden" name="leader" value="${sessionScope.userId}" />
 
 
 

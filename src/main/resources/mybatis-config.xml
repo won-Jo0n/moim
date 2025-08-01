@@ -10,5 +10,6 @@
         <typeAlias type="com.spring.mbti.dto.MbtiSubmissionDTO" alias="mbtiSub"></typeAlias>
         <typeAlias type="com.spring.mbti.dto.MbtiTestDTO" alias="mbtiTest"></typeAlias>
         <typeAlias type="com.spring.mbti.dto.MbtiBoardDTO" alias="mbtiBoard"></typeAlias>
+        <typeAlias type="com.spring.review.dto.ReviewDTO" alias="review"></typeAlias>
     </typeAliases>
 </configuration>

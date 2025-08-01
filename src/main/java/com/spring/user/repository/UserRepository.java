@@ -16,4 +16,8 @@ public class UserRepository {
     public UserDTO login(UserDTO userDTO) {
         return sql.selectOne("User.login",userDTO);
     }
+
+    public UserDTO getUserById(int userId) {
+        return sql.selectOne("User.getUserById", userId);
+    }
 }
