@@ -6,6 +6,6 @@
 
 <select id="findAllQuestions" resultType="com.spring.mbti.dto.MbtiTestDTO">
     SELECT id, question, type FROM mbtiquestion
-</select>
+</select> 
 
 </mapper>
