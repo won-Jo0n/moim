@@ -61,11 +61,11 @@ public class UserController {
         return "/user/modify";
     }
 
-    @PostMapping("modify")
-    public String modify(@ModelAttribute UserDTO userDTO){
-        int result = userService.modify(userDTO);
-
-        if(result >= 1) return "";
-    }
+//    @PostMapping("modify")
+//    public String modify(@ModelAttribute UserDTO userDTO){
+////        int result = userService.modify(userDTO);
+//
+////        if(result >= 1) return "";
+//    }
 
 }
