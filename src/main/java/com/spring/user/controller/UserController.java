@@ -46,13 +46,13 @@ public class UserController {
         }
     }
 
-    @GetMapping("logout")
+    @GetMapping("/logout")
     public String logout(HttpSession session){
         session.invalidate();
-        return "index";
+        return "redirect:/";
     }
 
-    @GetMapping("modify")
+    @GetMapping("/modify")
     public String modifyForm(HttpSession session, Model model){
         int userId = (int) session.getAttribute("userId");
         UserDTO userDTO = userService.getUserById(userId);
@@ -61,11 +61,21 @@ public class UserController {
         return "/user/modify";
     }
 
-//    @PostMapping("modify")
-//    public String modify(@ModelAttribute UserDTO userDTO){
-////        int result = userService.modify(userDTO);
-//
-////        if(result >= 1) return "";
-//    }
+    @PostMapping("/modify")
+    public String modify(@ModelAttribute UserDTO userDTO){
+        int result = userService.modify(userDTO);
+
+        return "home";
+    }
+
+    @GetMapping("/delete")
+    public String delete(HttpSession session){
+        int userId = (int) session.getAttribute("userId");
+        userService.delete(userId);
+
+        return "redirec:/";
+    }
+
+
 
 }
