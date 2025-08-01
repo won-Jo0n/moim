@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 @Data
 public class GroupDTO {
     private int id;
-    private int leader;
+    private String leader;
     private String title;
     private String description;
     private String location;

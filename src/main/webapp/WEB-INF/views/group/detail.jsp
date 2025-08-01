@@ -16,7 +16,12 @@
         <fmt:formatDate value="${group.createdAt}" pattern="yyyy-MM-dd" />
     </p>
 
-    <a href="/group/update?id=${group.id}">수정하기</a>
-    <a href="/group/list">←</a>
+    <!-- 로그인한 사용자가 모임장일 때만 수정/삭제 버튼 보이기 -->
+    <c:if test="${sessionScope.loginId eq group.leader}">
+        <a href="/group/update?id=${group.id}">수정하기</a>
+        <a href="/group/delete?id=${group.id}">삭제하기</a>
+    </c:if>
+
+    <a href="/group/list">← 목록으로 </a>
 </body>
 </html>

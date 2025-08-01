@@ -11,5 +11,6 @@
 <body>
     <p>home</p>
     <p>${sessionScope.loginId}</p>
+    <a href="/group/create">그룹생성</a>
 </body>
 </html>
