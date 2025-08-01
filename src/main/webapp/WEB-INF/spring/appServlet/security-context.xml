@@ -11,16 +11,15 @@
     <!-- 1. 인증 및 인가 설정 -->
     <http auto-config="true" use-expressions="true">
         <!-- 접근 권한 설정 -->
-<!--        <intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')" />-->
-<!--        <intercept-url pattern="/user/**" access="hasRole('ROLE_USER')" />-->
-<!--        <intercept-url pattern="/login" access="permitAll" />-->
+
+        <intercept-url pattern="/login" access="permitAll" />
         <intercept-url pattern="/**" access="permitAll" />
 
         <!-- 로그인 설정 -->
         <form-login
-                login-page="/login"
-                default-target-url="/"
-                authentication-failure-url="/login?error=true"
+                login-page="/index"
+                default-target-url="/user/home"
+                authentication-failure-url="/?error=true"
                 username-parameter="username"
                 password-parameter="password" />
 
