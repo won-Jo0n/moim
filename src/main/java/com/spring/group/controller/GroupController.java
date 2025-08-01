@@ -26,13 +26,6 @@ public class GroupController {
     // 그룹 생성
     @PostMapping("/create")
     public String createGroup(@ModelAttribute GroupDTO groupDTO, HttpSession session){
-
-        // 세션에서 로그인 유저 ID 받아와서 leader로 설정
-        String loginId = (String) session.getAttribute("loginId");
-        if (loginId == null) {
-            return "redirect:/user/login";  // 또는 index.jsp로 이동
-        }
-
         groupService.save(groupDTO);
         return "redirect:/group/list";
     }

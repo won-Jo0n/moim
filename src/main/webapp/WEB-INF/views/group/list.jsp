@@ -24,7 +24,6 @@
         <tbody>
             <c:forEach var="group" items="${groupList}">
                 <tr>
-
                     <td>${group.title}</td>
                     <td>${group.location}</td>
                     <td>${group.maxUserNum}</td>
