@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="MbtiBoard">
+
+    <insert id="save" parameterType="mbtiBoard">
+        INSERT INTO mbtiboard (mbtiId, author, title, content, fileId)
+        VALUES (#{mbtiId}, #{author}, #{title}, #{content}, #{fileId})
+    </insert>
+
+    <select id="findAllByMbtiId" parameterType="int" resultType="mbtiBoard">
+        SELECT * FROM mbtiboard WHERE mbtiId = #{mbtiId} ORDER BY createdAt DESC
+    </select>
+
+    <select id="findById" parameterType="int" resultType="mbtiBoard">
+        SELECT * FROM mbtiboard WHERE id = #{id}
+    </select>
+
+    <update id="update" parameterType="mbtiBoard">
+        UPDATE mbtiboard
+        SET title = #{title}, content = #{content}, status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM mbtiboard WHERE id = #{id}
+    </delete>
+
+
+
+</mapper>

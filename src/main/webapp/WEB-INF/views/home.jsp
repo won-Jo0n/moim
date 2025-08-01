@@ -11,5 +11,7 @@
 <body>
     <p>home</p>
     <p>${sessionScope.loginId}</p>
+    <a href="/mbti/test/">mbti 테스트${mbtiResult}</a>
+
 </body>
 </html>

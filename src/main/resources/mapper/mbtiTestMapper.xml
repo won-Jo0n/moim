@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="MbtiTest">
 
-<select id="findAllQuestions" resultType="com.spring.mbti.dto.MbtiTestDTO">
-    SELECT id, question, type FROM mbtiquestion
-</select> 
+    <!-- MBTI 문항 전체 조회 -->
+    <select id="findAllQuestions" resultType="com.spring.mbti.dto.MbtiTestDTO">
+        SELECT id, question, type FROM mbtiquestion
+    </select>
 
+    <!-- MBTI 문자열(ex: ENFP)로 mbti.id 찾기 -->
+    <select id="findMbtiIdByCode" parameterType="string" resultType="int">
+        SELECT id FROM mbti WHERE mbti = #{mbti}
+    </select>
+
+    <!-- user 테이블에 mbtiId와 변경일자 업데이트 -->
+    <update id="updateUserMbti">
+        UPDATE user
+        SET mbtiId = #{mbtiId}, changeMbtiAt = NOW()
+        WHERE id = #{userId}
+    </update>
+
+    <select id="findUserIdByLoginId" resultType="int">
+        SELECT id FROM user WHERE loginId = #{loginId}
+    </select>`
 </mapper>
