@@ -58,10 +58,10 @@ public class GroupController {
     // 그룹 수정
     @PostMapping("/update")
     public String update(@ModelAttribute GroupDTO groupDTO, HttpSession session){
-        Integer loginId = (Integer) session.getAttribute("loginId");
+        int userId = (int) session.getAttribute("userId");
         GroupDTO group = groupService.findById(groupDTO.getId());
         // 사용자가 모임장이 아닐경우 수정 차단
-        /*if(group.getLeader() != loginId){
+        /*if(group.getLeader() != userId){
             return "error/unauthorized";
         }*/
         groupService.update(groupDTO);
@@ -73,12 +73,16 @@ public class GroupController {
     // 그룹 삭제
     @GetMapping("/delete")
     public String delete(@RequestParam("id") int id, HttpSession session){
-        int loginId  = (int) session.getAttribute("loginId ");
+        int userId  = (int) session.getAttribute("userId ");
+        System.out.println(userId);
+
         GroupDTO group = groupService.findById(id);  // 그룹 조회
 
 
+
+
         // 로그인한 유저가 모인장이 아닐때 삭제 차단
-        /*if(group.getLeader() != loginId){
+        /*if(group.getLeader() != userId){
             return "error/unauthorized";
         }*/
 
