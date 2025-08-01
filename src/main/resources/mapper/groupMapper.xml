@@ -1,0 +1,47 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Group">
+    <!-- 그룹 생성 -->
+    <insert id="createGroup" parameterType="group">
+        INSERT INTO group (leader, title, description, location, maxUserNum)
+        VALUES (#{leaderId}, #{title}, #{description}, #{location}, #{maxUserNum});
+    </insert>
+
+    <!-- 그룹 전체 조회 (status = 1일때만 조회)-->
+    <select id="findAll" resultType="group">
+        SELECT * FROM group
+        WHERE status = 1
+        ORDER BY createdAt DESC;
+    </select>
+
+    <!-- 그룹 상세 조회 -->
+    <select id="findById" parameterType="int" resultType="group">
+        SELECT * FROM `group`
+        WHERE id = #{id}
+    </select>
+
+    <!-- 그룹 수정 -->
+    <update id="update" parameterType="group">
+        UPDATE group
+        SET title = #{title},
+        description = #{description},
+        location = #{location},
+        maxUserNum = #{maxUserNum}
+        WHERE id = #{id};
+    </update>
+
+    <!-- 그룹 삭제 (status → -1로 처리) -->
+    <update id="delete" parameterType="int">
+        UPDATE `group`
+        SET status = -1
+        WHERE id = #{id};
+    </update>
+
+
+
+
+
+
+
+</mapper>
