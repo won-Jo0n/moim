@@ -5,9 +5,7 @@ import com.spring.mbti.repository.MbtiTestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -15,33 +13,43 @@ public class MbtiTestService {
 
     private final MbtiTestRepository mbtiTestRepository;
 
+    // 1. 모든 질문 불러오기
     public List<MbtiTestDTO> findAllQuestions() {
         return mbtiTestRepository.findAllQuestions();
     }
+    public int findUserIdByLoginId(String loginId) {
+        return mbtiTestRepository.findUserIdByLoginId(loginId);
+    }
 
+
+    // 2. 점수로 MBTI 계산하고 DB 저장까지 처리
     public String calculateMbti(int userId, List<Integer> answers) {
-        List<MbtiTestDTO> questions = mbtiTestRepository.findAllQuestions();
+        List<MbtiTestDTO> questions = findAllQuestions();
 
+        // 점수 누적용 맵 (예: ei → 10점, ie → 5점)
         Map<String, Integer> scoreMap = new HashMap<>();
-        scoreMap.put("ie", 0); scoreMap.put("ei", 0);
-        scoreMap.put("sn", 0); scoreMap.put("ns", 0);
-        scoreMap.put("tf", 0); scoreMap.put("ft", 0);
-        scoreMap.put("jp", 0); scoreMap.put("pj", 0);
+        for (int i = 0; i < questions.size(); i++) {
+            MbtiTestDTO q = questions.get(i);
+            String type = q.getType();
+            int score = answers.get(i);
 
-        for (int i = 0; i < answers.size(); i++) {
-            MbtiTestDTO dto = questions.get(i);
-            String type = dto.getType();
-            int point = answers.get(i);
-
-            scoreMap.put(type, scoreMap.get(type) + point);
+            scoreMap.put(type, scoreMap.getOrDefault(type, 0) + score);
         }
 
+        // 각 축별 dominant 성향 선택
         StringBuilder result = new StringBuilder();
-        result.append(scoreMap.get("ie") >= scoreMap.get("ei") ? "E" : "I");
-        result.append(scoreMap.get("sn") >= scoreMap.get("ns") ? "S" : "N");
-        result.append(scoreMap.get("tf") >= scoreMap.get("ft") ? "T" : "F");
-        result.append(scoreMap.get("jp") >= scoreMap.get("pj") ? "J" : "P");
+        result.append(scoreMap.getOrDefault("ei", 0) >= scoreMap.getOrDefault("ie", 0) ? "E" : "I");
+        result.append(scoreMap.getOrDefault("sn", 0) >= scoreMap.getOrDefault("ns", 0) ? "S" : "N");
+        result.append(scoreMap.getOrDefault("tf", 0) >= scoreMap.getOrDefault("ft", 0) ? "T" : "F");
+        result.append(scoreMap.getOrDefault("jp", 0) >= scoreMap.getOrDefault("pj", 0) ? "J" : "P");
 
-        return result.toString();
+        String mbtiCode = result.toString();
+
+        // 3. MBTI 결과를 user 테이블에 반영
+        int mbtiId = mbtiTestRepository.findMbtiIdByCode(mbtiCode);
+        mbtiTestRepository.updateUserMbti(userId, mbtiId);
+
+        return mbtiCode;
     }
+
 }

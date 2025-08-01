@@ -1507,7 +1507,7 @@
     </mime-mapping>
     <mime-mapping>
         <extension>eml</extension>
-        <mime-type>message/rfc822</mime-type>
+        <mime-type>webSocketMessage/rfc822</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>emma</extension>
@@ -1795,7 +1795,7 @@
     </mime-mapping>
     <mime-mapping>
         <extension>gim</extension>
-        <mime-type>application/vnd.groove-identity-message</mime-type>
+        <mime-type>application/vnd.groove-identity-webSocketMessage</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>gml</extension>
@@ -1855,7 +1855,7 @@
     </mime-mapping>
     <mime-mapping>
         <extension>gtm</extension>
-        <mime-type>application/vnd.groove-tool-message</mime-type>
+        <mime-type>application/vnd.groove-tool-webSocketMessage</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>gtw</extension>
@@ -2487,7 +2487,7 @@
     </mime-mapping>
     <mime-mapping>
         <extension>mime</extension>
-        <mime-type>message/rfc822</mime-type>
+        <mime-type>webSocketMessage/rfc822</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>mj2</extension>
