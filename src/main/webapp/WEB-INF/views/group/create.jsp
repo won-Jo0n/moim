@@ -46,7 +46,7 @@
             <label for="maxUserNum">최대 인원</label><br>
             <input type="number" id="maxUserNum" name="maxUserNum" placeholder="예: 10" min="1" required><br><br>
 
-
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
             <button type="submit">모임 만들기</button>
     </form>
 
