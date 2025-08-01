@@ -15,7 +15,6 @@ public class GroupRepository {
     // 그룹 생성하여 저장
     public void save(GroupDTO groupDTO) {
         sql.insert("Group.createGroup",groupDTO);
-
     }
 
     // 그룹 전체 조회
