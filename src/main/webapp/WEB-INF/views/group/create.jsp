@@ -13,7 +13,7 @@
             <!-- 제목 -->
             <label for="title">모임 이름</label><br>
             <input type="text" id="title" name="title" placeholder="모임 이름을 입력하세요" required><br><br>
-            <input type="hidden" value="${sessionScope.loginId}" />
+            <input type="hidden" name="leader" value="${sessionScope.userId}" />
 
 
 
