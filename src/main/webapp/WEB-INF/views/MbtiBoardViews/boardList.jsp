@@ -9,7 +9,6 @@
     <a href="/mbti/board/write">글 작성</a>
     <table border="1">
         <tr>
-            <th>번호</th>
             <th>제목</th>
             <th>작성자</th>
             <th>내용</th>
@@ -17,10 +16,9 @@
         </tr>
         <c:forEach var="board" items="${boardList}">
             <tr>
-                <td>${board.id}</td>
                 <td><a href="/mbti/board/detail/${board.id}">${board.title}</a></td>
                 <td>${board.author}</td>
-                <td>${board.authorName}</td>
+                <td>${board.content}</td>
                 <td>${board.createdAt}</td>
             </tr>
         </c:forEach>
