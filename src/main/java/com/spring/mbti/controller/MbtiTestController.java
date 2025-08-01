@@ -1,6 +1,5 @@
 package com.spring.mbti.controller;
 
-import com.spring.mbti.dto.MbtiSubmissionDTO;
 import com.spring.mbti.dto.MbtiTestDTO;
 import com.spring.mbti.service.MbtiTestService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +19,6 @@ public class MbtiTestController {
 
     private final MbtiTestService mbtiTestService;
 
-    // MBTI 검사 페이지 요청
     @GetMapping("/test")
     public String mbtiTestPage(Model model) {
         List<MbtiTestDTO> questionList = mbtiTestService.findAllQuestions();
@@ -28,71 +26,61 @@ public class MbtiTestController {
         return "MbtiFormViews/mbtiTest";
     }
 
-    // 검사 결과 처리
+
     @PostMapping("/submit")
     public String mbtiTestSubmit(@RequestParam Map<String, String> map,
                                  HttpSession session, Model model) {
         List<MbtiTestDTO> questionList = mbtiTestService.findAllQuestions();
         String[] answers = new String[questionList.size()];
-
-        for (int ind = 0; ind < answers.length; ind++) {
-            answers[ind] = map.get("answers" + ind);
+        for (int i = 0; i < answers.length; i++) {
+            answers[i] = map.get("answers" + i);
         }
 
-        // 점수 누적용 Map 초기화
         int e = 0, i = 0, s = 0, n = 0, t = 0, f = 0, j = 0, p = 0;
+        List<Integer> scoreList = new ArrayList<>();
 
         for (int idx = 0; idx < answers.length; idx++) {
+            int score = 0;
             String raw = answers[idx];
-            int score = 0; // 기본값
 
             if (raw != null && !raw.equals("")) {
                 try {
                     score = Integer.parseInt(raw);
-                } catch (NumberFormatException ex) {
-                    System.out.println("숫자 변환 실패: answers" + idx + " = " + raw);
-                }
-            } else {
-                System.out.println("값 없음: answers" + idx);
+                } catch (NumberFormatException ignored) {}
             }
 
+            scoreList.add(score);
             String type = questionList.get(idx).getType().toLowerCase();
 
             switch (type) {
-                case "ei":
-                case "ie":
-                    if (type.equals("ei")) e += score;
-                    else i += score;
-                    break;
-                case "sn":
-                case "ns":
-                    if (type.equals("sn")) s += score;
-                    else n += score;
-                    break;
-                case "tf":
-                case "ft":
-                    if (type.equals("tf")) t += score;
-                    else f += score;
-                    break;
-                case "jp":
-                case "pj":
-                    if (type.equals("jp")) j += score;
-                    else p += score;
-                    break;
+                case "ei": e += score; break;
+                case "ie": i += score; break;
+                case "sn": s += score; break;
+                case "ns": n += score; break;
+                case "tf": t += score; break;
+                case "ft": f += score; break;
+                case "jp": j += score; break;
+                case "pj": p += score; break;
             }
         }
 
-        // MBTI 결정
         StringBuilder result = new StringBuilder();
         result.append(i > e ? "I" : "E");
         result.append(n > s ? "N" : "S");
         result.append(f > t ? "F" : "T");
         result.append(p > j ? "P" : "J");
-
         String mbtiResult = result.toString();
-        System.out.println("최종 MBTI 결과: " + mbtiResult);
+
+        // ✅ 세션에서 loginId 꺼내서 → userId 조회
+        Object loginIdObj = session.getAttribute("loginId");
+        if (loginIdObj != null) {
+            String loginId = loginIdObj.toString(); // ex) "ngchan03"
+            int userId = mbtiTestService.findUserIdByLoginId(loginId); // 핵심
+            mbtiTestService.calculateMbti(userId, scoreList);
+        }
 
         model.addAttribute("mbtiResult", mbtiResult);
         return "MbtiFormViews/mbtiFormHome";
     }
+
 }

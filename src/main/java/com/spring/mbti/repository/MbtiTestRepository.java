@@ -18,4 +18,19 @@ public class MbtiTestRepository {
     public List<MbtiTestDTO> findAllQuestions() {
         return sql.selectList("MbtiTest.findAllQuestions");
     }
+
+    public int findMbtiIdByCode(String mbti) {
+        return sql.selectOne("MbtiTest.findMbtiIdByCode", mbti);
+    }
+
+    public void updateUserMbti(int userId, int mbtiId) {
+        var param = new java.util.HashMap<String, Object>();
+        param.put("userId", userId);
+        param.put("mbtiId", mbtiId);
+        sql.update("MbtiTest.updateUserMbti", param);
+    }
+
+    public int findUserIdByLoginId(String loginId) {
+        return sql.selectOne("MbtiTest.findUserIdByLoginId", loginId);
+    }
 }
