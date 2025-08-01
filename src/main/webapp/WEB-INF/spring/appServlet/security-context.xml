@@ -19,9 +19,9 @@
 
         <!-- 로그인 설정 -->
         <form-login
-                login-page="/index"
-                default-target-url="/user/home"
-                authentication-failure-url="/?error=true"
+                login-page="/login"
+                default-target-url="/"
+                authentication-failure-url="/login?error=true"
                 username-parameter="username"
                 password-parameter="password" />
 
