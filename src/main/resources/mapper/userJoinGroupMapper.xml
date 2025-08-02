@@ -1,0 +1,17 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.spring.userjoingroup.repository.UserJoinGroupRepository">
+
+    <!-- 그룹 생성 시 leader insert -->
+    <insert id="insert" parameterType="com.spring.userjoingroup.dto.UserJoinGroupDTO">
+        INSERT INTO userJoinGroup (userId, groupId, joinedAt, role)
+        VALUES (#{userId}, #{groupId}, NOW(), #{role});
+    </insert>
+
+    <!-- 그룹 삭제 시 연관 데이터 삭제 -->
+    <delete id="deleteByGroupId" parameterType="int">
+        DELETE FROM userJoinGroup WHERE groupId = #{groupId};
+    </delete>
+
+</mapper>

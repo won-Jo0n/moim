@@ -24,9 +24,26 @@ public class GroupController {
     }
 
     // 그룹 생성
+    // userJoinGroup 같이 처리
     @PostMapping("/create")
-    public String createGroup(@ModelAttribute GroupDTO groupDTO, HttpSession session){
-        groupService.save(groupDTO);
+    public String createGroup(@RequestParam("title") String title,
+                              @RequestParam("description") String description,
+                              @RequestParam("city") String city,
+                              @RequestParam("country") String country,
+                              @RequestParam("maxUserNum") int maxUserNum,
+                              HttpSession session){
+        int loginUserId = (int) session.getAttribute("userId");
+        String location = city + " " + country;
+
+        GroupDTO groupDTO = new GroupDTO();
+        groupDTO.setTitle(title);
+        groupDTO.setDescription(description);
+        groupDTO.setLocation(location);
+        groupDTO.setMaxUserNum(maxUserNum);
+        groupDTO.setLeader(loginUserId);
+
+
+        groupService.save(groupDTO, loginUserId);
         return "redirect:/group/list";
     }
 
@@ -73,20 +90,16 @@ public class GroupController {
     // 그룹 삭제
     @GetMapping("/delete")
     public String delete(@RequestParam("id") int id, HttpSession session){
-        int userId  = (int) session.getAttribute("userId ");
-        System.out.println(userId);
+        int userId  = (int) session.getAttribute("userId");
 
         GroupDTO group = groupService.findById(id);  // 그룹 조회
-
-
-
 
         // 로그인한 유저가 모인장이 아닐때 삭제 차단
         /*if(group.getLeader() != userId){
             return "error/unauthorized";
         }*/
 
-        groupService.delete(id);
+        groupService.delete(id); // 연관 테이블 + 그룹 삭제
         return "redirect:/group/list"; // 수정하기
 
     }

@@ -3,7 +3,7 @@
 
 <mapper namespace="Group">
     <!-- 그룹 생성 -->
-    <insert id="createGroup" parameterType="group">
+    <insert id="createGroup" parameterType="group" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO `group` (leader, title, description, location, maxUserNum)
         VALUES (#{leader}, #{title}, #{description}, #{location}, #{maxUserNum});
     </insert>
