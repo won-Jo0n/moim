@@ -16,4 +16,16 @@ public class UserRepository {
     public UserDTO login(UserDTO userDTO) {
         return sql.selectOne("User.login",userDTO);
     }
+
+    public UserDTO getUserById(int userId) {
+        return sql.selectOne("User.getUserById", userId);
+    }
+
+    public int modify(UserDTO userDTO) {
+        return sql.update("User.modify", userDTO);
+    }
+
+    public void delete(int userId) {
+        sql.update("User.delete", userId);
+    }
 }
