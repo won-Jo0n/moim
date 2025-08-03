@@ -19,5 +19,10 @@
     <update id="delete" parameterType="int">
         UPDATE user SET status = -1 WHERE id = #{id};
     </update>
-
+    <select id="getUserByLoginId" parameterType="String" resultType="user">
+        SELECT * FROM user WHERE loginId = #{loginId};
+    </select>
+    <update id="updateUserStatus" parameterType="user">
+        UPDATE user SET status = #{status} WHERE id = #{id};
+    </update>
 </mapper>

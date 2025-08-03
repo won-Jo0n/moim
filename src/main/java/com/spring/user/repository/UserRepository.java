@@ -28,4 +28,12 @@ public class UserRepository {
     public void delete(int userId) {
         sql.update("User.delete", userId);
     }
+
+    public UserDTO getUserByLoginId(String loginId) {
+        return sql.selectOne("User.getUserByLoginId", loginId);
+    }
+
+    public void updateUserStatus(UserDTO user) {
+        sql.update("User.updateUserStatus", user);
+    }
 }
