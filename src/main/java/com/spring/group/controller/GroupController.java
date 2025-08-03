@@ -2,6 +2,8 @@ package com.spring.group.controller;
 
 import com.spring.group.dto.GroupDTO;
 import com.spring.group.service.GroupService;
+import com.spring.userjoingroup.dto.UserJoinGroupDTO;
+import com.spring.userjoingroup.repository.UserJoinGroupRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
@@ -16,6 +18,7 @@ import java.util.List;
 @RequestMapping("/group")
 public class GroupController {
     private final GroupService groupService;
+    private final UserJoinGroupRepository userJoinGroupRepository;
 
     // 그룹 생성 작성폼 //create.jsp
     @GetMapping("/create")
@@ -57,9 +60,24 @@ public class GroupController {
 
     // 그룹 상세 보기 // detail.jsp
     @GetMapping("/detail")
-    public String detail(@RequestParam("id") int id, Model model) {
-        GroupDTO group = groupService.findById(id);
+    public String detail(@RequestParam("groupId") int groupId,
+                         HttpSession session,
+                         Model model) {
+        GroupDTO group = groupService.findById(groupId);
         model.addAttribute("group", group);
+
+        int loginUserId = (int) session.getAttribute("userId");
+
+        //중복 신청 여부 확인
+        UserJoinGroupDTO dto = new UserJoinGroupDTO();
+        dto.setUserId(loginUserId);
+        dto.setGroupId(groupId);
+
+        UserJoinGroupDTO existing = userJoinGroupRepository.findOne(dto);
+        boolean alreadyApplied = (existing != null);
+
+        model.addAttribute("alreadyApplied", alreadyApplied);
+
         return "group/detail";  // detail.jsp
     }
 
@@ -74,16 +92,24 @@ public class GroupController {
 
     // 그룹 수정
     @PostMapping("/update")
-    public String update(@ModelAttribute GroupDTO groupDTO, HttpSession session){
-        int userId = (int) session.getAttribute("userId");
-        GroupDTO group = groupService.findById(groupDTO.getId());
-        // 사용자가 모임장이 아닐경우 수정 차단
-        /*if(group.getLeader() != userId){
-            return "error/unauthorized";
-        }*/
-        groupService.update(groupDTO);
-        return "redirect:/group/detail?id=" + groupDTO.getId();
+    public String update(@RequestParam("id") int id,
+                         @RequestParam("title") String title,
+                         @RequestParam("description") String description,
+                         @RequestParam("city") String city,
+                         @RequestParam("country") String country,
+                         @RequestParam("maxUserNum") int maxUserNum) {
 
+        String location = city + " " + country;
+
+        GroupDTO groupDTO = new GroupDTO();
+        groupDTO.setId(id);
+        groupDTO.setTitle(title);
+        groupDTO.setDescription(description);
+        groupDTO.setLocation(location);
+        groupDTO.setMaxUserNum(maxUserNum);
+
+        groupService.update(groupDTO);
+        return "redirect:/group/detail?id=" + id;
     }
 
 

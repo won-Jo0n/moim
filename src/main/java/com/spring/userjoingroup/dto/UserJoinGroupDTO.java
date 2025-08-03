@@ -10,4 +10,5 @@ public class UserJoinGroupDTO {
     private int groupId;
     private Timestamp joinedAt;
     private String role;
+    private String status; // pending / approved / rejected
 }

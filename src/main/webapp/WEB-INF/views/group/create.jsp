@@ -15,8 +15,6 @@
             <input type="text" id="title" name="title" placeholder="모임 이름을 입력하세요" required><br><br>
 
 
-
-
             <!-- 모임 소개 -->
             <label for="description">모임 소개</label><br>
             <textarea id="description" name="description" rows="5" cols="40" placeholder="모임을 소개해주세요" required></textarea><br><br>
@@ -52,10 +50,12 @@
 
             <!-- 최대 인원 -->
             <label for="maxUserNum">최대 인원</label><br>
-            <input type="number" id="maxUserNum" name="maxUserNum" placeholder="예: 10" min="1" required><br><br>
+            <input type="number" id="maxUserNum" name="maxUserNum" placeholder="예: 10" min="4" max="99" required><br><br>
 
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+
             <button type="submit">모임 만들기</button>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+
     </form>
 
 

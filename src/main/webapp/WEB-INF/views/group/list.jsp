@@ -54,7 +54,7 @@
         document.querySelectorAll(".clickable-row").forEach(function(row) {
             row.addEventListener("click", function () {
                 const id = this.dataset.id;
-                window.location.href = "/group/detail?id=" + id;
+                window.location.href = "/group/detail?groupId=" + id;
             });
         });
     </script>
