@@ -1,5 +1,10 @@
-package com.spring;
+package com.spring.oauth.controller;
 
+import com.spring.oauth.service.OAuthService;
+import com.spring.user.dto.UserDTO;
+import com.spring.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,10 +19,17 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Controller
+@RequiredArgsConstructor
 public class OAuthController {
+    private final OAuthService oAuthService;
+    private final UserRepository userRepository;
+
     @GetMapping("/oauthLogin")
     public String naverLogin(HttpSession session) throws UnsupportedEncodingException {
         String clientId = "BLDL0iNoSfM6b2JzShDS";
@@ -82,12 +94,34 @@ public class OAuthController {
 
         JSONObject userJson = new JSONObject(userInfo);
         JSONObject responseObj = userJson.getJSONObject("response");
+        Map<String, Object> oAuthData = new HashMap<>();
+
         for(String key : responseObj.keySet()){
-            System.out.println(key);
+            oAuthData.put(key, responseObj.get(key));
             System.out.println(key + ": " + responseObj.get(key));
         }
 
-        return "redirect:/"; // 로그인 성공 후 이동할 페이지
+        UserDTO userDTO = oAuthService.getUser((String)responseObj.get("id"));
+        if(userDTO == null){
+            model.addAttribute("OAuthData", oAuthData);
+            return "/user/join";
+        }else{
+            if (userDTO.getStatus() == 0 && userDTO.getBanEndTime() != null && userDTO.getBanEndTime().isAfter(LocalDateTime.now())) {
+                // 사용자에게 보낼 메시지 (예외 메시지)
+                String message = String.format("정지된 계정입니다. 제재 해제 시간: %s", userDTO.getBanEndTime());
+                throw new DisabledException(message); // 로그인 거부
+            }
+            if (userDTO.getStatus() == 0 && userDTO.getBanEndTime() != null && userDTO.getBanEndTime().isBefore(LocalDateTime.now())) {
+                // 사용자 상태를 정상으로 되돌리는 로직
+                userDTO.setStatus(1);
+                userDTO.setBanEndTime(null);
+                userRepository.updateUserStatus(userDTO); // DB에 업데이트
+            }
+            session.setAttribute("userId", userDTO.getId());
+            session.setAttribute("userName", userDTO.getNickName());
+            return "home";
+        }
+
     }
 }
 

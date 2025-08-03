@@ -2,35 +2,41 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>로그인</title>
+    <link rel="stylesheet" href="/resources/css/index.css">
 </head>
 <body>
 
-    <c:if test="${param.error != null}">
-        <div style="color:red;">로그인 실패: 아이디 또는 비밀번호를 확인해주세요.</div>
-    </c:if>
+<div class="container">
+    <!-- 로고 이미지 영역 -->
+    <div class="image-section">
+        <img src="/resources/images/logo.png" alt="로고 이미지">
+        <!-- 로고 이미지는 /static/img/logo.png 경로에 위치한다고 가정 -->
+    </div>
 
-    <c:if test="${param.logout != null}">
-        <div style="color:blue;">로그아웃 되었습니다.</div>
-    </c:if>
+    <!-- 로그인 폼 영역 -->
+    <div class="form-section">
+        <form action="/login" method="post">
+            <input type="text" name="loginId" placeholder="아이디" required />
+            <input type="password" name="password" placeholder="비밀번호" required />
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+            <button type="submit">로그인</button>
+        </form>
 
-    <form action="/user/login" method="post">
-        <label for="loginId">아이디:</label>
-        <input type="text" name="loginId" id="loginId" />
-        <br />
-        <label for="password">비밀번호:</label>
-        <input type="password" name="password" id="password" />
-        <br />
-        <button type="submit">로그인</button>
+        <div class="signup-link">
+            아직 계정이 없으신가요? <a href="/user/join">회원가입</a>
+        </div>
 
-        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-    </form>
-    <a href="/user/join">회원가입</a>
-    <a href="/oauthLogin">
-        <img height="50" src="https://static.nid.naver.com/oauth/small_g_in.PNG"/>
-    </a>
+        <div class="social-login">
+            <a href="/oauthLogin">
+                <img src="https://static.nid.naver.com/oauth/small_g_in.PNG" alt="네이버 로그인">
+            </a>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
