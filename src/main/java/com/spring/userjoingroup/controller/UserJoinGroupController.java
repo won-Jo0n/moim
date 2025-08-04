@@ -1,6 +1,10 @@
 package com.spring.userjoingroup.controller;
 
 
+import com.spring.group.dto.GroupDTO;
+import com.spring.group.service.GroupService;
+import com.spring.user.dto.UserDTO;
+import com.spring.user.service.UserService;
 import com.spring.userjoingroup.dto.UserJoinGroupDTO;
 import com.spring.userjoingroup.service.UserJoinGroupService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +23,7 @@ import java.util.List;
 @RequestMapping("/groupjoin")
 public class UserJoinGroupController {
     private final UserJoinGroupService userJoinGroupService;
+    private final GroupService groupService;
 
     // 참여 신청
     @PostMapping("/apply")
@@ -36,26 +41,49 @@ public class UserJoinGroupController {
         return "redirect:/group/detail?groupId=" + groupId;
     }
 
-    // 모임장이 신청자 확인
+    // 모임장이 신청자 확인 // 신청자 목록 보기
     @GetMapping("/requests")
-    public String viewRequests(@RequestParam int groupId, Model model) {
+    public String viewRequests(@RequestParam int groupId,
+                               Model model,
+                               HttpSession session) {
+        GroupDTO group = groupService.findById(groupId);
+        int loginUserId = (int) session.getAttribute("userId");
+
+        // 모임장이 아닐 경우 접근 차단
+        if(loginUserId != group.getLeader()){
+            return "redirect:/group/detail?groupId=" + groupId;
+        }
+
         List<UserJoinGroupDTO> pendingList = userJoinGroupService.getPendingRequests(groupId);
+
         model.addAttribute("pendingList", pendingList);
-        return "/group/request-list"; // JSP 페이지
+        model.addAttribute("groupId",groupId);
+        return "/group/requestList"; // requestList.jsp
     }
 
-    // 승인
+
+    // 승인 처리
     @PostMapping("/approve")
-    public String approve(@RequestParam int userId, @RequestParam int groupId) {
+    public String approve(@RequestParam int userId,
+                          @RequestParam int groupId) {
         userJoinGroupService.updateStatus(userId, groupId, "approved");
         return "redirect:/groupjoin/requests?groupId=" + groupId;
     }
 
-    // 거절
+    // 거절 처리
     @PostMapping("/reject")
-    public String reject(@RequestParam int userId, @RequestParam int groupId) {
+    public String reject(@RequestParam int userId,
+                         @RequestParam int groupId) {
         userJoinGroupService.updateStatus(userId, groupId, "rejected");
         return "redirect:/groupjoin/requests?groupId=" + groupId;
+    }
+
+    // 그룹 탈퇴
+    @PostMapping("/leave")
+    public String leaveGroup(@RequestParam("groupId") int groupId, HttpSession session){
+        int userId = (int) session.getAttribute("userId");
+        userJoinGroupService.leaveGroup(userId, groupId);
+        return "redirect:/group/detail?groupId="+groupId;
     }
 }
 

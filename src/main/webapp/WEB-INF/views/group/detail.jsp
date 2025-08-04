@@ -30,22 +30,41 @@
         </form>
     </c:if>
 
-    <c:choose>
-      <c:when test="${alreadyApplied}">
-        <form action="/groupjoin/cancel" method="post">
-          <input type="hidden" name="groupId" value="${group.id}" />
-          <button type="submit">참여 신청 취소</button>
-          <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+    <c:if test="${sessionScope.userId != group.leader and not alreadyApproved}">
+      <c:choose>
+        <c:when test="${alreadyApplied}">
+          <form action="/groupjoin/cancel" method="post">
+            <input type="hidden" name="groupId" value="${group.id}" />
+            <button type="submit">참여 신청 취소</button>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+          </form>
+        </c:when>
+        <c:otherwise>
+          <form action="/groupjoin/apply" method="post">
+            <input type="hidden" name="groupId" value="${group.id}" />
+            <button type="submit">모임 참여 신청</button>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+          </form>
+        </c:otherwise>
+      </c:choose>
+    </c:if>
+
+    <!-- 승인된 사람에게만 모임 탈퇴 버튼 -->
+    <c:if test="${alreadyApproved}">
+        <form action="/groupjoin/leave" method="post" onsubmit="return confirm('정말 모임을 탈퇴하시겠습니까?');">
+            <input type="hidden" name="groupId" value="${group.id}"/>
+            <button type="submit">모임 탈퇴</button>
+             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
         </form>
-      </c:when>
-      <c:otherwise>
-        <form action="/groupjoin/apply" method="post">
-          <input type="hidden" name="groupId" value="${group.id}" />
-          <button type="submit">모임 참여 신청</button>
-          <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+    </c:if>
+
+    <!-- 로그인한 사용자가 모임장일 경우에만 신청 목록 보기 버튼 표시 -->
+    <c:if test="${sessionScope.userId eq group.leader}">
+        <form action="/groupjoin/requests" method="get">
+            <input type="hidden" name="groupId" value="${group.id}"/>
+            <button type="submit">참여 신청 목록 보기</button>
         </form>
-      </c:otherwise>
-    </c:choose>
+    </c:if>
 
     <a href="/group/list">← 목록으로 </a>
 </body>

@@ -15,6 +15,15 @@
         ORDER BY createdAt DESC;
     </select>
 
+    <!-- 그룹 검색 조회 -->
+    <select id="searchByKeyword" parameterType="string" resultType="group">
+        SELECT * FROM `group`
+        WHERE status = 1
+            AND (title LIKE CONCAT('%', #{keyword}, '%')
+                OR location LIKE CONCAT('%', #{keyword}, '%'))
+        ORDER BY createdAt DESC;
+    </select>
+
     <!-- 그룹 상세 조회 -->
     <select id="findById" parameterType="int" resultType="group">
         SELECT * FROM `group`

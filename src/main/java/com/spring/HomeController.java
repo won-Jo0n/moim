@@ -9,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.servlet.http.HttpSession;
+
 @Controller
 public class HomeController {
     @GetMapping("/")
@@ -17,13 +19,13 @@ public class HomeController {
     }
 
     @GetMapping("/home")
-    public String home(Model model){
+    public String home(Model model, HttpSession session){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomerUserDetails userDetails = (CustomerUserDetails) auth.getPrincipal();
         UserDTO loginUser = userDetails.getUserDTO();
         System.out.println(loginUser.getLoginId());
+        session.setAttribute("userId", loginUser.getId());
 
-        String loginId = userDetails.toString();
         if(userDetails == null){
             System.out.println("null");
         }

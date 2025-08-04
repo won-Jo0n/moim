@@ -50,6 +50,7 @@ public class UserJoinGroupService {
     // 승인 or 거절
     public void updateStatus(int userId, int groupId, String status) {
         UserJoinGroupDTO dto = new UserJoinGroupDTO();
+
         dto.setUserId(userId);
         dto.setGroupId(groupId);
         dto.setStatus(status);
@@ -59,4 +60,8 @@ public class UserJoinGroupService {
         userJoinGroupRepository.updateStatus(dto);
     }
 
+    // 탈퇴
+    public void leaveGroup(int userId, int groupId) {
+        userJoinGroupRepository.leaveGroup(userId, groupId);
+    }
 }

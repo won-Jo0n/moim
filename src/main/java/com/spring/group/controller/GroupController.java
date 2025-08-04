@@ -4,6 +4,7 @@ import com.spring.group.dto.GroupDTO;
 import com.spring.group.service.GroupService;
 import com.spring.userjoingroup.dto.UserJoinGroupDTO;
 import com.spring.userjoingroup.repository.UserJoinGroupRepository;
+import com.spring.userjoingroup.service.UserJoinGroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
@@ -19,8 +20,9 @@ import java.util.List;
 public class GroupController {
     private final GroupService groupService;
     private final UserJoinGroupRepository userJoinGroupRepository;
+    private final UserJoinGroupService userJoinGroupService;
 
-    // 그룹 생성 작성폼 //create.jsp
+    // 그룹 생성 작성폼
     @GetMapping("/create")
     public String createForm(){
         return "/group/create";
@@ -35,6 +37,7 @@ public class GroupController {
                               @RequestParam("country") String country,
                               @RequestParam("maxUserNum") int maxUserNum,
                               HttpSession session){
+
         int loginUserId = (int) session.getAttribute("userId");
         String location = city + " " + country;
 
@@ -50,11 +53,12 @@ public class GroupController {
         return "redirect:/group/list";
     }
 
-    // 그룹 목록 보기 //list.jsp
+    // 그룹 목록 보기
+    // 검색어 없으면 전제 리스트 , 있다면 필터링 된 리스트
     @GetMapping("/list")
-    public String groupList(Model model){
-        List<GroupDTO> groupList = groupService.findAll();
-        model.addAttribute("groupList",groupList);
+    public String groupList(@RequestParam(value = "keyword", required = false) String keyword, Model model) {
+        List<GroupDTO> groupList = groupService.searchGroups(keyword);
+        model.addAttribute("groupList", groupList);
         return "group/list";
     }
 
@@ -74,9 +78,11 @@ public class GroupController {
         dto.setGroupId(groupId);
 
         UserJoinGroupDTO existing = userJoinGroupRepository.findOne(dto);
-        boolean alreadyApplied = (existing != null);
+        boolean alreadyApplied = (existing != null && "pending".equals(existing.getStatus()));
+        boolean alreadyApproved = (existing != null && "approved".equals(existing.getStatus()));
 
         model.addAttribute("alreadyApplied", alreadyApplied);
+        model.addAttribute("alreadyApproved", alreadyApproved);
 
         return "group/detail";  // detail.jsp
     }
@@ -129,6 +135,8 @@ public class GroupController {
         return "redirect:/group/list"; // 수정하기
 
     }
+
+
 
 //  로그인 처리 컨트롤러 setAttribute 확인하고 수정하기
 
