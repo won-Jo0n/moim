@@ -23,11 +23,29 @@
             <button type="submit">수정</button>
         </form>
 
-        <form action="/group/delete" method="get" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+        <form action="/group/delete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
             <input type="hidden" name="id" value="${group.id}" />
             <button type="submit">삭제</button>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
         </form>
     </c:if>
+
+    <c:choose>
+      <c:when test="${alreadyApplied}">
+        <form action="/groupjoin/cancel" method="post">
+          <input type="hidden" name="groupId" value="${group.id}" />
+          <button type="submit">참여 신청 취소</button>
+          <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+        </form>
+      </c:when>
+      <c:otherwise>
+        <form action="/groupjoin/apply" method="post">
+          <input type="hidden" name="groupId" value="${group.id}" />
+          <button type="submit">모임 참여 신청</button>
+          <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+        </form>
+      </c:otherwise>
+    </c:choose>
 
     <a href="/group/list">← 목록으로 </a>
 </body>

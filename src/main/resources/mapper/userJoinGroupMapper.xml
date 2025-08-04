@@ -1,0 +1,49 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.spring.userjoingroup.repository.UserJoinGroupRepository">
+
+    <!-- 그룹 생성 시 leader insert -->
+    <insert id="insert" parameterType="userJoinGroup">
+        INSERT INTO userJoinGroup (userId, groupId, joinedAt, role)
+        VALUES (#{userId}, #{groupId}, NOW(), #{role});
+    </insert>
+
+    <!-- 모임 참여 신청 insert -->
+    <insert id="insertRequest" parameterType="userJoinGroup">
+        INSERT INTO userJoinGroup (userId, groupId, status, role)
+        VALUES (#{userId}, #{groupId}, #{status}, #{role});
+    </insert>
+
+    <!-- 모임 참여 중복 신청 방지 -->
+    <select id="findOne" parameterType="userJoinGroup" resultType="userJoinGroup">
+        SELECT * FROM userJoinGroup
+        WHERE userId = #{userId} AND groupId = #{groupId}
+    </select>
+
+    <!-- 그룹 삭제 시 연관 데이터 삭제 -->
+    <delete id="deleteByGroupId" parameterType="int">
+        DELETE FROM userJoinGroup WHERE groupId = #{groupId};
+    </delete>
+
+    <!-- 신청 취소 -->
+    <delete id="deleteByUserAndGroup" parameterType="userJoinGroup">
+        DELETE FROM userJoinGroup
+        WHERE userId = #{userId} AND groupId = #{groupId} AND status = 'pending';
+    </delete>
+
+    <!-- 대기 중인 신청자 목록 조회 -->
+    <select id="findPendingByGroupId" parameterType="userJoinGroup"
+            resultType="userJoinGroup">
+        SELECT * FROM userJoinGroup
+        WHERE groupId = #{groupId} AND status = 'pending';
+    </select>
+
+    <!-- 승인/거절 처리 -->
+    <update id="updateStatus" parameterType="userJoinGroup">
+        UPDATE userJoinGroup
+        SET status = #{status}, joinedAt = #{joinedAt}
+        WHERE userId = #{userId} AND groupId = #{groupId};
+    </update>
+
+</mapper>
