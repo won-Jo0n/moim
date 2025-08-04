@@ -78,13 +78,15 @@ public class GroupController {
         dto.setGroupId(groupId);
 
         UserJoinGroupDTO existing = userJoinGroupRepository.findOne(dto);
-        boolean alreadyApplied = (existing != null && "pending".equals(existing.getStatus()));
-        boolean alreadyApproved = (existing != null && "approved".equals(existing.getStatus()));
+        boolean isAppliedMember = (existing != null && "pending".equals(existing.getStatus()));
+        boolean isApprovedMember = (existing != null && "approved".equals(existing.getStatus()));
+        boolean isLeader = (loginUserId == group.getLeader());
 
-        model.addAttribute("alreadyApplied", alreadyApplied);
-        model.addAttribute("alreadyApproved", alreadyApproved);
+        model.addAttribute("isAppliedMember", isAppliedMember);
+        model.addAttribute("isApprovedMember ", isApprovedMember);
+        model.addAttribute("isLeader", isLeader);
 
-        return "group/detail";  // detail.jsp
+        return "group/detail";
     }
 
     // 그룹 수정 작성폼 // update.jsp

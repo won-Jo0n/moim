@@ -16,7 +16,7 @@
         <fmt:formatDate value="${group.createdAt}" pattern="yyyy-MM-dd" />
     </p>
 
-    <!-- 로그인한 사용자가 모임장일 때만 수정/삭제 버튼 보이기 -->
+    <!-- 로그인한 사용자가 모임장일 때만 수정/삭제 버튼 표시 -->
     <c:if test="${sessionScope.userId == group.leader}">
         <form action="/group/update" method="get">
             <input type="hidden" name="id" value="${group.id}"/>
@@ -30,9 +30,10 @@
         </form>
     </c:if>
 
-    <c:if test="${sessionScope.userId != group.leader and not alreadyApproved}">
+    <!-- 로그인한 사용자가 모임장이 아니고, 승인된 사용자가 아닐떄 참여 버튼 표시 -->
+    <c:if test="${sessionScope.userId != group.leader and not isApprovedMember}">
       <c:choose>
-        <c:when test="${alreadyApplied}">
+        <c:when test="${isAppliedMember}">
           <form action="/groupjoin/cancel" method="post">
             <input type="hidden" name="groupId" value="${group.id}" />
             <button type="submit">참여 신청 취소</button>
@@ -49,8 +50,8 @@
       </c:choose>
     </c:if>
 
-    <!-- 승인된 사람에게만 모임 탈퇴 버튼 -->
-    <c:if test="${alreadyApproved}">
+    <!-- 승인된 사람에게만 모임 탈퇴 버튼 표시 -->
+    <c:if test="${isApprovedMember}">
         <form action="/groupjoin/leave" method="post" onsubmit="return confirm('정말 모임을 탈퇴하시겠습니까?');">
             <input type="hidden" name="groupId" value="${group.id}"/>
             <button type="submit">모임 탈퇴</button>
@@ -63,6 +64,14 @@
         <form action="/groupjoin/requests" method="get">
             <input type="hidden" name="groupId" value="${group.id}"/>
             <button type="submit">참여 신청 목록 보기</button>
+        </form>
+    </c:if>
+
+    <!-- 승인된 사람이거나 모임장일때만 모임게시판 글 작성 버튼 표시-->
+    <c:if test="${isApprovedMember or isLeader}">
+        <form action="/groupboard/create" method="get">
+            <input type="hidden" name="groupId" value="${group.id}" />
+            <button type="submit">글 작성</button>
         </form>
     </c:if>
 

@@ -1,0 +1,27 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.spring.groupboard.repository.GroupBoardRepository">
+
+    <!-- 게시글 목록 (작성자 닉네임 JOIN) -->
+    <select id="findByGroupId" parameterType="int" resultType="groupBoard">
+        SELECT gb.*, u.nickName AS authorNickName
+        FROM groupboard gb
+        JOIN user u ON gb.author = u.id
+        WHERE gb.groupId = #{groupId}
+        AND gb.status = 1
+        ORDER BY gb.createdAt DESC
+    </select>
+
+    <!-- 게시글 작성 -->
+    <insert id="save" parameterType="groupBoard">
+        INSERT INTO groupboard (groupId, author, title, content, fileId)
+        VALUES (#{groupId}, #{author}, #{title}, #{content}, #{fileId})
+    </insert>
+
+    <!-- 게시글 삭제 (논리 삭제면 status=0으로 바꾸는 방식도 가능) -->
+    <delete id="delete" parameterType="int">
+        DELETE FROM groupboard WHERE id = #{id}
+    </delete>
+
+</mapper>
