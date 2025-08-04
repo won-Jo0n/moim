@@ -7,4 +7,14 @@
         SELECT * FROM mbti;
     </select>
 
+    <select id="getMbtiLabels" resultType="String">
+        select mbti FROM mbti;
+    </select>
+
+    <select id="getCountGroupByMbti" resultType="chartCount">
+        SELECT m.mbti mbti, COUNT(*) value FROM user
+        JOIN mbti m ON user.mbtiId = m.id
+        GROUP BY m.mbti;
+    </select>
+
 </mapper>

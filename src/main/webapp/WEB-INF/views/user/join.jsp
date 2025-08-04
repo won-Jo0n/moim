@@ -40,7 +40,7 @@
     <input type="text" name="nickName" placeholder="닉네임">
 
     <label for="mbti">당신의 MBTI를 선택하세요:</label>
-    <select name="mbti" id="mbti" required>
+    <select name="mbtiId" id="mbti" required>
         <%-- mbtiList의 각 요소를 반복하여 <option> 태그를 동적으로 생성 --%>
         <c:forEach var="mbti" items="${mbtiList}">
             <option value="${mbti.id}" ${mbti.id == 0 ? 'selected' : ''}>

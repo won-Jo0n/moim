@@ -44,6 +44,7 @@ public class UserController {
                        @RequestParam("city") String city, @RequestParam("county") String county){
         String region = city + " " + county;
         userDTO.setRegion(region);
+        System.out.println(userDTO.getMbtiId());
         if(command.equals("OAuthJoin")){
             oAuthService.OAuthJoin(userDTO);
         }else{
