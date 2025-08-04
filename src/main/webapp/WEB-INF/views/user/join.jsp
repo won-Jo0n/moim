@@ -18,8 +18,9 @@
     <c:if test="${not empty OAuthData}">
       <input type="hidden" name="command" value="OAuthJoin"/>
       <input type="hidden" name="loginId" value="${OAuthData.id}" />
+      <input type="text" name="nickName" value="${OAuthData.name}">
       <input type="hidden" name="gender" value="${OAuthData.gender}" />
-      <input type="hidden" name="birthDate" value="${OAuthData.birthyear}-${OAuthData.birthday}"/>
+      <input type="text" name="birthDate" value="${OAuthData.birthyear}-${OAuthData.birthday}" readOnly/>
     </c:if>
 
     <c:if test="${empty OAuthData}">
@@ -28,16 +29,15 @@
       <input type="password" name="password" placeholder="비밀번호 입력">
       <label>성별:</label><br>
       <div class="gender-group">
-        <input type="radio" id="male" name="gender" value="male">
+        <input type="radio" id="male" name="gender" value="M">
         <label for="male">남성</label>
-        <input type="radio" id="female" name="gender" value="female">
+        <input type="radio" id="female" name="gender" value="F">
         <label for="female">여성</label>
       </div>
+      <input type="text" name="nickName" placeholder="닉네임">
       <label for="birthDate">생년월일</label>
       <input id="birthDate" type="date" name="birthDate">
     </c:if>
-
-    <input type="text" name="nickName" placeholder="닉네임">
 
     <label for="mbti">당신의 MBTI를 선택하세요:</label>
     <select name="mbtiId" id="mbti" required>

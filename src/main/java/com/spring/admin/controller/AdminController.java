@@ -110,6 +110,7 @@ public class AdminController {
         model.addAttribute("statsList", statsList);
         model.addAttribute("statsJson", statsJson);
 
+
         // JSP 페이지로 이동
         return "admin/chart2";
     }
