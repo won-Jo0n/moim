@@ -12,5 +12,9 @@
         <typeAlias type="com.spring.mbti.dto.MbtiBoardDTO" alias="mbtiBoard"></typeAlias>
         <typeAlias type="com.spring.mbti.dto.MbtiDTO" alias="mbti"></typeAlias>
         <typeAlias type="com.spring.review.dto.ReviewDTO" alias="review"></typeAlias>
+        <typeAlias type="com.spring.report.dto.ReportDTO" alias="report"></typeAlias>
+        <typeAlias type="com.spring.admin.dto.PenaltiDTO" alias="penalti"></typeAlias>
+        <typeAlias type="com.spring.admin.dto.ChartDTO" alias="chart"></typeAlias>
+        <typeAlias type="com.spring.admin.dto.ChartCountDTO" alias="chartCount"></typeAlias>
     </typeAliases>
 </configuration>

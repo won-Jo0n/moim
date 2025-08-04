@@ -4,8 +4,8 @@
 
 <mapper namespace="User">
     <insert id="join" parameterType="user">
-        INSERT INTO user(loginId, password, nickName, gender, birthDate, region )
-        VALUES(#{loginId},#{password},#{nickName},#{gender},#{birthDate},#{region});
+        INSERT INTO user(loginId, password, nickName, gender, birthDate, region, mbtiId )
+        VALUES(#{loginId},#{password},#{nickName},#{gender},#{birthDate},#{region}, #{mbtiId});
     </insert>
     <select id="login" parameterType="user" resultType="user">
         SELECT * FROM user WHERE loginId = #{loginId} AND password = #{password};

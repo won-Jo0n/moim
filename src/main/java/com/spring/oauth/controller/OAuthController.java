@@ -104,7 +104,7 @@ public class OAuthController {
         UserDTO userDTO = oAuthService.getUser((String)responseObj.get("id"));
         if(userDTO == null){
             model.addAttribute("OAuthData", oAuthData);
-            return "/user/join";
+            return "forward:/user/join";
         }else{
             if (userDTO.getStatus() == 0 && userDTO.getBanEndTime() != null && userDTO.getBanEndTime().isAfter(LocalDateTime.now())) {
                 // 사용자에게 보낼 메시지 (예외 메시지)

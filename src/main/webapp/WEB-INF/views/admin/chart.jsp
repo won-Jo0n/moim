@@ -6,8 +6,9 @@
 <head>
     <meta charset="UTF-8">
     <title>관리자 대시보드</title>
+    <!-- Google Font -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-    <link rel="stylesheet" href="../resources/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2L8i4z3g2sN+G4BvT+R/bX/6y+gA4F98cI3tA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../resources/css/adminlte.min.css">
 </head>
 <body class="hold-transition sidebar-mini">
