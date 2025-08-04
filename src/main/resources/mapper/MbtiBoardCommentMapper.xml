@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="MbtiBoardComment">
+
+    <!-- 댓글 저장 -->
+    <insert id="save" parameterType="com.spring.mbti.dto.MbtiBoardCommentDTO">
+        INSERT INTO mbtiboardcomment (boardId, parentId, author, content, createdAt, status)
+        VALUES (#{boardId}, #{parentId}, #{author}, #{content}, NOW(), 0)
+    </insert>
+
+    <!-- 댓글 전체 조회 (댓글 + 대댓글 포함), 작성자 닉네임 JOIN -->
+    <select id="findAllByBoardId" resultType="com.spring.mbti.dto.MbtiBoardCommentDTO">
+        SELECT c.*, u.nickname AS authorNickname
+        FROM mbtiboardcomment c
+        JOIN user u ON c.author = u.id
+        WHERE c.boardId = #{boardId} AND c.status = 0
+        ORDER BY COALESCE(c.parentId, c.id), c.parentId IS NOT NULL, c.createdAt ASC
+    </select>
+
+    <!-- 댓글 단일 조회 -->
+    <select id="findById" resultType="com.spring.mbti.dto.MbtiBoardCommentDTO">
+        SELECT * FROM mbtiboardcomment WHERE id = #{id}
+    </select>
+
+    <!-- 댓글 수정 -->
+    <update id="update" parameterType="com.spring.mbti.dto.MbtiBoardCommentDTO">
+        UPDATE mbtiboardcomment
+        SET content = #{content}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 댓글 논리 삭제 -->
+    <update id="delete">
+        UPDATE mbtiboardcomment
+        SET status = 1
+        WHERE id = #{id}
+    </update>
+
+</mapper>

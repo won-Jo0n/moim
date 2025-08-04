@@ -5,27 +5,54 @@
 <mapper namespace="MbtiBoard">
 
     <insert id="save" parameterType="mbtiBoard">
-        INSERT INTO mbtiboard (mbtiId, author, title, content, fileId)
-        VALUES (#{mbtiId}, #{author}, #{title}, #{content}, #{fileId})
+        INSERT INTO mbtiboard (author, title, content)
+        VALUES (#{author}, #{title}, #{content});
     </insert>
 
     <select id="findAllByMbtiId" parameterType="int" resultType="mbtiBoard">
         SELECT * FROM mbtiboard WHERE mbtiId = #{mbtiId} ORDER BY createdAt DESC
     </select>
 
-    <select id="findById" parameterType="int" resultType="mbtiBoard">
+    <select id="findById" parameterType="long" resultType="mbtiBoard">
         SELECT * FROM mbtiboard WHERE id = #{id}
+    </select>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM mbtiboard WHERE id = #{id}
+    </delete>
+
+    <!-- 댓글 저장 -->
+    <insert id="saveComment" parameterType="com.spring.mbti.dto.MbtiBoardCommentDTO">
+        INSERT INTO mbtiboard_comment (boardId, parentId, author, content, createdAt, status)
+        VALUES (#{boardId}, #{parentId}, #{author}, #{content}, NOW(), #{status})
+    </insert>
+
+    <!-- 댓글 목록 조회 -->
+    <select id="findCommentsByBoardId" resultType="com.spring.mbti.dto.MbtiBoardCommentDTO">
+        SELECT * FROM mbtiboard_comment
+        WHERE boardId = #{boardId} AND status = 1
+        ORDER BY parentId ASC, id ASC
+    </select>
+
+    <select id="findAll" resultType="com.spring.mbti.dto.MbtiBoardDTO">
+        SELECT * FROM mbtiboard
+        WHERE status = 1
+        ORDER BY id DESC
     </select>
 
     <update id="update" parameterType="mbtiBoard">
         UPDATE mbtiboard
-        SET title = #{title}, content = #{content}, status = #{status}
+        SET title = #{title},
+        content = #{content}
         WHERE id = #{id}
     </update>
 
-    <delete id="delete" parameterType="int">
-        DELETE FROM mbtiboard WHERE id = #{id}
-    </delete>
+    <update id="deleteComment" parameterType="int">
+        UPDATE mbtiboard_comment
+        SET status = 0
+        WHERE id = #{id}
+    </update>
+
 
 
 
