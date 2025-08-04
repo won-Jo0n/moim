@@ -10,7 +10,6 @@
 </head>
 <body>
     <p>home</p>
-    <p>${loginUser.loginId}</p>
     <%@ include file="header.jsp" %>
     <a href="/user/modify">수정하기</a>
     <a href="/user/logout">로그아웃</a>
