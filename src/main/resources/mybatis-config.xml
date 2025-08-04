@@ -7,6 +7,7 @@
     <typeAliases>
         <typeAlias type="com.spring.user.dto.UserDTO" alias="user"></typeAlias>
         <typeAlias type="com.spring.group.dto.GroupDTO" alias="group"></typeAlias>
+        <typeAlias type="com.spring.userjoingroup.dto.UserJoinGroupDTO" alias="userJoinGroup"></typeAlias>
         <typeAlias type="com.spring.mbti.dto.MbtiSubmissionDTO" alias="mbtiSub"></typeAlias>
         <typeAlias type="com.spring.mbti.dto.MbtiTestDTO" alias="mbtiTest"></typeAlias>
         <typeAlias type="com.spring.mbti.dto.MbtiBoardDTO" alias="mbtiBoard"></typeAlias>
