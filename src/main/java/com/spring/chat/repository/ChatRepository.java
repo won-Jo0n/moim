@@ -27,11 +27,19 @@ public class ChatRepository {
         return sql.selectList("Chat.getChatMessages", chatMessageDTO);
     }
 
-    public int readChatMessages(int userId, int chatUserId) {
+    public int sendChatMessage(int userId, int chatUserId, String content) {
         ChatMessageDTO chatMessageDTO = new ChatMessageDTO();
         chatMessageDTO.setRequestUserId(userId);
         chatMessageDTO.setResponseUserId(chatUserId);
-        return sql.update("Chat.readChatMessages", chatMessageDTO);
+        chatMessageDTO.setContent(content);
+        return sql.insert("Chat.sendChatMessage", chatMessageDTO);
+    }
+
+    public int readChatMessage(int userId, int chatUserId) {
+        ChatMessageDTO chatMessageDTO = new ChatMessageDTO();
+        chatMessageDTO.setRequestUserId(userId);
+        chatMessageDTO.setResponseUserId(chatUserId);
+        return sql.update("Chat.readChatMessage", chatMessageDTO);
     }
 
     public void requestChat(int userId, int chatUserId) {

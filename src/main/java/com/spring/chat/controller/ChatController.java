@@ -28,10 +28,16 @@ public class ChatController {
         return chatService.getChatMessages(userId, chatUserId);
     }
 
-    @GetMapping("/read/{chatUserId}")
-    public int readMessages(@PathVariable int chatUserId, HttpSession session){
+    @GetMapping("/send/{chatUserId}")
+    public int sendChatMessage(@PathVariable int chatUserId, @RequestParam("content") String content, HttpSession session){
         int userId = (int)session.getAttribute("userId");
-        return chatService.readChatMessages(userId, chatUserId);
+        return chatService.sendChatMessage(userId, chatUserId, content);
+    }
+
+    @GetMapping("/read/{chatUserId}")
+    public int readChatMessage(@PathVariable int chatUserId, HttpSession session){
+        int userId = (int)session.getAttribute("userId");
+        return chatService.readChatMessage(userId, chatUserId);
     }
 
     @GetMapping("/request/{chatUserId}")

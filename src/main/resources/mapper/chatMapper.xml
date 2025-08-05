@@ -21,7 +21,7 @@
         (f.requestUserId = #{userId} AND f.responseUserId = u.id)
         OR (f.responseUserId = #{userId} AND f.requestUserId = u.id)
         )
-        AND f.status >= 0
+        AND f.status >= 1
         LEFT JOIN (
         SELECT
         CASE
@@ -73,16 +73,23 @@
         OR
         (requestUserId = #{responseUserId} AND responseUserId = #{requestUserId}) AND status = 1;
     </select>
-    <update id="readChatMessages" parameterType="chatMessage">
+    <update id="readChatMessage" parameterType="chatMessage">
         UPDATE chat SET isRead = 1 WHERE requestUserId = #{requestUserId} AND responseUserId = #{responseUserId};
     </update>
-    <insert id="Chat.requestChat" parameterType="chatMessage">
-        INSERT INTO friends (requestUserId, responseUserId, state) VALUES (#{requestUserId}, #{responseUserId}, 2);
+    <insert id="sendChatMessage" parameterType="chatMessage">
+        INSERT INTO chat (requestUserId, responseUserId, content) VALUES (#{requestUserId}, #{responseUserId}, #{content});
     </insert>
-    <update id="Chat.acceptChat" parameterType="chatMessage">
-
+    <insert id="requestChat" parameterType="chatMessage">
+        INSERT INTO friends (requestUserId, responseUserId, status) VALUES (#{requestUserId}, #{responseUserId}, 3);
+    </insert>
+    <update id="acceptChat" parameterType="chatMessage">
+        UPDATE chat SET status = 2 WHERE WHERE (requestUserId = #{requestUserId} AND responseUserId = #{responseUserId})
+        OR
+        (requestUserId = #{responseUserId} AND responseUserId = #{requestUserId});
     </update>
-    <update id="Chat.declineChat" parameterType="chatMessage">
-
+    <update id="declineChat" parameterType="chatMessage">
+        UPDATE chat SET status = -1 WHERE WHERE (requestUserId = #{requestUserId} AND responseUserId = #{responseUserId})
+        OR
+        (requestUserId = #{responseUserId} AND responseUserId = #{requestUserId});
     </update>
 </mapper>

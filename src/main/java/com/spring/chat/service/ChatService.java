@@ -21,8 +21,12 @@ public class ChatService {
         return chatRepository.getChatMessages(userId, chatUserId);
     }
 
-    public int readChatMessages(int userId, int chatUserId) {
-        return chatRepository.readChatMessages(userId, chatUserId);
+    public int sendChatMessage(int userId, int chatUserId, String content) {
+        return chatRepository.sendChatMessage(userId, chatUserId, content);
+    }
+
+    public int readChatMessage(int userId, int chatUserId) {
+        return chatRepository.readChatMessage(userId, chatUserId);
     }
 
     public void requestChat(int userId, int chatUserId) {

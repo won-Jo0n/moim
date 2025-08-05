@@ -68,11 +68,6 @@
             </li>
             <li>
               <a href="#" role="button"
-                ><i class="fas fa-comments"></i> <span>메시지</span></a
-              >
-            </li>
-            <li>
-              <a href="#" role="button"
                 ><i class="fas fa-users"></i> <span>모임</span></a
               >
             </li>
