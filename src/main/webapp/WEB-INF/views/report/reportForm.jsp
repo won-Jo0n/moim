@@ -5,10 +5,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>순위보기</title>
+    <title>신고하기</title>
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 </head>
 <body>
+    <form action="/report" method="post">
 
 
 </body>

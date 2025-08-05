@@ -6,6 +6,7 @@ import com.spring.oauth.service.OAuthService;
 import com.spring.user.dto.UserDTO;
 import com.spring.user.service.UserService;
 import com.spring.userdetails.CustomerUserDetails;
+import com.spring.utils.FileUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,8 +14,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +29,7 @@ public class UserController {
     private final OAuthService oAuthService;
     private final PasswordEncoder passwordEncoder;
     private final MbtiService mbtiService;
+    private final FileUtil fileUtil;
 
     @GetMapping("/home")
     public String home(){
@@ -40,10 +44,22 @@ public class UserController {
     }
 
     @PostMapping("/join")
-    public String join(@ModelAttribute UserDTO userDTO,@RequestParam("command") String command,
-                       @RequestParam("city") String city, @RequestParam("county") String county){
+    public String join(@ModelAttribute UserDTO userDTO, @RequestParam("command") String command,
+                       @RequestParam("city") String city, @RequestParam("county") String county,
+                       @RequestParam(value="profile", required = false)MultipartFile profile) throws IOException {
+
         String region = city + " " + county;
         userDTO.setRegion(region);
+
+        if(!profile.isEmpty()){
+            int fileId = fileUtil.fileSave(profile);
+            System.out.println("fileId: " + fileId);
+            userDTO.setFileId(fileId);
+            System.out.println("userFileId: " + userDTO.getFileId());
+        }else{
+            userDTO.setFileId(0);
+        }
+
         if(command.equals("OAuthJoin")){
             oAuthService.OAuthJoin(userDTO);
         }else{
@@ -104,6 +120,12 @@ public class UserController {
         userService.delete(userId);
 
         return "redirect:/";
+    }
+
+    @PostMapping("/nickName-check")
+    public @ResponseBody int nickNameCheck(@RequestParam("nickName") String nickName){
+        int res = userService.nickNameCheck(nickName);
+        return res;
     }
 
 

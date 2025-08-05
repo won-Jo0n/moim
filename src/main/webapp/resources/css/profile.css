@@ -1,0 +1,84 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f2f5;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.user-info p {
+    margin: 6px 0;
+    font-size: 16px;
+    color: #555;
+}
+
+.grade {
+    font-weight: bold;
+    color: #3b82f6;
+}
+
+hr {
+    margin: 30px 0;
+    border: none;
+    border-top: 1px solid #ddd;
+}
+
+.post-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.post-list li {
+    padding: 14px 10px;
+    border-bottom: 1px solid #eee;
+    transition: background 0.3s;
+}
+
+.post-list li:hover {
+    background: #f9f9f9;
+}
+
+.post-list a {
+    text-decoration: none;
+    color: #222;
+    font-weight: bold;
+}
+
+.post-list small {
+    display: block;
+    font-size: 12px;
+    color: #888;
+    margin-top: 4px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.tab-content {
+    opacity: 1;
+    transition: opacity 0.4s ease;
+}
+
+.tab-content.hidden {
+    opacity: 0;
+    pointer-events: none;
+    height: 0;
+    overflow: hidden;
+}
+

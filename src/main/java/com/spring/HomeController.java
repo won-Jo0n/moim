@@ -26,6 +26,7 @@ public class HomeController {
         System.out.println(loginUser.getLoginId());
         session.setAttribute("userId", loginUser.getId());
 
+        String loginId = userDetails.toString();
         if(userDetails == null){
             System.out.println("null");
         }

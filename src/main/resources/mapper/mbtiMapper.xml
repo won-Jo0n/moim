@@ -7,4 +7,26 @@
         SELECT * FROM mbti;
     </select>
 
+    <select id="getMbtiLabels" resultType="String">
+        select mbti FROM mbti;
+    </select>
+
+    <select id="getCountGroupByMbti" resultType="chartCount">
+        SELECT m.mbti mbti, COUNT(*) value FROM user
+        JOIN mbti m ON user.mbtiId = m.id
+        GROUP BY m.mbti;
+    </select>
+
+    <select id="getCountGroupByGender" resultType="userGenderRatio">
+        SELECT
+        CASE gender
+        WHEN 'M' THEN '남자'
+        WHEN 'F' THEN '여자'
+        ELSE '기타'
+        END AS gender,
+        COUNT(*) AS count
+        FROM user
+        GROUP BY gender;
+    </select>
+
 </mapper>

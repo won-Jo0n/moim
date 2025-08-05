@@ -13,9 +13,9 @@
     관리자 대시보드
 </header>
 <nav>
-    <a href="#reports">신고 내역</a>
-    <a href="#stats">MBTI 통계</a>
-    <a href="#penalties">사용자 제재</a>
+    <a href="/admin/report">신고 내역</a>
+    <a href="/admin/chart">MBTI 통계</a>
+    <a href="/admin/penalties">사용자 제재</a>
 </nav>
 
 <div class="container">

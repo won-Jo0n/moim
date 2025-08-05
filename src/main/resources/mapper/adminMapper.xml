@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Admin">
+    <select id="getReportList" resultType="report">
+        SELECT * FROM report;
+    </select>
+
+    <select id="getPenaltiesUser" resultType="user">
+        SELECT * FROM user WHERE status = 0 AND banEndTime > CURRENT_TIMESTAMP;
+    </select>
+
+    <select id="getUserByNickName" parameterType="String" resultType="user">
+        SELECT * FROM user WHERE nickName = #{nickName};
+    </select>
+
+    <update id="getPenalti" parameterType="penalti">
+        UPDATE user
+        SET banEndTime = DATE_ADD(NOW(), INTERVAL #{penaltiesTerm} DAY), status = 0
+        WHERE nickName = #{nickName};
+    </update>
+
+    <update id="clearPenalti" parameterType="int">
+        UPDATE user
+        SET status = 1, banEndTime = null
+        WHERE id = #{id};
+    </update>
+
+</mapper>

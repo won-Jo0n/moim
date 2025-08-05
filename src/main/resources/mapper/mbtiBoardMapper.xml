@@ -4,29 +4,78 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="MbtiBoard">
 
-    <insert id="save" parameterType="mbtiBoard">
-        INSERT INTO mbtiboard (mbtiId, author, title, content, fileId)
-        VALUES (#{mbtiId}, #{author}, #{title}, #{content}, #{fileId})
+    <!-- 게시글 저장 -->
+    <insert id="save" parameterType="com.spring.mbti.dto.MbtiBoardDTO">
+        INSERT INTO mbtiboard (mbtiId, author, title, content, createdAt, status)
+        VALUES (#{mbtiId}, #{author}, #{title}, #{content}, NOW(), 1)
     </insert>
 
-    <select id="findAllByMbtiId" parameterType="int" resultType="mbtiBoard">
-        SELECT * FROM mbtiboard WHERE mbtiId = #{mbtiId} ORDER BY createdAt DESC
+    <!-- 전체 게시글 조회 (닉네임 포함) -->
+    <select id="findAll" resultType="com.spring.mbti.dto.MbtiBoardDTO">
+        SELECT
+        b.id, b.mbtiId, b.author, b.title, b.content, b.fileId,
+        b.createdAt, b.status,
+        u.nickname AS authorinfo
+        FROM mbtiboard b
+        LEFT JOIN user u ON b.author = u.id
+        WHERE b.status = 1
+        ORDER BY b.id DESC
     </select>
 
-    <select id="findById" parameterType="int" resultType="mbtiBoard">
-        SELECT * FROM mbtiboard WHERE id = #{id}
+    <!-- MBTI별 게시글 조회 (닉네임 포함) -->
+    <select id="findAllByMbtiId" parameterType="int" resultType="com.spring.mbti.dto.MbtiBoardDTO">
+        SELECT
+        b.id, b.mbtiId, b.author, b.title, b.content, b.fileId,
+        b.createdAt, b.status,
+        u.nickname AS authorinfo
+        FROM mbtiboard b
+        LEFT JOIN user u ON b.author = u.id
+        WHERE b.mbtiId = #{mbtiId} AND b.status = 1
+        ORDER BY b.createdAt DESC
     </select>
 
+    <!-- 단일 게시글 조회 (닉네임 포함) -->
+    <select id="findById" parameterType="long" resultType="com.spring.mbti.dto.MbtiBoardDTO">
+        SELECT
+        b.id, b.mbtiId, b.author, b.title, b.content, b.fileId,
+        b.createdAt, b.status,
+        u.nickname AS authorinfo
+        FROM mbtiboard b
+        LEFT JOIN user u ON b.author = u.id
+        WHERE b.id = #{id}
+    </select>
+
+    <!-- 게시글 수정 -->
     <update id="update" parameterType="mbtiBoard">
         UPDATE mbtiboard
-        SET title = #{title}, content = #{content}, status = #{status}
+        SET title = #{title},
+        content = #{content}
         WHERE id = #{id}
     </update>
 
-    <delete id="delete" parameterType="int">
+    <!-- 게시글 삭제 -->
+    <delete id="delete" parameterType="long">
         DELETE FROM mbtiboard WHERE id = #{id}
     </delete>
 
+    <!-- 댓글 저장 -->
+    <insert id="saveComment" parameterType="com.spring.mbti.dto.MbtiBoardCommentDTO">
+        INSERT INTO mbtiboard_comment (boardId, parentId, author, content, createdAt, status)
+        VALUES (#{boardId}, #{parentId}, #{author}, #{content}, NOW(), #{status})
+    </insert>
 
+    <!-- 댓글 목록 조회 -->
+    <select id="findCommentsByBoardId" resultType="com.spring.mbti.dto.MbtiBoardCommentDTO">
+        SELECT * FROM mbtiboard_comment
+        WHERE boardId = #{boardId} AND status = 1
+        ORDER BY parentId ASC, id ASC
+    </select>
+
+    <!-- 댓글 삭제 (상태 변경) -->
+    <update id="deleteComment" parameterType="int">
+        UPDATE mbtiboard_comment
+        SET status = 0
+        WHERE id = #{id}
+    </update>
 
 </mapper>

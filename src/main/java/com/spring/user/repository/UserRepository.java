@@ -36,4 +36,8 @@ public class UserRepository {
     public void updateUserStatus(UserDTO user) {
         sql.update("User.updateUserStatus", user);
     }
+
+    public int nickNameCheck(String nickName) {
+        return sql.selectOne("User.nickNameCheck", nickName);
+    }
 }
