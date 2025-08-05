@@ -6,6 +6,7 @@ import com.spring.userjoingroup.repository.UserJoinGroupRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -16,10 +17,12 @@ public class UserJoinGroupService {
     private final UserJoinGroupRepository userJoinGroupRepository;
 
     // 모임 참여 신청
-    public void applyToGroup(int userId, int groupId) {
+    public void applyToGroup(int userId, int groupId,
+                             HttpSession session) {
         UserJoinGroupDTO dto = new UserJoinGroupDTO();
         dto.setUserId(userId);
         dto.setGroupId(groupId);
+
         // 중복 insert 방지
         UserJoinGroupDTO existing = userJoinGroupRepository.findOne(dto);
         if (existing != null) {
@@ -50,6 +53,7 @@ public class UserJoinGroupService {
     // 승인 or 거절
     public void updateStatus(int userId, int groupId, String status) {
         UserJoinGroupDTO dto = new UserJoinGroupDTO();
+
         dto.setUserId(userId);
         dto.setGroupId(groupId);
         dto.setStatus(status);
@@ -59,4 +63,14 @@ public class UserJoinGroupService {
         userJoinGroupRepository.updateStatus(dto);
     }
 
+    // 탈퇴
+    public void leaveGroup(int userId, int groupId) {
+        userJoinGroupRepository.leaveGroup(userId, groupId);
+    }
+
+    // 승인된 멤버만 게시글 목록 조회 가능하도록
+    public boolean isApprovedMember(int groupId, int userId) {
+        UserJoinGroupDTO dto = userJoinGroupRepository.findOneByGroupIdAndUserId(groupId, userId);
+        return dto != null && "approved".equals(dto.getStatus());
+    }
 }

@@ -2,6 +2,7 @@ package com.spring.group.repository;
 
 import com.spring.group.dto.GroupDTO;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.Param;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -22,6 +23,11 @@ public class GroupRepository {
         return sql.selectList("Group.findAll");
     }
 
+    // 그룹 검색 조회
+    public List<GroupDTO> searchByKeyword(@Param("keyword") String keyword) {
+        return sql.selectList("Group.searchByKeyword", keyword);
+    }
+
     // 그룹 상세 조회
     public GroupDTO findById(int id) {
         return sql.selectOne("Group.findById", id);
@@ -34,9 +40,9 @@ public class GroupRepository {
 
     // 그룹 삭제
     public int delete(int id) {
-
         return sql.delete("Group.delete",id);
     }
+
 
 
 }

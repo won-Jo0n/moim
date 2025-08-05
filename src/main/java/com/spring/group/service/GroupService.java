@@ -32,10 +32,17 @@ public class GroupService {
         userJoinGroupRepository.insert(join);
     }
 
-    // 그룹 전체 조회
-    public List<GroupDTO> findAll() {
-        return groupRepository.findAll();
+
+
+    // 그룹 검색 조회
+    public List<GroupDTO> searchGroups(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return groupRepository.findAll();
+        }else{
+            return groupRepository.searchByKeyword(keyword);
+        }
     }
+
 
     // 그룹 상세 조회 // 모임장 권한 체크에 필요
     public GroupDTO findById(int id) {
@@ -55,6 +62,7 @@ public class GroupService {
         userJoinGroupRepository.deleteByGroupId(id); // 연관 테이블 먼저 정리
         groupRepository.delete(id); // 이후 삭제
     }
+
 
 
 }
