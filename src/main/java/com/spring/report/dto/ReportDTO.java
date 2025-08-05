@@ -9,4 +9,5 @@ public class ReportDTO {
     private int id,reportUser,reportedUser,status, boardId;
     private String content, type, title;
     private LocalDateTime reportedAt;
+    private Integer commentId;
 }

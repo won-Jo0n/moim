@@ -13,4 +13,9 @@ public class ReportService {
     public void report(ReportDTO reportDTO) {
         reportRepository.report(reportDTO);
     }
+
+    public void reportComment(ReportDTO reportDTO) {
+        reportRepository.reportComment(reportDTO);
+    }
+
 }

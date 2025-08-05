@@ -13,4 +13,8 @@ public class ReportRepository {
     public void report(ReportDTO reportDTO) {
         sql.insert("Report.report",reportDTO);
     }
+
+    public void reportComment(ReportDTO reportDTO) {
+        sql.insert("Report.reportComment", reportDTO);
+    }
 }

@@ -10,20 +10,20 @@ import com.spring.admin.service.AdminService;
 import com.spring.mbti.service.MbtiService;
 import com.spring.report.dto.ReportDTO;
 import com.spring.user.dto.UserDTO;
+import com.spring.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Controller
 @RequestMapping("/admin")
 @RequiredArgsConstructor
 public class AdminController {
     private final AdminService adminService;
+    private final UserService userService;
     private final MbtiService mbtiService;
 
     @GetMapping("/")
@@ -39,7 +39,21 @@ public class AdminController {
     @GetMapping("/report")
     public String report(Model model){
         List<ReportDTO> reportList =  adminService.getReportList();
+        Map<Integer, String> reportUserName = new HashMap<>();
+        Map<Integer, String> reportedUserName = new HashMap<>();
+
+        for(ReportDTO reportDTO : reportList){
+            UserDTO reportUser = userService.getUserById(reportDTO.getReportUser());
+            UserDTO reportedUser = userService.getUserById(reportDTO.getReportedUser());
+
+            reportUserName.put(reportDTO.getId(),reportUser.getNickName());
+            reportedUserName.put(reportDTO.getId(),reportedUser.getNickName());
+        }
+
         model.addAttribute("reportList", reportList);
+        model.addAttribute("reportUserMap", reportUserName);
+        model.addAttribute("reportedUserMap", reportedUserName);
+
         return "/admin/report";
     }
 
