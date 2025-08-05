@@ -1,5 +1,6 @@
 package com.spring.mbti.repository;
 
+import com.spring.mbti.dto.MbtiBoardCommentDTO;
 import com.spring.mbti.dto.MbtiBoardDTO;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSession;
@@ -33,5 +34,12 @@ public class MbtiBoardRepository {
 
     public int delete(int id) {
         return sql.delete(NAMESPACE + "delete", id);
+    }
+    public int saveComment(MbtiBoardCommentDTO dto) {
+        return sql.insert(NAMESPACE + "saveComment", dto);
+    }
+
+    public List<MbtiBoardCommentDTO> findCommentsByBoardId(int boardId) {
+        return sql.selectList(NAMESPACE + "findCommentsByBoardId", boardId);
     }
 }

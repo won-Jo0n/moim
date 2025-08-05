@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Profile">
+
+    <!-- ✅ 마이페이지 유저 정보 조회 -->
+    <select id="findByUserId" resultType="com.spring.profile.dto.ProfileDTO">
+        SELECT u.id AS userId,
+        u.nickname,
+        m.mbti,
+        u.rating,
+        u.point,
+        u.createdAt AS joinedAt
+        FROM user u
+        LEFT JOIN mbti m ON u.mbtiId = m.id
+        WHERE u.id = #{userId}
+    </select>
+
+    <!-- 포인트 증가/감소 -->
+    <update id="updatePoint">
+        UPDATE user SET point = point + #{change} WHERE id = #{userId}
+    </update>
+
+    <!-- 등급 증가/감소 -->
+    <update id="updateRating">
+        UPDATE user SET rating = rating + #{change} WHERE id = #{userId}
+    </update>
+
+    <!-- 유저가 작성한 MBTI 게시판 글 목록 -->
+    <select id="findBoardsByUserId" resultType="com.spring.mbti.dto.MbtiBoardDTO">
+        SELECT * FROM mbtiboard WHERE author = #{userId} ORDER BY createdAt DESC
+    </select>
+
+    <!-- 받은 평균 별점 조회 (정수로 반올림) -->
+    <select id="findAverageRatingByUserId" resultType="int">
+        SELECT IFNULL(ROUND(AVG(score)), 0)
+        FROM review
+        WHERE userId = #{userId}
+        AND status = 'ACTIVE'
+    </select>
+
+</mapper>
