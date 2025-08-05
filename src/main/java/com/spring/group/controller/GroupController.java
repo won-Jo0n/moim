@@ -28,7 +28,7 @@ public class GroupController {
     // 그룹 생성 작성폼
     @GetMapping("/create")
     public String createForm(){
-        return "/group/create";
+        return "group/create";
     }
 
     // 그룹 생성
@@ -49,7 +49,7 @@ public class GroupController {
         groupDTO.setDescription(description);
         groupDTO.setLocation(location);
         groupDTO.setMaxUserNum(maxUserNum);
-        groupDTO.setLeader(loginUserId);
+        groupDTO.setLeader(loginUserId); // 모임장 설정
 
 
         groupService.save(groupDTO, loginUserId);
@@ -57,10 +57,9 @@ public class GroupController {
     }
 
     // 그룹 목록 보기
-    // 검색어 없으면 전제 리스트 , 있다면 필터링 된 리스트
     @GetMapping("/list")
     public String groupList(@RequestParam(value = "keyword", required = false) String keyword, Model model) {
-        List<GroupDTO> groupList = groupService.searchGroups(keyword);
+        List<GroupDTO> groupList = groupService.searchGroups(keyword);  // 검색어 없으면 전체 리스트 , 있다면 필터링 된 리스트
         model.addAttribute("groupList", groupList);
         return "group/list";
     }
@@ -82,13 +81,13 @@ public class GroupController {
         dto.setGroupId(groupId);
 
 
-        UserJoinGroupDTO existing = userJoinGroupRepository.findOne(dto);
+        UserJoinGroupDTO existing = userJoinGroupRepository.findOne(dto); // 참여 상태 조회
         boolean isAppliedMember = (existing != null && "pending".equals(existing.getStatus()));
         boolean isApprovedMember = (existing != null && "approved".equals(existing.getStatus()));
         boolean isLeader = (loginUserId == group.getLeader());
 
         if (isLeader || isApprovedMember) {
-            List<GroupBoardDTO> boardList = groupBoardService.findByGroupId(groupId);
+            List<GroupBoardDTO> boardList = groupBoardService.findByGroupId(groupId); // 게시글 조회
             model.addAttribute("boardList", boardList);
         }
 
@@ -96,7 +95,7 @@ public class GroupController {
         model.addAttribute("isApprovedMember", isApprovedMember);
         model.addAttribute("isLeader", isLeader);
 
-        return "/group/detail";
+        return "group/detail";
     }
 
     // 그룹 수정 작성폼 // update.jsp
@@ -119,20 +118,20 @@ public class GroupController {
 
         String location = city + " " + country;
 
-        GroupDTO groupDTO = new GroupDTO();
+        GroupDTO groupDTO = new GroupDTO(); // 수정할 그룹 정보 세팅
         groupDTO.setId(id);
         groupDTO.setTitle(title);
         groupDTO.setDescription(description);
         groupDTO.setLocation(location);
         groupDTO.setMaxUserNum(maxUserNum);
 
-        groupService.update(groupDTO);
-        return "redirect:/group/detail?id=" + id;
+        groupService.update(groupDTO); // DB 업데이트
+        return "redirect:/group/detail?groupId=" + id;
     }
 
 
     // 그룹 삭제
-    @GetMapping("/delete")
+    @PostMapping("/delete")
     public String delete(@RequestParam("id") int id, HttpSession session){
         int userId  = (int) session.getAttribute("userId");
 

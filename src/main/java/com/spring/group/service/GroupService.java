@@ -22,7 +22,6 @@ public class GroupService {
     @Transactional
     public void save(GroupDTO groupDTO, int loginUserId) {
         groupRepository.save(groupDTO);  // 그룹 insert
-
         // 그룹 생성 후, userJoinGroup에 leader 등록
         UserJoinGroupDTO join = new UserJoinGroupDTO();
         join.setUserId(loginUserId);
@@ -32,8 +31,6 @@ public class GroupService {
         userJoinGroupRepository.insert(join);
     }
 
-
-
     // 그룹 검색 조회
     public List<GroupDTO> searchGroups(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
@@ -42,7 +39,6 @@ public class GroupService {
             return groupRepository.searchByKeyword(keyword);
         }
     }
-
 
     // 그룹 상세 조회 // 모임장 권한 체크에 필요
     public GroupDTO findById(int id) {
@@ -62,7 +58,5 @@ public class GroupService {
         userJoinGroupRepository.deleteByGroupId(id); // 연관 테이블 먼저 정리
         groupRepository.delete(id); // 이후 삭제
     }
-
-
 
 }
