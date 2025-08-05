@@ -42,6 +42,7 @@ public class MbtiBoardController {
     public String save(@ModelAttribute MbtiBoardDTO boardDTO,
                        HttpSession session,
                        @RequestParam(value = "mbtiBoardFile", required = false)MultipartFile mbtiBoardFile) throws IOException {
+
         if(!mbtiBoardFile.isEmpty()){
             String originalFileName = mbtiBoardFile.getOriginalFilename();
             String uuid = UUID.randomUUID().toString();
@@ -49,7 +50,6 @@ public class MbtiBoardController {
             String savePath = "C:/upload/" + storedFileName;
 
             mbtiBoardFile.transferTo(new File(savePath));
-
 
         }
         int userId = (int) session.getAttribute("userId");
@@ -66,17 +66,47 @@ public class MbtiBoardController {
 
 
     @GetMapping("/detail/{id}")
-    public String detail(@PathVariable Long id, Model model) {
+    public String detail(@PathVariable Long id, Model model, HttpSession session) {
         MbtiBoardDTO board = mbtiBoardService.findById(id);
-        List<MbtiBoardCommentDTO> commentList = commentService.findAllByBoardId(id); // ✅ 수정됨
+
+        if (board == null) {
+            return "redirect:/mbti/board/detail";
+        }
+
+        List<MbtiBoardCommentDTO> commentList = commentService.findAllByBoardId(id);
+
+        Object sessionUserIdObj = session.getAttribute("userId");
+        boolean isAuthor = false;
+        if (sessionUserIdObj != null) {
+            Long sessionUserId = Long.valueOf(sessionUserIdObj.toString());
+            isAuthor = sessionUserId.equals((long) board.getAuthor()); // Null 안 터짐
+        }
+
         model.addAttribute("board", board);
         model.addAttribute("commentList", commentList);
+        model.addAttribute("isAuthor", isAuthor);
         return "MbtiBoardViews/detail";
     }
 
     @GetMapping("/edit/{id}")
-    public String editForm(@PathVariable Long id, Model model) {
+    public String editForm(@PathVariable Long id, Model model, HttpSession session) {
         MbtiBoardDTO board = mbtiBoardService.findById(id);
+
+        if (board == null) {
+            return "redirect:/mbti/board";
+        }
+
+        Object sessionUserIdObj = session.getAttribute("userId");
+        if (sessionUserIdObj == null) {
+            return "redirect:/user/login";
+        }
+
+        int sessionUserId = Integer.parseInt(sessionUserIdObj.toString());
+        if (board.getAuthor() != sessionUserId) {
+            // 작성자가 아니면 수정 불가
+            return "redirect:/mbti/board/detail/" + board.getId(); // 또는 403.jsp로
+        }
+
         model.addAttribute("board", board);
         return "MbtiBoardViews/edit";
     }

@@ -13,6 +13,8 @@ public class MbtiBoardCommentRepository {
 
     private final SqlSession sql;
 
+    private static final String NAMESPACE = "MbtiBoardComment.";
+
     public void save(MbtiBoardCommentDTO commentDTO) {
         sql.insert("MbtiBoardComment.save", commentDTO);
     }
@@ -31,5 +33,12 @@ public class MbtiBoardCommentRepository {
 
     public void delete(Long id) {
         sql.update("MbtiBoardComment.delete", id); // 논리 삭제
+    }
+    public int saveComment(MbtiBoardCommentDTO dto) {
+        return sql.insert(NAMESPACE + "saveComment", dto);
+    }
+
+    public List<MbtiBoardCommentDTO> findCommentsByBoardId(int boardId) {
+        return sql.selectList(NAMESPACE + "findCommentsByBoardId", boardId);
     }
 }

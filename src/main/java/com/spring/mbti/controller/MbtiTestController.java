@@ -71,7 +71,7 @@ public class MbtiTestController {
         result.append(p > j ? "P" : "J");
         String mbtiResult = result.toString();
 
-        // ✅ 세션에서 loginId 꺼내서 → userId 조회
+        // 세션에서 loginId 꺼내서 → userId 조회
         Object loginIdObj = session.getAttribute("loginId");
         if (loginIdObj != null) {
             String loginId = loginIdObj.toString(); // ex) "ngchan03"

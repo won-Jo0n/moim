@@ -17,7 +17,7 @@
         FROM mbtiboardcomment c
         JOIN user u ON c.author = u.id
         WHERE c.boardId = #{boardId} AND c.status = 0
-        ORDER BY COALESCE(c.parentId, c.id), c.parentId IS NOT NULL, c.createdAt ASC
+        ORDER BY c.parentId ASC, c.id ASC
     </select>
 
     <!-- 댓글 단일 조회 -->

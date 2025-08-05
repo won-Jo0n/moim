@@ -18,6 +18,7 @@ public class MbtiBoardCommentController {
     private final MbtiBoardCommentService commentService;
     private final UserService userService;
 
+    // 댓글 작성
     @PostMapping("/save")
     public String save(@ModelAttribute MbtiBoardCommentDTO dto,
                        @RequestParam Long boardId,
@@ -30,17 +31,34 @@ public class MbtiBoardCommentController {
         return "redirect:/mbti/board/detail/" + boardId;
     }
 
-    @PostMapping("/edit")
-    public String edit(@ModelAttribute MbtiBoardCommentDTO dto,
-                       @RequestParam Long boardId) {
+    // 댓글 수정
+    @PostMapping("/update")
+    public String updateComment(@ModelAttribute MbtiBoardCommentDTO dto,
+                                HttpSession session) {
+        int userId = (int) session.getAttribute("userId");
+        MbtiBoardCommentDTO original = commentService.findById(dto.getId());
+
+        if (original == null || original.getAuthor() != userId) {
+            return "redirect:/mbti/board/detail/" + dto.getBoardId();
+        }
+
         commentService.update(dto);
-        return "redirect:/mbti/board/detail/" + boardId;
+        return "redirect:/mbti/board/detail/" + dto.getBoardId();
     }
 
+    // 댓글 삭제
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable Long id,
-                         @RequestParam Long boardId) {
+                         @RequestParam Long boardId,
+                         HttpSession session) {
+        int userId = (int) session.getAttribute("userId");
+        MbtiBoardCommentDTO original = commentService.findById(id);
+
+        if (original == null || original.getAuthor() != userId) {
+            return "redirect:/mbti/board/detail/" + boardId;
+        }
+
         commentService.delete(id);
-        return "redirect:/mbti/board/detail" + boardId;
+        return "redirect:/mbti/board/detail/" + boardId;
     }
 }

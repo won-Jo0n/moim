@@ -14,5 +14,6 @@
     <a href="/user/logout">로그아웃</a>
     <a href="/group/create">그룹생성</a>
     <a href="/mbti/test/">mbti 테스트${mbtiResult}</a>
+    <a href="/mypage/">마이페이지</a>
 </body>
 </html>

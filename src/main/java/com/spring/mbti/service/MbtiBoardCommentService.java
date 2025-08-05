@@ -32,4 +32,6 @@ public class MbtiBoardCommentService {
     public void delete(Long id) {
         commentRepository.delete(id);
     }
+
+
 }
