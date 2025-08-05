@@ -1,0 +1,45 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="GroupBoard">
+
+    <!-- 게시글 목록 (작성자 닉네임 JOIN) -->
+    <select id="findByGroupId" parameterType="int" resultType="groupBoard">
+        SELECT gb.*, u.nickName AS authorNickName
+        FROM groupboard gb
+        JOIN user u ON gb.author = u.id
+        WHERE gb.groupId = #{groupId}
+        AND gb.status = 1
+        ORDER BY gb.createdAt DESC
+    </select>
+
+    <!-- 게시글 상세 보기 -->
+    <select id="findById" parameterType="int" resultType="groupBoard">
+        SELECT gb.*, u.nickName AS authorNickName
+        FROM groupboard gb
+        JOIN user u ON gb.author = u.id
+        WHERE gb.id = #{id}
+    </select>
+
+    <!-- 게시글 작성 -->
+    <insert id="save" parameterType="groupBoard">
+        INSERT INTO groupboard (groupId, author, title, content, fileId)
+        VALUES (#{groupId}, #{author}, #{title}, #{content}, #{fileId})
+    </insert>
+
+    <!-- 게시글 수정 -->
+    <update id="update" parameterType="groupBoard">
+        UPDATE groupboard
+        SET title = #{title},
+        content = #{content}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 게시글 삭제 -->
+    <update id="delete" parameterType="int">
+        UPDATE groupboard SET status = 0 WHERE id = #{id}
+    </update>
+
+
+
+</mapper>

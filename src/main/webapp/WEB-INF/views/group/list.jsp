@@ -20,11 +20,17 @@
 <body>
     <h2>모임 목록</h2>
 
+    <form action="/group/list" method="get">
+        <input type="text" name="keyword" placeholder="검색어를 입력하세요" value="${param.keyword}"/>
+        <button type="submit">검색</button>
+    </form>
+
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
             <tr>
                 <th>모임명</th>
                 <th>모임 지역</th>
+                <th>모임 소개</th>
                 <th>최대 인원</th>
                 <th>생성일</th>
                 <th>상태</th>
@@ -35,6 +41,7 @@
                 <tr class="clickable-row" data-id="${group.id}">
                     <td>${group.title}</td>
                     <td>${group.location}</td>
+                    <td>${group.description}</td>
                     <td>${group.maxUserNum}</td>
                     <td>${group.createdAt}</td>
                     <td>

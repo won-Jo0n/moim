@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
@@ -12,6 +13,15 @@
     <select id="findAll" resultType="group">
         SELECT * FROM `group`
         WHERE status = 1
+        ORDER BY createdAt DESC;
+    </select>
+
+    <!-- 그룹 검색 조회 -->
+    <select id="searchByKeyword" parameterType="string" resultType="group">
+        SELECT * FROM `group`
+        WHERE status = 1
+            AND (title LIKE CONCAT('%', #{keyword}, '%')
+                OR location LIKE CONCAT('%', #{keyword}, '%'))
         ORDER BY createdAt DESC;
     </select>
 
@@ -37,10 +47,6 @@
         SET status = -1
         WHERE id = #{id};
     </update>
-
-
-
-
 
 
 

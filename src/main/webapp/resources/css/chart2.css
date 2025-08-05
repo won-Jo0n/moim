@@ -1,0 +1,49 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f5f6fa;
+}
+
+.chart-container {
+    width: 90%;
+    max-width: 900px;
+    margin: 40px auto;
+}
+
+.chart-block {
+    margin-bottom: 30px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.chart-header {
+    background-color: #f0f0f5;
+    padding: 12px 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.chart-content {
+    padding: 20px;
+    display: none;
+}
+
+.chart-block.open .chart-content {
+    display: block;
+}
+
+.toggle-icon {
+    font-size: 18px;
+    transition: transform 0.3s ease;
+}
+
+.chart-block.open .toggle-icon {
+    transform: rotate(180deg);
+}

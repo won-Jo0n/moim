@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="File">
+    <insert id="save" parameterType="file">
+        INSERT INTO file(originalFileName,fileName)
+        VALUES (#{originalFileName},#{fileName});
+    </insert>
+
+    <select id="getIdByFileName" parameterType="String" resultType="int">
+        SELECT id FROM file WHERE fileName = #{fileName};
+    </select>
+
+    <select id="getFileByFileId" parameterType="int" resultType="file">
+        SELECT * FROM file WHERE id = #{id}
+    </select>
+
+</mapper>

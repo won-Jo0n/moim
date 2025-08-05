@@ -1,35 +1,39 @@
 package com.spring.mbti.service;
 
 import com.spring.mbti.dto.MbtiBoardDTO;
-import com.spring.mbti.repository.MbtiBoardRepository;
 import lombok.RequiredArgsConstructor;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class MbtiBoardService {
 
-    private final MbtiBoardRepository mbtiBoardRepository;
+    private final SqlSessionTemplate sqlSession;
 
-    public int save(MbtiBoardDTO dto) {
-        return mbtiBoardRepository.save(dto);
+    public List<MbtiBoardDTO> findAll() {
+        return sqlSession.selectList("MbtiBoard.findAll");
     }
 
-    public List<MbtiBoardDTO> findAllByMbtiId(int mbtiId) {
-        return mbtiBoardRepository.findAllByMbtiId(mbtiId);
+    public MbtiBoardDTO findById(Long id) {
+        return sqlSession.selectOne("MbtiBoard.findById", id);
     }
 
-    public MbtiBoardDTO findById(int id) {
-        return mbtiBoardRepository.findById(id);
+    public void  save(MbtiBoardDTO dto) {
+        sqlSession.insert("MbtiBoard.save", dto);
     }
 
-    public int update(MbtiBoardDTO dto) {
-        return mbtiBoardRepository.update(dto);
+    public void update(MbtiBoardDTO dto) {
+        System.out.println(dto.getAuthor());
+        System.out.println(dto.getTitle());
+        System.out.println(dto.getContent());
+        sqlSession.update("MbtiBoard.update", dto);
     }
 
-    public int delete(int id) {
-        return mbtiBoardRepository.delete(id);
+    public void delete(Long id) {
+        sqlSession.delete("MbtiBoard.delete", id);
     }
+
+
 }

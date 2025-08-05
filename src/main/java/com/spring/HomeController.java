@@ -23,13 +23,17 @@ public class HomeController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomerUserDetails userDetails = (CustomerUserDetails) auth.getPrincipal();
         UserDTO loginUser = userDetails.getUserDTO();
+        System.out.println(loginUser.getLoginId());
         session.setAttribute("userId", loginUser.getId());
 
+        String loginId = userDetails.toString();
         if(userDetails == null){
             System.out.println("null");
         }
-        model.addAttribute("loginUser", loginUser.getId());
+        model.addAttribute("loginUser", loginUser);
         return "home";
     }
+
+
 
 }

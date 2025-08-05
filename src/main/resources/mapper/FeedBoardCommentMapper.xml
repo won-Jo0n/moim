@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.spring.mbti.repository.FeedBoardCommentRepository">
+
+    <!-- 댓글 저장 -->
+    <insert id="save" parameterType="com.spring.mbti.dto.FeedBoardCommentDTO">
+        INSERT INTO feedboardcomment (feedId, author, mbtiId, content, createdAt, status, parentId)
+        VALUES (#{feedId}, #{author}, #{mbtiId}, #{content}, NOW(), #{status}, #{parentId})
+    </insert>
+
+    <!-- 게시글의 모든 댓글/대댓글 -->
+    <select id="findAllByFeedId" resultType="com.spring.mbti.dto.FeedBoardCommentDTO">
+        SELECT c.*, u.nickname AS authorNickname
+        FROM feedboardcomment c
+        JOIN user u ON c.author = u.id
+        WHERE c.feedId = #{feedId} AND c.status = 1
+        ORDER BY COALESCE(parentId, id), parentId IS NOT NULL, createdAt ASC
+    </select>
+
+    <!-- 단일 댓글 조회 -->
+    <select id="findById" resultType="com.spring.mbti.dto.FeedBoardCommentDTO">
+        SELECT * FROM feedboardcomment WHERE id = #{id}
+    </select>
+
+    <!-- 댓글 내용 수정 -->
+    <update id="update" parameterType="com.spring.mbti.dto.FeedBoardCommentDTO">
+        UPDATE feedboardcomment SET content = #{content} WHERE id = #{id}
+    </update>
+
+    <!-- 댓글 삭제 -->
+    <delete id="delete">
+        DELETE FROM feedboardcomment WHERE id = #{id}
+    </delete>
+
+    <!-- 특정 댓글의 대댓글들 조회 -->
+    <select id="findRepliesByParentId" resultType="com.spring.mbti.dto.FeedBoardCommentDTO">
+        SELECT * FROM feedboardcomment
+        WHERE parentId = #{parentId}
+        ORDER BY createdAt ASC
+    </select>
+
+</mapper>
