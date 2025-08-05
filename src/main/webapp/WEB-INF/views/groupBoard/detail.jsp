@@ -17,6 +17,7 @@
     <!-- 수정/삭제 버튼: 작성자 본인만 표시 -->
     <c:if test="${isAuthor}">
         <a href="/groupboard/update?id=${board.id}">수정</a>
+        <a href="/report/?reportUser=${sessionScope.userId}&reportedUser=${board.author}&type=groupboard&boardId=${board.id}">신고하기</a>
 
         <form action="/groupboard/delete" method="post" onsubmit="return confirm('삭제하시겠습니까?');">
             <input type="hidden" name="id" value="${board.id}">
