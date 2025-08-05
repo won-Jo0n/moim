@@ -42,7 +42,7 @@
         </c:when>
         <c:otherwise>
           <form action="/groupjoin/apply" method="post">
-            <input type="hidden" name="userId" value="${sessionScope.userId}"
+            <input type="hidden" name="userId" value="${sessionScope.userId}"/>
             <input type="hidden" name="groupId" value="${group.id}" />
             <input type="submit" value="모임 참여 신청">
           </form>

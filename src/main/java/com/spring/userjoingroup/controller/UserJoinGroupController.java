@@ -27,26 +27,22 @@ public class UserJoinGroupController {
 
     // 참여 신청
     @PostMapping("/apply")
-    public void applyToGroup(
-            @RequestParam("groupId") String groupId
-            ,HttpSession session) {
-        System.out.println("groupId: " + groupId);
-//        System.out.println("참여 신청자 userId: " + userJoinGroupDTO.getUserId());
-//        System.out.println("groupId: " + userJoinGroupDTO.getGroupId());
+    public void applyToGroup(@ModelAttribute UserJoinGroupDTO userJoinGroupDTO, HttpSession session) {
+        System.out.println("groupId: " + userJoinGroupDTO.getGroupId());
+        System.out.println("참여 신청자 userId: " + userJoinGroupDTO.getUserId());
         System.out.println("[POST] /groupjoin/apply 요청 수신됨");
 
 
 
-        // 중복 신청 방지
-//        UserJoinGroupDTO existing = userJoinGroupRepository.findOne(userJoinGroupDTO);
-//        if (existing != null) {
-//            throw new IllegalStateException("이미 신청한 모임입니다.");
-//        }
-//
-//        userJoinGroupDTO.setStatus("pending");
-//        userJoinGroupDTO.setRole("member");
-//        userJoinGroupDTO.setJoinedAt(null); // 승인 전이므로 null
-//        userJoinGroupRepository.insertRequest(userJoinGroupDTO);
+        UserJoinGroupDTO existing = userJoinGroupRepository.findOne(userJoinGroupDTO);
+        if (existing != null) {
+            throw new IllegalStateException("이미 신청한 모임입니다.");
+        }
+
+        userJoinGroupDTO.setStatus("pending");
+        userJoinGroupDTO.setRole("member");
+        userJoinGroupDTO.setJoinedAt(null); // 승인 전이므로 null
+        userJoinGroupRepository.insertRequest(userJoinGroupDTO);
     }
 
     // 신청 취소
