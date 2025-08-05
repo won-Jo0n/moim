@@ -17,4 +17,16 @@
         GROUP BY m.mbti;
     </select>
 
+    <select id="getCountGroupByGender" resultType="userGenderRatio">
+        SELECT
+        CASE gender
+        WHEN 'M' THEN '남자'
+        WHEN 'F' THEN '여자'
+        ELSE '기타'
+        END AS gender,
+        COUNT(*) AS count
+        FROM user
+        GROUP BY gender;
+    </select>
+
 </mapper>

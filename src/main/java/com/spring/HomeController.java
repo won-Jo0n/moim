@@ -28,7 +28,7 @@ public class HomeController {
         if(userDetails == null){
             System.out.println("null");
         }
-        model.addAttribute("loginUser", loginUser.getId());
+        model.addAttribute("loginUser", loginUser);
         return "home";
     }
 
