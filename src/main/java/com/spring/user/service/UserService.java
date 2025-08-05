@@ -31,4 +31,7 @@ public class UserService {
         userRepository.delete(userId);
     }
 
+    public int nickNameCheck(String nickName) {
+        return userRepository.nickNameCheck(nickName);
+    }
 }

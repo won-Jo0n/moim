@@ -1,6 +1,7 @@
 package com.spring.mbti.service;
 
 import com.spring.admin.dto.ChartCountDTO;
+import com.spring.admin.dto.UserGenderRatioDTO;
 import com.spring.mbti.dto.MbtiDTO;
 import com.spring.mbti.repository.MbtiRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,5 +25,9 @@ public class MbtiService {
 
     public List<ChartCountDTO> getCountGroupByMbti() {
         return mbtiRepository.getCountGroupByMbti();
+    }
+
+    public List<UserGenderRatioDTO> getCountGroupByGender() {
+        return mbtiRepository.getCountGroupByGender();
     }
 }

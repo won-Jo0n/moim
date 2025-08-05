@@ -56,7 +56,6 @@ public class WebSocketController {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         String sessionId = accessor.getSessionId();
         String userId = event.getUser().getName();
-        System.out.println("hi");
         boolean firstSession = false;
         if (!sessionToUser.containsKey(sessionId)) {
             sessionToUser.put(sessionId, userId);

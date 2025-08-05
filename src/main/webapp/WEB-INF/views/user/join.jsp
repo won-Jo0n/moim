@@ -7,6 +7,7 @@
   <meta charset="UTF-8">
   <title>회원가입</title>
   <link rel="stylesheet" href="../resources/css/join.css">
+  <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 </head>
 <body>
 <div class="container">
@@ -14,11 +15,12 @@
     <img src="../resources/images/logo.png" alt="Logo">
   </div>
   <h2>회원가입</h2>
-  <form action="/user/join" method="post">
+  <form action="/user/join" method="post" enctype="multipart/form-data">
     <c:if test="${not empty OAuthData}">
       <input type="hidden" name="command" value="OAuthJoin"/>
       <input type="hidden" name="loginId" value="${OAuthData.id}" />
-      <input type="text" name="nickName" value="${OAuthData.name}">
+      <input id="nickName" type="text" name="nickName" value="${OAuthData.name}" onkeyup="nickNameCheck()">
+      <p id="check-result"></p>
       <input type="hidden" name="gender" value="${OAuthData.gender}" />
       <input type="text" name="birthDate" value="${OAuthData.birthyear}-${OAuthData.birthday}" readOnly/>
     </c:if>
@@ -34,10 +36,13 @@
         <input type="radio" id="female" name="gender" value="F">
         <label for="female">여성</label>
       </div>
-      <input type="text" name="nickName" placeholder="닉네임">
+      <input id="nickName" type="text" name="nickName" placeholder="닉네임" onkeyup="nickNameCheck()">
+      <p id="check-result"></p>
       <label for="birthDate">생년월일</label>
       <input id="birthDate" type="date" name="birthDate">
     </c:if>
+
+    <input type="file" name="profile">
 
     <label for="mbti">당신의 MBTI를 선택하세요:</label>
     <select name="mbtiId" id="mbti" required>
@@ -77,7 +82,6 @@
     </select>
 
     <input type="submit" value="가입하기">
-    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
   </form>
 </div>
 <script>
@@ -115,6 +119,34 @@
         option.textContent = county;
         countySelect.appendChild(option);
       });
+    }
+  });
+
+  const nickNameCheck = ()=>{
+          const nickName = document.getElementById("nickName").value;
+          const checkResult = document.getElementById("check-result");
+
+          $.ajax({
+              type : "post",
+              url : "/user/nickName-check",
+              data : {"nickName" : nickName},
+              success : function(res){
+                  if(res == 0){
+                      checkResult.style.color="green";
+                      checkResult.innerHTML = "사용 가능한 닉네임 입니다.";
+                  }else {
+                      checkResult.style.color="red";
+                      checkResult.innerHTML = "이미 사용중인 닉네임 입니다.";
+                  }
+              },error : function(err){
+                  console.log("에러발생", err)
+              }
+          });
+      }
+  $(document).ready(function() {
+    const nickName = document.getElementById("nickName").value;
+    if(nickName){
+        nickNameCheck();
     }
   });
 </script>
