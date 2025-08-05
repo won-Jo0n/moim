@@ -17,5 +17,7 @@
         <typeAlias type="com.spring.admin.dto.PenaltiDTO" alias="penalti"></typeAlias>
         <typeAlias type="com.spring.admin.dto.ChartDTO" alias="chart"></typeAlias>
         <typeAlias type="com.spring.admin.dto.ChartCountDTO" alias="chartCount"></typeAlias>
+        <typeAlias type="com.spring.chat.dto.ChatUserDTO" alias="chatUser"></typeAlias>
+        <typeAlias type="com.spring.chat.dto.ChatMessageDTO" alias="chatMessage"></typeAlias>
     </typeAliases>
 </configuration>

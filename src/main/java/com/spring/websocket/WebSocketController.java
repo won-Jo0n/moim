@@ -1,25 +1,15 @@
 package com.spring.websocket;
 
-import com.spring.friends.FriendsService;
-import com.spring.user.dto.UserDTO;
+import com.spring.chat.dto.ChatUserDTO;
+import com.spring.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.socket.WebSocketSession;
-import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
-import org.springframework.web.socket.messaging.SessionUnsubscribeEvent;
-import org.springframework.web.util.HtmlUtils;
 
-import java.security.Principal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class WebSocketController {
     private final SimpMessagingTemplate messagingTemplate;
-    private final FriendsService friendsService;
+    private final ChatService chatService;
     private final Map<String, String> sessionToUser = new ConcurrentHashMap<>();
     private final Map<String, Integer> sessionCount = new ConcurrentHashMap<>();
     /*
@@ -61,8 +51,8 @@ public class WebSocketController {
             sessionToUser.put(sessionId, userId);
             firstSession = sessionCount.merge(userId, 1, Integer::sum) == 1;
         }
-        List<UserDTO> friends = friendsService.getAllFriends(Integer.parseInt(userId));
-        for (UserDTO friend : friends) {
+        List<ChatUserDTO> chatFriends = chatService.getChatFriends(Integer.parseInt(userId));
+        for (ChatUserDTO friend : chatFriends) {
             if (sessionCount.getOrDefault(String.valueOf(friend.getId()), 0) > 0) {
                 messagingTemplate.convertAndSendToUser(userId, "/queue/main",
                         Map.of("type", "FRIEND_ONLINE","sender", friend.getId()));
@@ -83,8 +73,8 @@ public class WebSocketController {
             sessionToUser.remove(sessionId);
             sessionCount.computeIfPresent(userId, (k, v) -> v > 1 ? v - 1 : null);
             if(sessionCount.getOrDefault(userId, 0) <= 0){
-                List<UserDTO> friends = friendsService.getAllFriends(Integer.parseInt(userId));
-                for(UserDTO friend : friends){
+                List<ChatUserDTO> chatFriends = chatService.getChatFriends(Integer.parseInt(userId));
+                for(ChatUserDTO friend : chatFriends){
                     if(sessionCount.getOrDefault(String.valueOf(friend.getId()), 0) > 0){
                         messagingTemplate.convertAndSendToUser(String.valueOf(friend.getId()), "/queue/main",
                                 Map.of("type", "FRIEND_OFFLINE","sender", userId));
