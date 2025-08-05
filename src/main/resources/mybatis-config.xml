@@ -13,6 +13,7 @@
         <typeAlias type="com.spring.mbti.dto.MbtiBoardDTO" alias="mbtiBoard"></typeAlias>
         <typeAlias type="com.spring.mbti.dto.MbtiDTO" alias="mbti"></typeAlias>
         <typeAlias type="com.spring.review.dto.ReviewDTO" alias="review"></typeAlias>
+        <typeAlias type="com.spring.groupboard.dto.GroupBoardDTO" alias="groupBoard"></typeAlias>
 
     </typeAliases>
 </configuration>

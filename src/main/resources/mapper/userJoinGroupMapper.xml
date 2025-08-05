@@ -53,5 +53,12 @@
         WHERE userId = #{userId} AND groupId = #{groupId} AND status = 'approved';
     </delete>
 
+    <!-- 게시글 목록 조회를 위한  -->
+    <select id="findOneByGroupIdAndUserId" resultType="userJoinGroup">
+        SELECT * FROM userjoingroup
+        WHERE groupId = #{groupId}
+        AND userId = #{userId}
+    </select>
+
 
 </mapper>

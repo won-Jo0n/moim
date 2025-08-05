@@ -35,4 +35,8 @@ public interface UserJoinGroupRepository {
 
     // 그룹 탈퇴
     void leaveGroup(@Param("userId") int userId, @Param("groupId") int groupId);
+
+    // 게시글 목록 조회를 위한
+    UserJoinGroupDTO findOneByGroupIdAndUserId(@Param("groupId") int groupId,
+                                               @Param("userId") int userId);
 }

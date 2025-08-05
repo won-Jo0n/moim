@@ -42,9 +42,9 @@
         </c:when>
         <c:otherwise>
           <form action="/groupjoin/apply" method="post">
+            <input type="hidden" name="userId" value="${sessionScope.userId}"
             <input type="hidden" name="groupId" value="${group.id}" />
-            <button type="submit">모임 참여 신청</button>
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+            <input type="submit" value="모임 참여 신청">
           </form>
         </c:otherwise>
       </c:choose>
@@ -73,6 +73,17 @@
             <input type="hidden" name="groupId" value="${group.id}" />
             <button type="submit">글 작성</button>
         </form>
+    </c:if>
+
+    <c:if test="${isLeader || isApprovedMember}">
+        <h3> 게시판</h3>
+        <c:forEach var="board" items="${boardList}">
+             <div class="post-card" onclick="location.href='/groupboard/detail?id=${board.id}'">
+                <h4>${board.title}</h4>
+                <p>${board.content}</p>
+                <small>작성자: ${board.authorNickName}  작성일: ${board.createdAt}</small>
+            </div>
+        </c:forEach>
     </c:if>
 
     <a href="/group/list">← 목록으로 </a>

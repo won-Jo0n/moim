@@ -17,37 +17,66 @@ public class GroupBoardController {
 
     private final GroupBoardService groupBoardService;
 
-    // 모임별 게시글 목록
-    @GetMapping("/list")
-    public String list(@RequestParam("groupId") int groupId, Model model) {
-        List<GroupBoardDTO> boardList = groupBoardService.findByGroupId(groupId);
-        model.addAttribute("boardList", boardList);
-        model.addAttribute("groupId", groupId);
-        return "/groupboard/board";
+    // 게시글 상세보기
+    @GetMapping("/detail")
+    public String detail(@RequestParam("id") int id,
+                         HttpSession session,
+                         Model model){
+        GroupBoardDTO boardDTO = groupBoardService.findById(id);
+        int loginUserId = (int) session.getAttribute("userId");
+
+        boolean isAuthor = (loginUserId == boardDTO.getAuthor());
+        model.addAttribute("board", boardDTO);
+        model.addAttribute("isAuthor", isAuthor);
+
+        return "groupBoard/detail";
     }
 
-    // 글 작성 폼
+    // 게시글 작성 폼
     @GetMapping("/create")
     public String createForm(@RequestParam("groupId") int groupId, Model model) {
+        //System.out.println("groupBoard createForm 성공");
         model.addAttribute("groupId", groupId);
-        return "/groupboard/create"; // 작성 폼은 추후 만들 예정
+        return "groupBoard/create";
     }
 
-    // 글 작성 처리
+    // 게시글 작성 처리
     @PostMapping("/create")
     public String create(@ModelAttribute GroupBoardDTO dto, HttpSession session) {
         int loginUserId = (int) session.getAttribute("userId");
-        dto.setAuthor(loginUserId);
+        dto.setAuthor(loginUserId); // author : session으로 설정
         groupBoardService.save(dto);
-        return "redirect:/groupboard/list?groupId=" + dto.getGroupId();
+        return "redirect:/group/detail?groupId=" + dto.getGroupId();
     }
 
-    // 글 삭제
+    // 게시글 수정 폼
+    @GetMapping("/update")
+    public String updateForm(@RequestParam("id") int id,
+                             HttpSession session,
+                             Model model) {
+        GroupBoardDTO board = groupBoardService.findById(id);
+        int loginUserId = (int) session.getAttribute("userId");
+
+        if (board.getAuthor() != loginUserId) {
+            return "redirect:/group/list";
+        }
+
+        model.addAttribute("board", board);
+        return "groupBoard/update";
+    }
+
+    // 수정 처리
+    @PostMapping("/update")
+    public String update(@ModelAttribute GroupBoardDTO dto) {
+        groupBoardService.update(dto);
+        return "redirect:/group/detail?groupId=" + dto.getGroupId();
+    }
+
+    // 게시글 삭제
     @PostMapping("/delete")
     public String delete(@RequestParam("id") int id, @RequestParam("groupId") int groupId) {
         groupBoardService.delete(id);
-        return "redirect:/groupboard/list?groupId=" + groupId;
+        return "redirect:/group/detail?groupId=" + groupId;
     }
 
-    // 글 수정 폼 및 처리도 이후에 추가 가능
 }

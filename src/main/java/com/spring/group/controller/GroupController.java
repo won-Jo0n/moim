@@ -2,6 +2,8 @@ package com.spring.group.controller;
 
 import com.spring.group.dto.GroupDTO;
 import com.spring.group.service.GroupService;
+import com.spring.groupboard.dto.GroupBoardDTO;
+import com.spring.groupboard.service.GroupBoardService;
 import com.spring.userjoingroup.dto.UserJoinGroupDTO;
 import com.spring.userjoingroup.repository.UserJoinGroupRepository;
 import com.spring.userjoingroup.service.UserJoinGroupService;
@@ -21,6 +23,7 @@ public class GroupController {
     private final GroupService groupService;
     private final UserJoinGroupRepository userJoinGroupRepository;
     private final UserJoinGroupService userJoinGroupService;
+    private final GroupBoardService groupBoardService;
 
     // 그룹 생성 작성폼
     @GetMapping("/create")
@@ -67,7 +70,8 @@ public class GroupController {
     public String detail(@RequestParam("groupId") int groupId,
                          HttpSession session,
                          Model model) {
-        GroupDTO group = groupService.findById(groupId);
+
+        GroupDTO group = groupService.findById(groupId); // 모임 정보 가져오기
         model.addAttribute("group", group);
 
         int loginUserId = (int) session.getAttribute("userId");
@@ -77,16 +81,22 @@ public class GroupController {
         dto.setUserId(loginUserId);
         dto.setGroupId(groupId);
 
+
         UserJoinGroupDTO existing = userJoinGroupRepository.findOne(dto);
         boolean isAppliedMember = (existing != null && "pending".equals(existing.getStatus()));
         boolean isApprovedMember = (existing != null && "approved".equals(existing.getStatus()));
         boolean isLeader = (loginUserId == group.getLeader());
 
+        if (isLeader || isApprovedMember) {
+            List<GroupBoardDTO> boardList = groupBoardService.findByGroupId(groupId);
+            model.addAttribute("boardList", boardList);
+        }
+
         model.addAttribute("isAppliedMember", isAppliedMember);
-        model.addAttribute("isApprovedMember ", isApprovedMember);
+        model.addAttribute("isApprovedMember", isApprovedMember);
         model.addAttribute("isLeader", isLeader);
 
-        return "group/detail";
+        return "/group/detail";
     }
 
     // 그룹 수정 작성폼 // update.jsp
@@ -137,11 +147,6 @@ public class GroupController {
         return "redirect:/group/list"; // 수정하기
 
     }
-
-
-
-//  로그인 처리 컨트롤러 setAttribute 확인하고 수정하기
-
 
 
 }

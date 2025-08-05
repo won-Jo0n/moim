@@ -13,17 +13,29 @@ public class GroupBoardRepository {
 
     private final SqlSession sql;
 
-    private static final String NAMESPACE = "com.spring.groupboard.repository.GroupBoardRepository";
-
+    // 게시글 목록
     public List<GroupBoardDTO> findByGroupId(int groupId) {
-        return sql.selectList(NAMESPACE + ".findByGroupId", groupId);
+        return sql.selectList("GroupBoard.findByGroupId", groupId);
     }
 
-    public void save(GroupBoardDTO dto) {
-        sql.insert(NAMESPACE + ".save", dto);
+    // 게시글 상세조회
+    public GroupBoardDTO findById(int id) {
+        return sql.selectOne("GroupBoard.findById", id);
     }
 
+    // 게시글 저장
+    public void save(GroupBoardDTO groupBoardDTO) {
+        sql.insert("GroupBoard.save", groupBoardDTO);
+    }
+
+    // 게시글 수정
+    public void update(GroupBoardDTO dto) {
+        sql.update("GroupBoard.update", dto);
+    }
+
+    // 게시글 삭제
     public void delete(int id) {
-        sql.delete(NAMESPACE + ".delete", id);
+        sql.delete( "GroupBoard.delete", id);
+        //mapper namespace 랑 //dto alias랑 다른점이 뭐지 ?
     }
 }

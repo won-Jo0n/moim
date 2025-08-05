@@ -13,15 +13,30 @@ public class GroupBoardService {
 
     private final GroupBoardRepository groupBoardRepository;
 
+    // 그룹ID로 게시글 목록 조회
     public List<GroupBoardDTO> findByGroupId(int groupId) {
         return groupBoardRepository.findByGroupId(groupId);
     }
 
+    // 게시글 상세조회
+    public GroupBoardDTO findById(int id) {
+        return groupBoardRepository.findById(id);
+    }
+
+    // 게시글 저장
     public void save(GroupBoardDTO dto) {
         groupBoardRepository.save(dto);
     }
 
+    // 게시글 수정
+    public void update(GroupBoardDTO dto) {
+        groupBoardRepository.update(dto);
+    }
+
+    // 게시글 삭제
     public void delete(int id) {
         groupBoardRepository.delete(id);
     }
+
+
 }
