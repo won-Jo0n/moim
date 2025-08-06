@@ -4,8 +4,8 @@
 
 <mapper namespace="User">
     <insert id="join" parameterType="user">
-        INSERT INTO user(loginId, password, nickName, gender, birthDate, region, mbtiId , fileId)
-        VALUES(#{loginId},#{password},#{nickName},#{gender},#{birthDate},#{region}, #{mbtiId}, #{fileId});
+        INSERT INTO user(loginId, password, nickName,mobile, gender, birthDate, region, mbtiId , fileId)
+        VALUES(#{loginId},#{password},#{nickName}, #{mobile}, #{gender},#{birthDate},#{region}, #{mbtiId}, #{fileId});
     </insert>
     <select id="login" parameterType="user" resultType="user">
         SELECT * FROM user WHERE loginId = #{loginId} AND password = #{password};
@@ -28,4 +28,9 @@
     <select id="nickNameCheck" parameterType="String" resultType="int">
         SELECT COUNT(*) FROM user WHERE nickName = #{nickName};
     </select>
+    <insert id="createUserSchedule" parameterType="userSchedule">
+        INSERT INTO userschedule(userId,groupScheduleId)
+        VALUES(#{userId},#{groupScheduleId});
+    </insert>
+
 </mapper>

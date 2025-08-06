@@ -29,4 +29,27 @@
         GROUP BY gender;
     </select>
 
+    <select id="getCountGroupByAge" resultType="userAgeRatio">
+        <![CDATA[
+        SELECT
+            CASE
+                WHEN age < 10 THEN '10대 미만' -- 이 부분을 추가했습니다.
+                ELSE CONCAT(FLOOR(age / 10) * 10, '대')
+            END AS ageRatio, -- DTO 필드명과 일치
+            COUNT(*) AS value -- DTO 필드명과 일치
+        FROM (
+            SELECT
+                birthDate,
+                YEAR(CURDATE()) - YEAR(birthDate) - (DATE_FORMAT(CURDATE(), '%m%d') < DATE_FORMAT(birthDate, '%m%d')) AS age
+            FROM user
+        ) AS subquery
+        GROUP BY ageRatio -- 'age_group' 대신 'ageRatio'로 수정했습니다.
+        ORDER BY
+            CASE
+                WHEN ageRatio = '10대 미만' THEN 0 -- 'age_group' 대신 'ageRatio'로 수정했습니다.
+                ELSE CAST(SUBSTRING_INDEX(ageRatio, '대', 1) AS UNSIGNED) -- 'age_group' 대신 'ageRatio'로 수정했습니다.
+            END;
+        ]]>
+    </select>
+
 </mapper>
