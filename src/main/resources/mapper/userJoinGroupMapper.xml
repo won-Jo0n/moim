@@ -38,7 +38,10 @@
         SELECT uj.userId, uj.groupId, uj.joinedAt, uj.role, u.nickName
         FROM userJoinGroup uj
         JOIN user u ON uj.userId = u.id
-        WHERE uj.groupId = #{groupId} AND uj.status = 'pending';
+        WHERE uj.groupId = #{groupId}
+        AND uj.status = 'pending'
+        AND uj.userId != (
+        SELECT leader FROM `group` WHERE id = #{groupId});
     </select>
 
     <!-- 승인/거절 처리 -->

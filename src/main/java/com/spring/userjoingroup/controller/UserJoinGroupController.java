@@ -3,8 +3,6 @@ package com.spring.userjoingroup.controller;
 
 import com.spring.group.dto.GroupDTO;
 import com.spring.group.service.GroupService;
-import com.spring.user.dto.UserDTO;
-import com.spring.user.service.UserService;
 import com.spring.userjoingroup.dto.UserJoinGroupDTO;
 import com.spring.userjoingroup.repository.UserJoinGroupRepository;
 import com.spring.userjoingroup.service.UserJoinGroupService;
@@ -12,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -27,14 +24,10 @@ public class UserJoinGroupController {
 
     // 참여 신청
     @PostMapping("/apply")
-    public void applyToGroup(@ModelAttribute UserJoinGroupDTO userJoinGroupDTO, HttpSession session) {
-        System.out.println("groupId: " + userJoinGroupDTO.getGroupId());
-        System.out.println("참여 신청자 userId: " + userJoinGroupDTO.getUserId());
-        System.out.println("[POST] /groupjoin/apply 요청 수신됨");
-
-
-
+    public String applyToGroup(@ModelAttribute UserJoinGroupDTO userJoinGroupDTO,
+                               HttpSession session) {
         UserJoinGroupDTO existing = userJoinGroupRepository.findOne(userJoinGroupDTO);
+
         if (existing != null) {
             throw new IllegalStateException("이미 신청한 모임입니다.");
         }
@@ -43,6 +36,8 @@ public class UserJoinGroupController {
         userJoinGroupDTO.setRole("member");
         userJoinGroupDTO.setJoinedAt(null); // 승인 전이므로 null
         userJoinGroupRepository.insertRequest(userJoinGroupDTO);
+
+        return "redirect:/group/detail?groupId=" + userJoinGroupDTO.getGroupId();
     }
 
     // 신청 취소
@@ -50,6 +45,7 @@ public class UserJoinGroupController {
     public String cancel(@RequestParam("groupId") int groupId, HttpSession session) {
         int userId = (int) session.getAttribute("userId");
         userJoinGroupService.cancelApplication(userId, groupId);
+
         return "redirect:/group/detail?groupId=" + groupId;
     }
 
@@ -70,7 +66,7 @@ public class UserJoinGroupController {
 
         model.addAttribute("pendingList", pendingList);
         model.addAttribute("groupId",groupId);
-        return "/group/requestList"; // requestList.jsp
+        return "group/requestList";
     }
 
 

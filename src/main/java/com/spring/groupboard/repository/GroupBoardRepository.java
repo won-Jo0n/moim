@@ -36,6 +36,6 @@ public class GroupBoardRepository {
     // 게시글 삭제
     public void delete(int id) {
         sql.delete( "GroupBoard.delete", id);
-        //mapper namespace 랑 //dto alias랑 다른점이 뭐지 ?
+
     }
 }
