@@ -21,22 +21,32 @@ public class GroupBoardCommentController {
     @PostMapping("/create")
     public String save(@ModelAttribute GroupBoardCommentDTO groupBoardCommentDTO,
                        HttpSession session){
-        Object nickNameObj = session.getAttribute("nickName");
-        System.out.println("세션 nickName: " + nickNameObj);
+        Integer loginUserId = (Integer) session.getAttribute("userId");
 
-        if (nickNameObj == null) {
-            System.out.println("세션에 닉네임 없음 → 로그인 필요");
-            return "redirect:/login";  // 로그인 페이지로 리디렉트
+        if(loginUserId == null){
+            return "redirect:/user/login";
         }
 
-        String author = nickNameObj.toString();
+        // depth 1 초과 댓글 막기 // 댓글-대댓글 1단계까지만 가능
+        if (groupBoardCommentDTO.getDepth() > 1) {
+            return "redirect:/groupboard/detail?id=" + groupBoardCommentDTO.getBoardId();
+        }
 
-
-        groupBoardCommentDTO.setAuthor(author);
+        groupBoardCommentDTO.setAuthor(loginUserId);
         groupBoardCommentService.save(groupBoardCommentDTO);
-        return "redirect:/groupboard/detail?id=" + groupBoardCommentDTO.getBoardId();
 
+        return "redirect:/groupboard/detail?id=" + groupBoardCommentDTO.getBoardId();
     }
+
+    // 댓글 수정
+    @PostMapping("/update")
+    public String update(@RequestParam("id") int id,
+                         @RequestParam("boardId") int boardId,
+                         @RequestParam("content") String content) {
+        groupBoardCommentService.update(id, content);
+        return "redirect:/groupboard/detail?id=" + boardId;
+    }
+
 
     // 댓글 삭제
     @PostMapping("/delete")

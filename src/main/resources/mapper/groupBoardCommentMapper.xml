@@ -6,20 +6,29 @@
 
     <!-- 댓글 저장 -->
     <insert id="save" parameterType="groupBoardComment">
-        INSERT INTO groupboardcomment (groupId, boardId, author, content)
-        VALUES (#{groupId}, #{boardId}, #{author}, #{content})
+        INSERT INTO groupboardcomment (groupId, boardId, author, content, parentId, depth)
+        VALUES (#{groupId}, #{boardId}, #{author}, #{content}, #{parentId}, #{depth})
     </insert>
 
     <!-- 댓글 목록 -->
     <select id="findByBoardId" parameterType="int" resultType="groupBoardComment">
-        SELECT c.*,
-        u.nickName AS authorNickName
+        SELECT c.*, u.nickName AS authorNickName
         FROM groupboardcomment c
         JOIN user u ON c.author = u.id
         WHERE c.boardId = #{boardId}
         AND c.status = 1
-        ORDER BY c.createdAt ASC
+        ORDER BY
+        CASE WHEN c.parentId IS NULL THEN c.id ELSE c.parentId END,
+        c.parentId,
+        c.createdAt
     </select>
+
+    <!-- 댓글 수정 -->
+    <update id="update" parameterType="map">
+        UPDATE groupboardcomment
+        SET content = #{content}
+        WHERE id = #{id}
+    </update>
 
     <!-- 댓글 삭제 -->
     <update id="delete" parameterType="int">
