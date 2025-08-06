@@ -11,13 +11,16 @@ import com.spring.user.service.UserService;
 import com.spring.userjoingroup.dto.UserJoinGroupDTO;
 import com.spring.userjoingroup.repository.UserJoinGroupRepository;
 import com.spring.userjoingroup.service.UserJoinGroupService;
+import com.spring.utils.FileUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.parameters.P;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +33,7 @@ public class GroupController {
     private final UserJoinGroupRepository userJoinGroupRepository;
     private final UserJoinGroupService userJoinGroupService;
     private final GroupBoardService groupBoardService;
+    private final FileUtil fileUtil;
     private final UserService userService;
 
     // 그룹 생성 작성폼
@@ -46,7 +50,10 @@ public class GroupController {
                               @RequestParam("city") String city,
                               @RequestParam("country") String country,
                               @RequestParam("maxUserNum") int maxUserNum,
-                              HttpSession session){
+                              @RequestParam(value = "groupFile", required = false) MultipartFile file,
+                              HttpSession session) throws IOException {
+
+
 
         int loginUserId = (int) session.getAttribute("userId");
         String location = city + " " + country;
@@ -57,6 +64,13 @@ public class GroupController {
         groupDTO.setLocation(location);
         groupDTO.setMaxUserNum(maxUserNum);
         groupDTO.setLeader(loginUserId); // 모임장 설정
+
+        if(!file.isEmpty()){
+            int fileId = fileUtil.fileSave(file);
+            groupDTO.setFileId(fileId);
+        }else{
+            groupDTO.setFileId(1);
+        }
 
 
         groupService.save(groupDTO, loginUserId);

@@ -1,20 +1,18 @@
-package com.spring.groupboard.dto;
+package com.spring.groupboardcomment.dto;
 
 import lombok.Data;
 
 import java.sql.Timestamp;
 
 @Data
-public class GroupBoardDTO {
+public class GroupBoardCommentDTO {
     private int id;
     private int groupId;
-    private int author; // userId
-    private String title;
+    private int boardId;
+    private String author;
     private String content;
-    private int fileId;
     private Timestamp createdAt;
     private int status;
-    private int hits;
 
     // 닉네임 조인용 (JOIN user)
     private String authorNickName;

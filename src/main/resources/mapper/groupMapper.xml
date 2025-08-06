@@ -2,11 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
+
 <mapper namespace="Group">
     <!-- 그룹 생성 -->
     <insert id="createGroup" parameterType="group" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO `group` (leader, title, description, location, maxUserNum)
-        VALUES (#{leader}, #{title}, #{description}, #{location}, #{maxUserNum});
+        INSERT INTO `group` (leader, title, description, location, maxUserNum, fileId)
+        VALUES (#{leader}, #{title}, #{description}, #{location}, #{maxUserNum}, #{fileId});
     </insert>
 
     <!-- 그룹 전체 조회 (status = 1일때만 조회)-->
