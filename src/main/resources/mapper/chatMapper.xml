@@ -3,70 +3,99 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="Chat">
     <select id="getChatFriends" parameterType="int" resultType="chatUser">
+        <![CDATA[
         SELECT
-        u.id,
-        f.status,
-        cs.unreadCount,
-        u.nickName,
-        u.gender,
-        m.mbti AS mbti,
-        cs.content AS lastChatContent,
-        u.lastLogin AS lastLoginTime,
-        cs.sendAt AS lastChatTime
+            u.id,
+            f.status,
+            cs.unreadCount,
+            u.nickName,
+            u.gender,
+            m.mbti AS mbti,
+            IFNULL(cs.content, '') AS lastChatContent,
+            CASE
+                WHEN TIMESTAMPDIFF(MINUTE, u.lastLogin, NOW()) < 60 THEN
+                    CONCAT(
+                        IF(TIMESTAMPDIFF(MINUTE, u.lastLogin, NOW()) < 1, 1, TIMESTAMPDIFF(MINUTE, u.lastLogin, NOW())),
+                        '분 전'
+                    )
+                WHEN TIMESTAMPDIFF(HOUR, u.lastLogin, NOW()) < 24 THEN
+                    CONCAT(TIMESTAMPDIFF(HOUR, u.lastLogin, NOW()), '시간 전')
+                WHEN TIMESTAMPDIFF(DAY, u.lastLogin, NOW()) < 7 THEN
+                    CONCAT(TIMESTAMPDIFF(DAY, u.lastLogin, NOW()), '일 전')
+                WHEN TIMESTAMPDIFF(WEEK, u.lastLogin, NOW()) < 4 THEN
+                    CONCAT(TIMESTAMPDIFF(WEEK, u.lastLogin, NOW()), '주 전')
+                WHEN TIMESTAMPDIFF(MONTH, u.lastLogin, NOW()) < 12 THEN
+                    CONCAT(TIMESTAMPDIFF(MONTH, u.lastLogin, NOW()), '달 전')
+                ELSE
+                    CONCAT(TIMESTAMPDIFF(YEAR, u.lastLogin, NOW()), '년 전')
+            END AS lastLoginTime,
+            CASE
+                WHEN cs.sendAt IS NULL THEN ''
+                WHEN DATE(cs.sendAt) = CURDATE() THEN
+                    CONCAT(
+                        IF(HOUR(cs.sendAt) < 12, '오전', '오후'),
+                        ' ',
+                        LPAD(IF(HOUR(cs.sendAt) > 12, HOUR(cs.sendAt) - 12, HOUR(cs.sendAt)), 2, '0'),
+                        ':',
+                        LPAD(MINUTE(cs.sendAt), 2, '0')
+                    )
+                WHEN DATEDIFF(CURDATE(), DATE(cs.sendAt)) = 1 THEN '어제'
+                WHEN YEAR(cs.sendAt) = YEAR(CURDATE()) THEN DATE_FORMAT(cs.sendAt, '%m-%d')
+                ELSE DATE_FORMAT(cs.sendAt, '%Y-%m-%d')
+            END AS lastChatTime
         FROM user AS u
         JOIN mbti AS m
-        ON m.id = u.mbtiId
+            ON m.id = u.mbtiId
         JOIN friends AS f
-        ON (
-        (f.requestUserId = #{userId} AND f.responseUserId = u.id)
-        OR (f.responseUserId = #{userId} AND f.requestUserId = u.id)
-        )
-        AND f.status >= 1
+            ON (
+                (f.requestUserId = #{userId} AND f.responseUserId = u.id)
+                OR (f.responseUserId = #{userId} AND f.requestUserId = u.id)
+            )
+            AND f.status >= 1
         LEFT JOIN (
-        SELECT
-        CASE
-        WHEN c.requestUserId = #{userId}
-        THEN c.responseUserId
-        ELSE c.requestUserId
-        END AS friendId,
-        c.sendAt,
-        c.content,
-        SUM(
-        CASE
-        WHEN c.responseUserId = #{userId} AND c.isRead = 0
-        THEN 1
-        ELSE 0
-        END
-        ) OVER (
-        PARTITION BY
-        CASE
-        WHEN c.requestUserId = #{userId}
-        THEN c.responseUserId
-        ELSE c.requestUserId
-        END
-        ) AS unreadCount,
-        ROW_NUMBER() OVER (
-        PARTITION BY
-        CASE
-        WHEN c.requestUserId = #{userId}
-        THEN c.responseUserId
-        ELSE c.requestUserId
-        END
-        ORDER BY
-        c.sendAt DESC
-        ) AS rn
-        FROM chat AS c
-        WHERE
-        c.requestUserId = #{userId} OR c.responseUserId = #{userId}
+            SELECT
+                CASE
+                    WHEN c.requestUserId = #{userId}
+                    THEN c.responseUserId
+                    ELSE c.requestUserId
+                END AS friendId,
+                c.sendAt,
+                c.content,
+                SUM(
+                    CASE
+                        WHEN c.responseUserId = #{userId} AND c.isRead = 0
+                        THEN 1
+                        ELSE 0
+                    END
+                ) OVER (
+                    PARTITION BY
+                        CASE
+                            WHEN c.requestUserId = #{userId}
+                            THEN c.responseUserId
+                            ELSE c.requestUserId
+                        END
+                ) AS unreadCount,
+                ROW_NUMBER() OVER (
+                    PARTITION BY
+                        CASE
+                            WHEN c.requestUserId = #{userId}
+                            THEN c.responseUserId
+                            ELSE c.requestUserId
+                        END
+                    ORDER BY
+                        c.sendAt DESC
+                ) AS rn
+            FROM chat AS c
+            WHERE
+                c.requestUserId = #{userId} OR c.responseUserId = #{userId}
         ) AS cs
-        ON cs.friendId = u.id AND cs.rn = 1
-        LEFT JOIN mbti
-        ON u.mbtiId = mbti.id
+            ON cs.friendId = u.id AND cs.rn = 1
         ORDER BY
-        f.status ASC,
-        cs.sendAt DESC,
-        f.responsedAt DESC,
-        u.nickName ASC;
+            f.status ASC,
+            cs.sendAt DESC,
+            f.responsedAt DESC,
+            u.nickName ASC;
+        ]]>
     </select>
     <select id="getChatMessages" parameterType="chatMessage" resultType="chatMessage">
         SELECT * FROM chat WHERE (requestUserId = #{requestUserId} AND responseUserId = #{responseUserId})
@@ -83,7 +112,7 @@
         INSERT INTO friends (requestUserId, responseUserId, status) VALUES (#{requestUserId}, #{responseUserId}, 3);
     </insert>
     <update id="acceptChat" parameterType="chatMessage">
-        UPDATE chat SET status = 2 WHERE WHERE (requestUserId = #{requestUserId} AND responseUserId = #{responseUserId})
+        UPDATE chat SET status = 2 WHERE (requestUserId = #{requestUserId} AND responseUserId = #{responseUserId})
         OR
         (requestUserId = #{responseUserId} AND responseUserId = #{requestUserId});
     </update>
