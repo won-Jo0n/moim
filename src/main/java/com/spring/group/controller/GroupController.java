@@ -1,9 +1,13 @@
 package com.spring.group.controller;
 
 import com.spring.group.dto.GroupDTO;
+import com.spring.group.dto.GroupScheduleDTO;
 import com.spring.group.service.GroupService;
 import com.spring.groupboard.dto.GroupBoardDTO;
 import com.spring.groupboard.service.GroupBoardService;
+import com.spring.user.dto.UserDTO;
+import com.spring.user.dto.UserScheduleDTO;
+import com.spring.user.service.UserService;
 import com.spring.userjoingroup.dto.UserJoinGroupDTO;
 import com.spring.userjoingroup.repository.UserJoinGroupRepository;
 import com.spring.userjoingroup.service.UserJoinGroupService;
@@ -17,7 +21,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -28,6 +34,7 @@ public class GroupController {
     private final UserJoinGroupService userJoinGroupService;
     private final GroupBoardService groupBoardService;
     private final FileUtil fileUtil;
+    private final UserService userService;
 
     // 그룹 생성 작성폼
     @GetMapping("/create")
@@ -105,9 +112,21 @@ public class GroupController {
             model.addAttribute("boardList", boardList);
         }
 
+        List<GroupScheduleDTO> groupScheduleList = groupService.getGroupScheduleByGroupId(groupId);
+
+
         model.addAttribute("isAppliedMember", isAppliedMember);
         model.addAttribute("isApprovedMember", isApprovedMember);
         model.addAttribute("isLeader", isLeader);
+        model.addAttribute("groupScheduleList", groupScheduleList);
+
+        Map<Integer, String> groupScheduleLeader = new HashMap<>();
+        for(GroupScheduleDTO g : groupScheduleList){
+            UserDTO leader = userService.getUserById(g.getScheduleLeader());
+            groupScheduleLeader.put(g.getId(), leader.getNickName());
+        }
+        model.addAttribute("groupScheduleLeaderNickName", groupScheduleLeader);
+
 
         return "group/detail";
     }
@@ -161,5 +180,48 @@ public class GroupController {
 
     }
 
+    // 그룹 일정 생성
+    @GetMapping("/createSchedule")
+    public String createScheduleForm(@RequestParam("scheduleLeader") int scheduleLeader,
+                                     @RequestParam("groupId") int groupId,
+                                     Model model){
+        model.addAttribute("scheduleLeader" , scheduleLeader);
+        model.addAttribute("groupId" , groupId);
+        return "/group/createSchedule";
+    }
+
+    @PostMapping("/createSchedule")
+    public String createSchedule(@ModelAttribute GroupScheduleDTO groupScheduleDTO){
+        groupService.createGroupSchedule(groupScheduleDTO);
+
+        return "redirect:/group/detail?groupId=" + groupScheduleDTO.getGroupId();
+    }
+
+    @GetMapping("/groupScheduleDetail")
+    public String groupScheduleDetail(@RequestParam("id") int groupScheduleId, Model model){
+        GroupScheduleDTO groupScheduleDTO = groupService.getGroupScheduleDetail(groupScheduleId);
+        UserDTO user = userService.getUserById(groupScheduleDTO.getScheduleLeader());
+
+
+        model.addAttribute("groupScheduleDTO", groupScheduleDTO);
+        model.addAttribute("leaderNickName", user.getNickName());
+
+        return "/group/groupScheduleDetail";
+
+    }
+
+    @GetMapping("/scheduleJoin")
+    public String groupScheduleJoin(@RequestParam("joinUserId") int joinUser,
+                                    @RequestParam("scheduleId") int scheduleId){
+        UserScheduleDTO userScheduleDTO = new UserScheduleDTO();
+
+        userScheduleDTO.setUserId(joinUser);
+        userScheduleDTO.setGroupScheduleId(scheduleId);
+
+        userService.createUserSchedule(userScheduleDTO);
+
+        return "#";
+
+    }
 
 }

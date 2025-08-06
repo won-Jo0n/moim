@@ -7,7 +7,7 @@
         SELECT * FROM user WHERE loginId = #{id};
     </select>
     <insert id="join" parameterType="user">
-        INSERT INTO user(loginId,nickName, gender, birthDate, region )
-        VALUES(#{loginId},#{nickName},#{gender},#{birthDate},#{region});
+        INSERT INTO user(loginId,nickName, gender, birthDate, region, mobile )
+        VALUES(#{loginId},#{nickName},#{gender},#{birthDate},#{region}, #{mobile});
     </insert>
 </mapper>

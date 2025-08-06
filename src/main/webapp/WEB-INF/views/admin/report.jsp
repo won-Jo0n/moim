@@ -26,7 +26,7 @@
     </thead>
     <tbody>
         <c:forEach var="report" items="${reportList}">
-            <tr onclick="handleReportClick('${report.type}', ${report.boardId})">
+            <tr onclick="handleReportClick(${report.id})">
                 <td>${report.id}</td>
                 <td>${reportUserMap[report.id]}</td>
                 <td>${reportedUserMap[report.id]}</td>
@@ -44,9 +44,8 @@
     </tbody>
 </table>
 <script>
-    const handleReportClick = (type, boardId)=>{
-        console.log(type);
-        console.log(boardId);
+    const handleReportClick = (reportId)=>{
+        location.href="/report/detail?id="+reportId;
     }
 </script>
 </body>

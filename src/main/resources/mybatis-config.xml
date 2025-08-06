@@ -21,7 +21,12 @@
         <typeAlias type="com.spring.chat.dto.ChatMessageDTO" alias="chatMessage"></typeAlias>
         <typeAlias type="com.spring.admin.dto.UserGenderRatioDTO" alias="userGenderRatio"></typeAlias>
         <typeAlias type="com.spring.file.dto.FileDTO" alias="file"></typeAlias>
+        <typeAlias type="com.spring.report.dto.ReportDTO" alias="report"></typeAlias>
         <typeAlias type="com.spring.groupboard.dto.GroupBoardDTO" alias="groupBoard"></typeAlias>
         <typeAlias type="com.spring.groupboardcomment.dto.GroupBoardCommentDTO" alias="groupBoardComment"></typeAlias>
+        <typeAlias type="com.spring.admin.dto.UserAgeRatioDTO" alias="userAgeRatio"></typeAlias>
+        <typeAlias type="com.spring.group.dto.GroupScheduleDTO" alias="groupSchedule"></typeAlias>
+        <typeAlias type="com.spring.user.dto.UserScheduleDTO" alias="userSchedule"></typeAlias>
+
     </typeAliases>
 </configuration>

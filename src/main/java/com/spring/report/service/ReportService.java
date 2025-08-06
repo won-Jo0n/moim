@@ -18,4 +18,7 @@ public class ReportService {
         reportRepository.reportComment(reportDTO);
     }
 
+    public ReportDTO getReportById(int reportId) {
+        return reportRepository.getReportById(reportId);
+    }
 }

@@ -50,12 +50,11 @@ public class UserController {
 
         String region = city + " " + county;
         userDTO.setRegion(region);
+        System.out.println(userDTO.getMobile());
 
         if(!profile.isEmpty()){
             int fileId = fileUtil.fileSave(profile);
-            System.out.println("fileId: " + fileId);
             userDTO.setFileId(fileId);
-            System.out.println("userFileId: " + userDTO.getFileId());
         }else{
             userDTO.setFileId(0);
         }
@@ -77,7 +76,6 @@ public class UserController {
         UserDTO loginUser = userService.login(userDTO);
         if(loginUser != null){
             session.setAttribute("userId", loginUser.getId());
-            System.out.println("성공");
             return "home";
         }else{
             System.out.println("실패");

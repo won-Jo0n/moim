@@ -35,8 +35,19 @@ public class ReportController {
             reportService.reportComment(reportDTO);
         }
 
-
         return "redirect:/" + reportDTO.getType()+"/detail?id="+reportDTO.getBoardId();
+    }
+
+    @GetMapping("/detail")
+    public String reportDetail(@RequestParam("id") int reportId, Model model){
+        ReportDTO reportDTO = reportService.getReportById(reportId);
+        model.addAttribute("report", reportDTO);
+        UserDTO reportUser = userService.getUserById(reportDTO.getReportUser());
+        UserDTO reportedUser = userService.getUserById(reportDTO.getReportedUser());
+        model.addAttribute("reportUser", reportUser);
+        model.addAttribute("reportedUser", reportedUser);
+
+        return "/report/detail";
     }
 
 

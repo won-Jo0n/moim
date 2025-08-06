@@ -1,6 +1,7 @@
 package com.spring.group.service;
 
 import com.spring.group.dto.GroupDTO;
+import com.spring.group.dto.GroupScheduleDTO;
 import com.spring.group.repository.GroupRepository;
 import com.spring.userjoingroup.dto.UserJoinGroupDTO;
 import com.spring.userjoingroup.repository.UserJoinGroupRepository;
@@ -59,4 +60,15 @@ public class GroupService {
         groupRepository.delete(id); // 이후 삭제
     }
 
+    public void createGroupSchedule(GroupScheduleDTO groupScheduleDTO) {
+        groupRepository.createGroupSchedule(groupScheduleDTO);
+    }
+
+    public List<GroupScheduleDTO> getGroupScheduleByGroupId(int groupId) {
+        return groupRepository.getGroupScheduleByGroupId(groupId);
+    }
+
+    public GroupScheduleDTO getGroupScheduleDetail(int groupScheduleId) {
+        return groupRepository.getGroupScheduleDetail(groupScheduleId);
+    }
 }

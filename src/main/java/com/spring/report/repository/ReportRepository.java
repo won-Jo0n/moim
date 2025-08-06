@@ -17,4 +17,8 @@ public class ReportRepository {
     public void reportComment(ReportDTO reportDTO) {
         sql.insert("Report.reportComment", reportDTO);
     }
+
+    public ReportDTO getReportById(int reportId) {
+        return sql.selectOne("Report.getReportById", reportId);
+    }
 }
