@@ -10,7 +10,6 @@ import com.spring.user.dto.UserScheduleDTO;
 import com.spring.user.service.UserService;
 import com.spring.userjoingroup.dto.UserJoinGroupDTO;
 import com.spring.userjoingroup.repository.UserJoinGroupRepository;
-import com.spring.userjoingroup.service.UserJoinGroupService;
 import com.spring.utils.FileUtil;
 import lombok.RequiredArgsConstructor;
 
@@ -31,7 +30,6 @@ import java.util.Map;
 public class GroupController {
     private final GroupService groupService;
     private final UserJoinGroupRepository userJoinGroupRepository;
-    private final UserJoinGroupService userJoinGroupService;
     private final GroupBoardService groupBoardService;
     private final FileUtil fileUtil;
     private final UserService userService;
@@ -148,9 +146,7 @@ public class GroupController {
                          @RequestParam("city") String city,
                          @RequestParam("country") String country,
                          @RequestParam("maxUserNum") int maxUserNum) {
-
         String location = city + " " + country;
-
         GroupDTO groupDTO = new GroupDTO(); // 수정할 그룹 정보 세팅
         groupDTO.setId(id);
         groupDTO.setTitle(title);
@@ -161,7 +157,6 @@ public class GroupController {
         groupService.update(groupDTO); // DB 업데이트
         return "redirect:/group/detail?groupId=" + id;
     }
-
 
     // 그룹 삭제
     @PostMapping("/delete")
