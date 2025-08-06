@@ -149,7 +149,7 @@
         <div class="message-container-header">
           <div class="user-info">
             <img id="chat-user-avatar" src="" />
-            <h3 id="chat-user-name"></h3>
+            <h2 id="chat-user-name"></h2>
           </div>
           <i class="fas fa-xmark close-btn" onclick="closeChat()"></i>
         </div>

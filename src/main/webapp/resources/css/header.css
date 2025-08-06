@@ -164,7 +164,6 @@ body {
   border-bottom: 1px solid #dbdbdb;
 }
 .message-container-header h2 {
-  margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
   color: #262626;
@@ -408,10 +407,16 @@ body {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  margin-right: 10px;
+  margin-right:10px;
 }
+
 #chat-popup .message-container-header .user-info h3 {
-  font-size: 1rem;
+    margin-left:10px;
+    font-size: 0.75rem;
+    color: #8e8e8e;
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap;
 }
 .chat-body {
   flex: 1;

@@ -53,7 +53,12 @@ function createMessageItem(user) {
     );
 }
 function openChat(element) {
-  const userId = $(element).attr("data-user-id");
+  const elem = $(element);
+  const imgSrc = elem.find(".avatar > img").attr("src");
+  const nickName = elem.find(".user-info > h3").text();
+  const mbti = elem.find(".user-info > p").text();
+  const userId = elem.attr("data-user-id");
+  header.chatUserId = userId;
   $.ajax({
     url: `/chat/messages/${userId}`, // 서버 엔드포인트로 변경
     type: "GET",
@@ -62,11 +67,13 @@ function openChat(element) {
       $("#chat-body").empty();
       togglePopup("message-popup", false);
       togglePopup("chat-popup", true);
+      document.getElementById("chat-user-avatar").src = imgSrc;
+      document.getElementById("chat-user-name").textContent = nickName;
+      document.getElementById("chat-user-mbti").textContent = mbti;
+
+
 
       console.log("채팅 기록:", data);
-
-      document.getElementById("chat-user-name").textContent = data.userName;
-      document.getElementById("chat-user-avatar").src = data.userAvatar;
     },
     error: function (xhr, status, error) {
       console.error("채팅 기록을 가져오는 중 오류 발생:", error);
@@ -79,36 +86,16 @@ function closeChat() {
   togglePopup("message-popup", true);
 }
 
-function sendMessage() {
+function createChatItem(chat) {
   const inputElement = document.getElementById("chat-input");
   const message = inputElement.value.trim();
   if (message) {
     const chatBody = document.getElementById("chat-body");
     const messageElement = document.createElement("div");
-    messageElement.classList.add("chat-message", "sent");
-    messageElement.textContent = message;
+    messageElement.classList.add("chat-message", chat.requestUserId == header.chatUserId ? "received" : "sent");
+    messageElement.textContent = chat.content;
     chatBody.prepend(messageElement);
     inputElement.value = "";
-    /*
-    $.ajax({
-        url: "/chat/send/1",
-        // 1을 buttonElement의 부모에 있는 data-user-id로 보내줘야한다
-        type: "GET",
-        contentType: "application/json",
-        success: function (data) {
-          togglePopup("message-popup", false);
-          togglePopup("chat-popup", true);
-
-          console.log("채팅 기록:", data);
-
-          document.getElementById("chat-user-name").textContent = data.userName;
-          document.getElementById("chat-user-avatar").src = data.userAvatar;
-        },
-        error: function (xhr, status, error) {
-          console.error("채팅 기록을 가져오는 중 오류 발생:", error);
-        },
-      });
-      */
   }
 }
 
@@ -170,6 +157,12 @@ stompClient.onConnect = (frame) => {
         break;
     }
   });
+};
+
+const header = {
+    notReadCount : 0,
+    chatUserId : -1,
+    tmpDateString : ""
 };
 
 $(function () {
