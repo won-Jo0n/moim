@@ -147,12 +147,19 @@
 
       <div id="chat-popup" class="common-popup hide">
         <div class="message-container-header">
-          <div class="user-info">
-            <img id="chat-user-avatar" src="" />
-            <h2 id="chat-user-name"></h2>
+            <div class="user-info">
+              <img
+                id="chat-user-avatar"
+                src="https://via.placeholder.com/32"
+                alt="프로필 이미지"
+              />
+              <div class="user-details">
+                <h2 id="chat-user-name">상대방 닉네임</h2>
+                <p id="chat-user-mbti">MBTI 정보</p>
+              </div>
+            </div>
+            <i class="fas fa-xmark close-btn" onclick="closeChat()"></i>
           </div>
-          <i class="fas fa-xmark close-btn" onclick="closeChat()"></i>
-        </div>
         <div id="chat-body" class="chat-body"></div>
         <div class="chat-footer">
           <input type="text" id="chat-input" placeholder="메시지 보내기..." />

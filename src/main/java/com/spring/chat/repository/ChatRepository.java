@@ -27,6 +27,13 @@ public class ChatRepository {
         return sql.selectList("Chat.getChatMessages", chatMessageDTO);
     }
 
+    public ChatMessageDTO myLastMessage(int userId, int chatUserId){
+        ChatMessageDTO chatMessageDTO = new ChatMessageDTO();
+        chatMessageDTO.setRequestUserId(userId);
+        chatMessageDTO.setResponseUserId(chatUserId);
+        return sql.selectOne("Chat.myLastMessage", chatMessageDTO);
+    }
+
     public int sendChatMessage(int userId, int chatUserId, String content) {
         ChatMessageDTO chatMessageDTO = new ChatMessageDTO();
         chatMessageDTO.setRequestUserId(userId);

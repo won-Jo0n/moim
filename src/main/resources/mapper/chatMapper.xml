@@ -97,6 +97,10 @@
             u.nickName ASC;
         ]]>
     </select>
+    <select id="myLastMessage" parameterType="chatMessage" resultType="chatMessage">
+        SELECT * FROM chat WHERE (requestUserId = #{requestUserId} AND responseUserId = #{responseUserId})
+        ORDER BY id DESC LIMIT 1
+    </select>
     <select id="getChatMessages" parameterType="chatMessage" resultType="chatMessage">
         SELECT * FROM chat WHERE (requestUserId = #{requestUserId} AND responseUserId = #{responseUserId})
         OR
