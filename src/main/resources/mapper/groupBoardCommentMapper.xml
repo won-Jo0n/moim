@@ -12,10 +12,13 @@
 
     <!-- 댓글 목록 -->
     <select id="findByBoardId" parameterType="int" resultType="groupBoardComment">
-        SELECT * FROM groupboardcomment
-        WHERE boardId = #{boardId}
-        AND status = 1
-        ORDER BY createdAt ASC
+        SELECT c.*,
+        u.nickName AS authorNickName
+        FROM groupboardcomment c
+        JOIN user u ON c.author = u.id
+        WHERE c.boardId = #{boardId}
+        AND c.status = 1
+        ORDER BY c.createdAt ASC
     </select>
 
     <!-- 댓글 삭제 -->

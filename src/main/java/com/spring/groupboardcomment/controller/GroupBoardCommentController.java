@@ -21,7 +21,17 @@ public class GroupBoardCommentController {
     @PostMapping("/create")
     public String save(@ModelAttribute GroupBoardCommentDTO groupBoardCommentDTO,
                        HttpSession session){
-        String author = session.getAttribute("nickName").toString();
+        Object nickNameObj = session.getAttribute("nickName");
+        System.out.println("세션 nickName: " + nickNameObj);
+
+        if (nickNameObj == null) {
+            System.out.println("세션에 닉네임 없음 → 로그인 필요");
+            return "redirect:/login";  // 로그인 페이지로 리디렉트
+        }
+
+        String author = nickNameObj.toString();
+
+
         groupBoardCommentDTO.setAuthor(author);
         groupBoardCommentService.save(groupBoardCommentDTO);
         return "redirect:/groupboard/detail?id=" + groupBoardCommentDTO.getBoardId();

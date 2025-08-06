@@ -22,7 +22,6 @@ public class GroupBoardController {
 
     private final GroupBoardService groupBoardService;
     private final FileUtil fileUtil;
-    private final GroupBoardCommentDTO groupBoardCommentDTO;
     private final GroupBoardCommentService groupBoardCommentService;
 
     // 게시글 상세보기

@@ -25,6 +25,7 @@
                     <input type="hidden" name="id" value="${comment.id}" />
                     <input type="hidden" name="boardId" value="${board.id}" />
                     <input type="submit" value="삭제" />
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                 </form>
             </c:if>
         </div>

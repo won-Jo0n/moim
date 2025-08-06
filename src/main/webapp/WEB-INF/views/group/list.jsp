@@ -42,7 +42,7 @@
                 <tr class="clickable-row" data-id="${group.id}">
                     <td>${group.title}</td>
                     <td>
-                        <img src="/file/preview?fileId=${group.fileId}" alt="대표 사진" width="80" height="80" />
+                        <img src="/file/preview?fileId=${group.fileId}" width="80" height="80" />
                     </td>
                     <td>${group.location}</td>
                     <td>${group.description}</td>

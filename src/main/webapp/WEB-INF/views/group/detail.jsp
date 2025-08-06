@@ -9,7 +9,7 @@
 <body>
     <h2>모임 상세 페이지</h2>
     <p><strong>모임명:</strong> ${group.title}</p>
-    <img src="/file/preview?fileId=${group.fileId}"></img>
+    <img src="/file/preview?fileId=${group.fileId}" width="150" height="150"></img>
     <p><strong>모임 소개:</strong> ${group.description}</p>
     <p><strong>모임 지역:</strong> ${group.location}</p>
     <p><strong>최대 인원:</strong> ${group.maxUserNum}</p>
@@ -80,7 +80,7 @@
         <h3> 게시판</h3>
         <c:forEach var="board" items="${boardList}">
              <div class="post-card" onclick="location.href='/groupboard/detail?id=${board.id}'">
-                <img src="/file/preview?fileId=${board.fileId}"  width="80"/>
+                <img src="/file/preview?fileId=${board.fileId}"  width="80" height="80"/>
                 <h4>${board.title}</h4>
                 <p>${board.content}</p>
                 <small>작성자: ${board.authorNickName}  작성일: ${board.createdAt}</small>

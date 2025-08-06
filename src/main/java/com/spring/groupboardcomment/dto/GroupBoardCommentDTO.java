@@ -14,4 +14,7 @@ public class GroupBoardCommentDTO {
     private Timestamp createdAt;
     private int status;
 
+    // 닉네임 조인용 (JOIN user)
+    private String authorNickName;
+
 }
