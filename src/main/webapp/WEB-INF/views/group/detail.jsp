@@ -86,6 +86,6 @@
         </c:forEach>
     </c:if>
 
-    <a href="/group/list">← 목록으로 </a>
+    <a href="/group/list">목록으로 돌아가기</a>
 </body>
 </html>

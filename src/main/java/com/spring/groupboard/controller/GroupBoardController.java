@@ -35,7 +35,6 @@ public class GroupBoardController {
     // 게시글 작성 폼
     @GetMapping("/create")
     public String createForm(@RequestParam("groupId") int groupId, Model model) {
-        //System.out.println("groupBoard createForm 성공");
         model.addAttribute("groupId", groupId);
         return "groupBoard/create";
     }
@@ -44,7 +43,7 @@ public class GroupBoardController {
     @PostMapping("/create")
     public String create(@ModelAttribute GroupBoardDTO dto, HttpSession session) {
         int loginUserId = (int) session.getAttribute("userId");
-        dto.setAuthor(loginUserId); // author : session으로 설정
+        dto.setAuthor(loginUserId); // author: session으로 설정
         groupBoardService.save(dto);
         return "redirect:/group/detail?groupId=" + dto.getGroupId();
     }
