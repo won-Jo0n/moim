@@ -3,8 +3,16 @@ package com.spring.oauth.controller;
 import com.spring.oauth.service.OAuthService;
 import com.spring.user.dto.UserDTO;
 import com.spring.user.repository.UserRepository;
+import com.spring.user.service.UserService;
+import com.spring.userdetails.CustomerUserDetailService;
+import com.spring.userdetails.CustomerUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +36,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OAuthController {
     private final OAuthService oAuthService;
-    private final UserRepository userRepository;
+    private final UserService userService;
+    private final CustomerUserDetailService customerUserDetailService;
 
     @GetMapping("/oauthLogin")
     public String naverLogin(HttpSession session) throws UnsupportedEncodingException {
@@ -94,6 +103,7 @@ public class OAuthController {
 
         JSONObject userJson = new JSONObject(userInfo);
         JSONObject responseObj = userJson.getJSONObject("response");
+        String naverId = (String) responseObj.get("id");
         Map<String, Object> oAuthData = new HashMap<>();
 
         for(String key : responseObj.keySet()){
@@ -101,25 +111,25 @@ public class OAuthController {
             System.out.println(key + ": " + responseObj.get(key));
         }
 
-        UserDTO userDTO = oAuthService.getUser((String)responseObj.get("id"));
-        if(userDTO == null){
+        try {
+            UserDetails userDetails = customerUserDetailService.loadUserByUsername(naverId);
+
+            // SecurityContext에 인증 정보 설정
+            Authentication authentication = new UsernamePasswordAuthenticationToken(
+                    userDetails, null, userDetails.getAuthorities()
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            return "redirect:/home"; // 로그인 성공 후 홈 페이지로 리다이렉트
+        } catch (UsernameNotFoundException e) {
+            // 사용자 정보가 DB에 없는 경우 회원가입 페이지로 이동
+            // 네이버에서 가져온 정보를 회원가입 폼에 미리 채워넣을 수 있습니다.
             model.addAttribute("OAuthData", oAuthData);
             return "forward:/user/join";
-        }else{
-            if (userDTO.getStatus() == 0 && userDTO.getBanEndTime() != null && userDTO.getBanEndTime().isAfter(LocalDateTime.now())) {
-                // 사용자에게 보낼 메시지 (예외 메시지)
-                String message = String.format("정지된 계정입니다. 제재 해제 시간: %s", userDTO.getBanEndTime());
-                throw new DisabledException(message); // 로그인 거부
-            }
-            if (userDTO.getStatus() == 0 && userDTO.getBanEndTime() != null && userDTO.getBanEndTime().isBefore(LocalDateTime.now())) {
-                // 사용자 상태를 정상으로 되돌리는 로직
-                userDTO.setStatus(1);
-                userDTO.setBanEndTime(null);
-                userRepository.updateUserStatus(userDTO); // DB에 업데이트
-            }
-            session.setAttribute("userId", userDTO.getId());
-            session.setAttribute("userName", userDTO.getNickName());
-            return "home";
+        } catch (DisabledException e) {
+            // 정지된 계정일 경우 처리
+            model.addAttribute("errorMessage", e.getMessage());
+            return "redirect:/"; // 로그인 폼으로 돌아가 에러 메시지 표시
         }
 
     }

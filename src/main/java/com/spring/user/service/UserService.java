@@ -53,4 +53,8 @@ public class UserService {
     public void cancleUserSchedule(UserScheduleDTO result) {
         userRepository.cancleUserSchedule(result);
     }
+
+    public void updateUserStatus(UserDTO loginUser) {
+        userRepository.updateUserStatus(loginUser);
+    }
 }
