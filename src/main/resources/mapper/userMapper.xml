@@ -32,5 +32,11 @@
         INSERT INTO userschedule(userId,groupScheduleId)
         VALUES(#{userId},#{groupScheduleId});
     </insert>
+    <select id="isJoin" parameterType="userSchedule" resultType="userSchedule">
+        SELECT * FROM userschedule WHERE userId = #{userId} AND groupScheduleId = #{groupScheduleId};
+    </select>
+    <update id="cancleUserSchedule" parameterType="userSchedule">
+        UPDATE userSchedule SET status = -1 WHERE userId = #{userId}, groupScheduleId = #{groupScheduleId};
+    </update>
 
 </mapper>

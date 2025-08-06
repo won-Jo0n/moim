@@ -16,11 +16,13 @@
     <p>${groupScheduleDTO.endTime}</p>
     <p>${groupScheduleDTO.maxUserNum}</p>
     <p>${groupScheduleDTO.status}</p>
-    <button onclick="clickJoinSchedule(${sessionScope.userId}, ${groupScheduleDTO.id})">참여 신청</button>
+    <button onclick="clickJoinSchedule(${sessionScope.userId}, ${groupScheduleDTO.id})">참여신청</button>
 
     <script>
         const clickJoinSchedule = (joinUser, scheduleId)=>{
-            location.href="/group/scheduleJoin?joinUserId=" + joinUser + "&scheduleId=" + scheduleId;
+            if(confirm("참여 신청하시겠습니까?")){
+                location.href="/group/scheduleJoin?joinUserId=" + joinUser + "&scheduleId=" + scheduleId;
+            }
         }
     </script>
 </body>
