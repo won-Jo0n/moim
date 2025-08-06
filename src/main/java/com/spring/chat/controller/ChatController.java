@@ -19,6 +19,7 @@ public class ChatController {
     public List<ChatUserDTO> getChatFriends(HttpSession session)
     {
         int userId = (int)session.getAttribute("userId");
+        List<ChatUserDTO> chatUserDTOList = chatService.getChatFriends(userId);
         return chatService.getChatFriends(userId);
     }
 
