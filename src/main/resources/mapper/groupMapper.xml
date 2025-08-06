@@ -48,6 +48,17 @@
         WHERE id = #{id};
     </update>
 
+    <insert id="createGroupSchedule" parameterType="groupSchedule">
+        INSERT INTO groupSchedule(scheduleLeader, groupId, title, description,startTime,endTime,maxUserNum)
+        VALUES(#{scheduleLeader},#{groupId},#{title},#{description},#{startTime},#{endTime},#{maxUserNum});
+    </insert>
 
+    <select id="getGroupScheduleByGroupId" parameterType="int" resultType="groupSchedule">
+        SELECT * FROM groupSchedule WHERE groupId = #{groupId};
+    </select>
+
+    <select id="getGroupScheduleDetail" parameterType="int" resultType="groupSchedule">
+        SELECT * FROM groupSchedule WHERE id=#{groupScheduleId};
+    </select>
 
 </mapper>

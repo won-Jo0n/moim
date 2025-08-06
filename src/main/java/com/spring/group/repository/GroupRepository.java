@@ -1,6 +1,7 @@
 package com.spring.group.repository;
 
 import com.spring.group.dto.GroupDTO;
+import com.spring.group.dto.GroupScheduleDTO;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.annotations.Param;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -44,4 +45,15 @@ public class GroupRepository {
     }
 
 
+    public void createGroupSchedule(GroupScheduleDTO groupScheduleDTO) {
+        sql.insert("Group.createGroupSchedule", groupScheduleDTO);
+    }
+
+    public List<GroupScheduleDTO> getGroupScheduleByGroupId(int groupId) {
+        return sql.selectList("Group.getGroupScheduleByGroupId", groupId);
+    }
+
+    public GroupScheduleDTO getGroupScheduleDetail(int groupScheduleId) {
+        return sql.selectOne("Group.getGroupScheduleDetail", groupScheduleId);
+    }
 }
