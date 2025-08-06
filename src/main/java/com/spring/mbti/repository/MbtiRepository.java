@@ -1,6 +1,7 @@
 package com.spring.mbti.repository;
 
 import com.spring.admin.dto.ChartCountDTO;
+import com.spring.admin.dto.UserAgeRatioDTO;
 import com.spring.admin.dto.UserGenderRatioDTO;
 import com.spring.mbti.dto.MbtiDTO;
 import lombok.RequiredArgsConstructor;
@@ -28,5 +29,9 @@ public class MbtiRepository {
 
     public List<UserGenderRatioDTO> getCountGroupByGender() {
         return sql.selectList("Mbti.getCountGroupByGender");
+    }
+
+    public List<UserAgeRatioDTO> getCountGroupByAge() {
+        return sql.selectList("Mbti.getCountGroupByAge");
     }
 }

@@ -75,6 +75,10 @@
         </form>
     </c:if>
 
+    <c:if test="${sessionScope.userId eq group.leader}">
+        <a href="/group/createSchedule?scheduleLeader=${sessionScope.userId}&groupId=${group.id}">그룹일정 생성</a>
+    </c:if>
+
     <c:if test="${isLeader || isApprovedMember}">
         <h3> 게시판</h3>
         <c:forEach var="board" items="${boardList}">
@@ -86,6 +90,44 @@
         </c:forEach>
     </c:if>
 
+    <c:choose>
+        <c:when test="${not empty groupScheduleList}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>리더</th>
+                        <th>제목</th>
+                        <th>설명</th>
+                        <th>시작 시간</th>
+                        <th>종료 시간</th>
+                        <th>최대 인원</th>
+                        <th>상태</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:forEach var="schedule" items="${groupScheduleList}">
+                        <tr onclick="clickGroupScheduleDetail(${schedule.id});">
+                            <td>${groupScheduleLeaderNickName[schedule.id]}</td>
+                            <td>${schedule.title}</td>
+                            <td>${schedule.description}</td>
+                            <td>${schedule.startTime}</td>
+                            <td>${schedule.endTime}</td>
+                            <td>${schedule.maxUserNum}</td>
+                            <td>${schedule.status}</td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
+            </table>
+        </c:when>
+        <c:otherwise>
+            <p class="no-schedules">등록된 그룹 스케줄이 없습니다.</p>
+        </c:otherwise>
+    </c:choose>
     <a href="/group/list">목록으로 돌아가기</a>
+    <script>
+        const clickGroupScheduleDetail = (id)=>{
+            location.href="/group/groupScheduleDetail?id=" + id;
+        }
+    </script>
 </body>
 </html>

@@ -21,6 +21,7 @@
       <input type="hidden" name="loginId" value="${OAuthData.id}" />
       <input id="nickName" type="text" name="nickName" value="${OAuthData.name}" onkeyup="nickNameCheck()">
       <p id="check-result"></p>
+      <input type="text" name="mobile" value="${OAuthData.mobile}" readOnly/>
       <input type="hidden" name="gender" value="${OAuthData.gender}" />
       <input type="text" name="birthDate" value="${OAuthData.birthyear}-${OAuthData.birthday}" readOnly/>
     </c:if>
@@ -36,10 +37,12 @@
         <input type="radio" id="female" name="gender" value="F">
         <label for="female">여성</label>
       </div>
-      <input id="nickName" type="text" name="nickName" placeholder="닉네임" onkeyup="nickNameCheck()">
+      <input id="nickName" type="text" name="nickName" placeholder="닉네임" onkeyup="nickNameCheck()"/>
       <p id="check-result"></p>
       <label for="birthDate">생년월일</label>
-      <input id="birthDate" type="date" name="birthDate">
+      <input id="birthDate" type="date" name="birthDate"/>
+      <input id="mobile" type="text" name="mobile" placeholder="전화번호를 입력해주세요" maxlength="13"/>
+      <p id="mobile-check-result"></p>
     </c:if>
 
     <input type="file" name="profile">
@@ -149,6 +152,26 @@
         nickNameCheck();
     }
   });
+  document.getElementById('mobile').addEventListener('input', function (e) {
+    let input = e.target.value.replace(/\D/g, '');
+
+    if (input.length < 4) {
+      e.target.value = input;
+    } else if (input.length < 8) {
+      e.target.value = input.replace(/(\d{3})(\d{1,4})/, '$1-$2');
+    } else {
+      e.target.value = input.replace(/(\d{3})(\d{4})(\d{1,4})/, '$1-$2-$3');
+    }
+  });
+
+
+  const phoneRegex = /^01[016789]-\d{3,4}-\d{4}$/;
+  const phone = document.getElementById('mobile').value;
+
+  if (!phoneRegex.test(phone)) {
+    alert("유효한 전화번호를 입력해주세요.");
+  }
+
 </script>
 </body>
 </html>
