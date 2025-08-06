@@ -11,7 +11,7 @@ public class GroupBoardDTO {
     private int author; // userId
     private String title;
     private String content;
-    private Integer fileId; // 파일 만들고 int로 수정해두기
+    private int fileId;
     private Timestamp createdAt;
     private int status;
     private int hits;
