@@ -45,8 +45,7 @@
 </table>
 <script>
     const handleReportClick = (type, boardId)=>{
-        console.log(type);
-        console.log(boardId);
+        location.href="/${type}/detail?id=${boardId}"
     }
 </script>
 </body>
