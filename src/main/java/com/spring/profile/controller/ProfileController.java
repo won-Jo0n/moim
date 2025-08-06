@@ -29,10 +29,10 @@ public class ProfileController {
         Long targetUserId = userIdParam != null ? userIdParam : sessionUserId;
 
         ProfileDTO profile = profileService.findByUserId(targetUserId);
-        List<MbtiBoardDTO> boardList = boardRepository.findByAuthor(targetUserId);
+        //List<MbtiBoardDTO> boardList = boardRepository.findByAuthor(targetUserId);
 
         model.addAttribute("profile", profile);
-        model.addAttribute("boardList", boardList);
+       // model.addAttribute("boardList", boardList);
         model.addAttribute("isOwner", targetUserId.equals(sessionUserId));
 
         return "profile/profile";
