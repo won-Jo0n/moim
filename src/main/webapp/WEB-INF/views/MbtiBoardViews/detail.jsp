@@ -5,108 +5,119 @@
 <head>
     <title>게시글 상세</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #fafafa;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            padding: 60px 0;
-        }
+       body {
+           font-family: 'Arial', sans-serif;
+           background-color: #fafafa;
+           margin: 0;
+           display: flex;
+           justify-content: center;
+           padding: 60px 0;
+       }
 
-        .detail-container {
-            background-color: #fff;
-            padding: 40px;
-            border-radius: 20px;
-            width: 600px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-        }
+       .detail-container {
+           background-color: #fff;
+           padding: 40px;
+           border-radius: 20px;
+           width: fit-content;         /* ✅ 내용에 맞게 너비 조정 */
+           max-width: 90vw;            /* ✅ 최대 너비 제한 */
+           min-width: 400px;           /* ✅ 최소 너비 확보 */
+           height: auto;               /* ✅ 높이는 내용에 따라 자동 */
+           box-shadow: 0 0 15px rgba(0,0,0,0.1);
+           word-break: break-word;     /* ✅ 줄바꿈 처리 */
+       }
 
-        h1 {
-            font-size: 26px;
-            margin-bottom: 10px;
-        }
+       h1 {
+           font-size: 26px;
+           margin-bottom: 10px;
+       }
 
-        .meta {
-            color: #999;
-            margin-bottom: 20px;
-        }
+       .meta {
+           color: #999;
+           margin-bottom: 20px;
+       }
 
-        .content {
-            font-size: 16px;
-            line-height: 1.6;
-            color: #333;
-            margin-bottom: 30px;
-        }
+       .content {
+           font-size: 16px;
+           line-height: 1.6;
+           color: #333;
+           margin-bottom: 1rem;
+       }
 
-        .actions {
-            text-align: right;
-        }
+       .actions {
+           text-align: right;
+       }
 
-        .actions a,
-        .actions input[type="submit"] {
-            background-color: #3897f0;
-            color: white;
-            border: none;
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-weight: bold;
-            text-decoration: none;
-            cursor: pointer;
-            margin-left: 10px;
-        }
+       .actions a,
+       .actions input[type="submit"] {
+           background-color: #3897f0;
+           color: white;
+           border: none;
+           padding: 10px 14px;
+           border-radius: 8px;
+           font-weight: bold;
+           text-decoration: none;
+           cursor: pointer;
+           margin-left: 10px;
+       }
 
-        .comment-section {
-            margin-top: 40px;
-            max-height: 500px;
-            overflow-y: auto;
-        }
+       .comment-section {
+           margin-top: 40px;
+           max-height: 500px;
+           overflow-y: auto;
+       }
 
-        .comment {
-            border-top: 1px solid #ccc;
-            padding: 10px 0;
-        }
+       .comment {
+           border-top: 1px solid #ccc;
+           padding: 10px 0;
+           max-width: 700px;              /* ✅ 내부 요소가 container 넘지 않도록 제한 */
+           box-sizing: border-box;
+       }
 
-        .reply {
-            margin-left: 20px;
-            padding: 10px;
-            border-left: 2px solid #ccc;
-            background-color: #f7f7f7;
-        }
+       .reply {
+           margin-left: 20px;
+           padding: 10px;
+           border-left: 2px solid #ccc;
+           background-color: #f7f7f7;
+           max-width: 680px;              /* ✅ 대댓글도 마찬가지 제한 */
+           box-sizing: border-box;
+       }
 
-        .comment-meta {
-            font-size: 13px;
-            color: #666;
-        }
+       .comment-meta {
+           font-size: 13px;
+           color: #666;
+       }
 
-        .comment-form textarea {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            margin-top: 10px;
-        }
+       .comment-form textarea {
+           width: 100%;
+           padding: 10px;
+           border-radius: 8px;
+           border: 1px solid #ccc;
+           margin-top: 10px;
+           box-sizing: border-box;
+       }
 
-        .comment-form input[type="submit"] {
-            margin-top: 10px;
-            background-color: #28a745;
-            color: #fff;
-            padding: 10px 14px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
+       .comment-form input[type="submit"] {
+           margin-top: 10px;
+           background-color: #28a745;
+           color: #fff;
+           padding: 10px 14px;
+           border: none;
+           border-radius: 8px;
+           cursor: pointer;
+       }
 
-        .reply-btn {
-            font-size: 12px;
-            color: #007bff;
-            cursor: pointer;
-            margin-top: 5px;
-        }
+       .reply-btn {
+           font-size: 12px;
+           color: #007bff;
+           cursor: pointer;
+           margin-top: 5px;
+       }
 
-        .reply-form {
-            margin-top: 10px;
-        }
+       .reply-form {
+           margin-top: 10px;
+           max-width: 680px;
+           box-sizing: border-box;
+       }
     </style>
 </head>
 <body>

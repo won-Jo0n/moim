@@ -42,4 +42,7 @@ public class MbtiBoardRepository {
     public List<MbtiBoardCommentDTO> findCommentsByBoardId(int boardId) {
         return sql.selectList(NAMESPACE + "findCommentsByBoardId", boardId);
     }
+
+    public List<MbtiBoardDTO> findByAuthor(Long targetUserId) {
+    }
 }
