@@ -45,4 +45,16 @@ public class UserService {
     public void createUserSchedule(UserScheduleDTO userScheduleDTO) {
         userRepository.createUserSchedule(userScheduleDTO);
     }
+
+    public UserScheduleDTO isJoin(UserScheduleDTO userScheduleDTO) {
+        return userRepository.isJoin(userScheduleDTO);
+    }
+
+    public void cancleUserSchedule(UserScheduleDTO result) {
+        userRepository.cancleUserSchedule(result);
+    }
+
+    public void updateUserStatus(UserDTO loginUser) {
+        userRepository.updateUserStatus(loginUser);
+    }
 }

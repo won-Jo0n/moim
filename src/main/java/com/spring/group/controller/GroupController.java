@@ -192,31 +192,34 @@ public class GroupController {
         return "redirect:/group/detail?groupId=" + groupScheduleDTO.getGroupId();
     }
 
+
     @GetMapping("/groupScheduleDetail")
-    public String groupScheduleDetail(@RequestParam("id") int groupScheduleId, Model model){
+    public String groupScheduleDetail(@RequestParam("id") int groupScheduleId, Model model, HttpSession session){
         GroupScheduleDTO groupScheduleDTO = groupService.getGroupScheduleDetail(groupScheduleId);
         UserDTO user = userService.getUserById(groupScheduleDTO.getScheduleLeader());
+        int userId = (int)session.getAttribute("userId");
 
+        UserScheduleDTO userScheduleDTO = new UserScheduleDTO();
+        userScheduleDTO.setGroupScheduleId(groupScheduleId);
+        userScheduleDTO.setUserId(userId);
 
         model.addAttribute("groupScheduleDTO", groupScheduleDTO);
         model.addAttribute("leaderNickName", user.getNickName());
 
         return "/group/groupScheduleDetail";
-
     }
 
     @GetMapping("/scheduleJoin")
     public String groupScheduleJoin(@RequestParam("joinUserId") int joinUser,
                                     @RequestParam("scheduleId") int scheduleId){
-        UserScheduleDTO userScheduleDTO = new UserScheduleDTO();
 
+        UserScheduleDTO userScheduleDTO = new UserScheduleDTO();
         userScheduleDTO.setUserId(joinUser);
         userScheduleDTO.setGroupScheduleId(scheduleId);
 
         userService.createUserSchedule(userScheduleDTO);
 
-        return "#";
-
+        return "redirect:/group/groupScheduleDetail?id=" +  userScheduleDTO.getGroupScheduleId();
     }
 
 }

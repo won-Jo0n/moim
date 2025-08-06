@@ -88,18 +88,21 @@ public class AdminController {
         ChartDTO mbtiStats = new ChartDTO();
         mbtiStats.setTitle("MBTI별 가입자 수");
         mbtiStats.setType("bar");
+        mbtiStats.setGridArea("A");
         mbtiStats.setLabel("가입자 수");
 
         List<UserGenderRatioDTO> userGenderRatioDTOS = mbtiService.getCountGroupByGender();
         ChartDTO genderStats = new ChartDTO();
         genderStats.setTitle("유저 성별 비율");
         genderStats.setType("bar");
+        genderStats.setGridArea("B");
         genderStats.setLabel("사용자 수");
 
         List<UserAgeRatioDTO> userAgeRatioDTOS = mbtiService.getCountGroupByAge();
         ChartDTO ageStats = new ChartDTO();
         ageStats.setTitle("나이별 유저 비율");
         ageStats.setType("bar");
+        ageStats.setGridArea("C");
         ageStats.setLabel("사용자 수");
 
         // mbtiStats 데이터
