@@ -1,6 +1,7 @@
 package com.spring.user.repository;
 
 import com.spring.user.dto.UserDTO;
+import com.spring.user.dto.UserScheduleDTO;
 import lombok.RequiredArgsConstructor;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
@@ -39,5 +40,17 @@ public class UserRepository {
 
     public int nickNameCheck(String nickName) {
         return sql.selectOne("User.nickNameCheck", nickName);
+    }
+
+    public void createUserSchedule(UserScheduleDTO userScheduleDTO) {
+        sql.insert("User.createUserSchedule",userScheduleDTO);
+    }
+
+    public UserScheduleDTO isJoin(UserScheduleDTO userScheduleDTO) {
+        return sql.selectOne("User.isJoin", userScheduleDTO);
+    }
+
+    public void cancleUserSchedule(UserScheduleDTO result) {
+        sql.update("User.cancleUserSchedule", result);
     }
 }

@@ -1,20 +1,28 @@
 package com.spring.group.controller;
 
 import com.spring.group.dto.GroupDTO;
+import com.spring.group.dto.GroupScheduleDTO;
 import com.spring.group.service.GroupService;
 import com.spring.groupboard.dto.GroupBoardDTO;
 import com.spring.groupboard.service.GroupBoardService;
+import com.spring.user.dto.UserDTO;
+import com.spring.user.dto.UserScheduleDTO;
+import com.spring.user.service.UserService;
 import com.spring.userjoingroup.dto.UserJoinGroupDTO;
 import com.spring.userjoingroup.repository.UserJoinGroupRepository;
-import com.spring.userjoingroup.service.UserJoinGroupService;
+import com.spring.utils.FileUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.parameters.P;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -22,13 +30,14 @@ import java.util.List;
 public class GroupController {
     private final GroupService groupService;
     private final UserJoinGroupRepository userJoinGroupRepository;
-    private final UserJoinGroupService userJoinGroupService;
     private final GroupBoardService groupBoardService;
+    private final FileUtil fileUtil;
+    private final UserService userService;
 
     // 그룹 생성 작성폼
     @GetMapping("/create")
     public String createForm(){
-        return "/group/create";
+        return "group/create";
     }
 
     // 그룹 생성
@@ -39,7 +48,10 @@ public class GroupController {
                               @RequestParam("city") String city,
                               @RequestParam("country") String country,
                               @RequestParam("maxUserNum") int maxUserNum,
-                              HttpSession session){
+                              @RequestParam(value = "groupFile", required = false) MultipartFile file,
+                              HttpSession session) throws IOException {
+
+
 
         int loginUserId = (int) session.getAttribute("userId");
         String location = city + " " + country;
@@ -49,7 +61,14 @@ public class GroupController {
         groupDTO.setDescription(description);
         groupDTO.setLocation(location);
         groupDTO.setMaxUserNum(maxUserNum);
-        groupDTO.setLeader(loginUserId);
+        groupDTO.setLeader(loginUserId); // 모임장 설정
+
+        if(!file.isEmpty()){
+            int fileId = fileUtil.fileSave(file);
+            groupDTO.setFileId(fileId);
+        }else{
+            groupDTO.setFileId(1);
+        }
 
 
         groupService.save(groupDTO, loginUserId);
@@ -57,10 +76,9 @@ public class GroupController {
     }
 
     // 그룹 목록 보기
-    // 검색어 없으면 전제 리스트 , 있다면 필터링 된 리스트
     @GetMapping("/list")
     public String groupList(@RequestParam(value = "keyword", required = false) String keyword, Model model) {
-        List<GroupDTO> groupList = groupService.searchGroups(keyword);
+        List<GroupDTO> groupList = groupService.searchGroups(keyword);  // 검색어 없으면 전체 리스트 , 있다면 필터링 된 리스트
         model.addAttribute("groupList", groupList);
         return "group/list";
     }
@@ -82,21 +100,33 @@ public class GroupController {
         dto.setGroupId(groupId);
 
 
-        UserJoinGroupDTO existing = userJoinGroupRepository.findOne(dto);
+        UserJoinGroupDTO existing = userJoinGroupRepository.findOne(dto); // 참여 상태 조회
         boolean isAppliedMember = (existing != null && "pending".equals(existing.getStatus()));
         boolean isApprovedMember = (existing != null && "approved".equals(existing.getStatus()));
         boolean isLeader = (loginUserId == group.getLeader());
 
         if (isLeader || isApprovedMember) {
-            List<GroupBoardDTO> boardList = groupBoardService.findByGroupId(groupId);
+            List<GroupBoardDTO> boardList = groupBoardService.findByGroupId(groupId); // 게시글 조회
             model.addAttribute("boardList", boardList);
         }
+
+        List<GroupScheduleDTO> groupScheduleList = groupService.getGroupScheduleByGroupId(groupId);
+
 
         model.addAttribute("isAppliedMember", isAppliedMember);
         model.addAttribute("isApprovedMember", isApprovedMember);
         model.addAttribute("isLeader", isLeader);
+        model.addAttribute("groupScheduleList", groupScheduleList);
 
-        return "/group/detail";
+        Map<Integer, String> groupScheduleLeader = new HashMap<>();
+        for(GroupScheduleDTO g : groupScheduleList){
+            UserDTO leader = userService.getUserById(g.getScheduleLeader());
+            groupScheduleLeader.put(g.getId(), leader.getNickName());
+        }
+        model.addAttribute("groupScheduleLeaderNickName", groupScheduleLeader);
+
+
+        return "group/detail";
     }
 
     // 그룹 수정 작성폼 // update.jsp
@@ -116,23 +146,20 @@ public class GroupController {
                          @RequestParam("city") String city,
                          @RequestParam("country") String country,
                          @RequestParam("maxUserNum") int maxUserNum) {
-
         String location = city + " " + country;
-
-        GroupDTO groupDTO = new GroupDTO();
+        GroupDTO groupDTO = new GroupDTO(); // 수정할 그룹 정보 세팅
         groupDTO.setId(id);
         groupDTO.setTitle(title);
         groupDTO.setDescription(description);
         groupDTO.setLocation(location);
         groupDTO.setMaxUserNum(maxUserNum);
 
-        groupService.update(groupDTO);
-        return "redirect:/group/detail?id=" + id;
+        groupService.update(groupDTO); // DB 업데이트
+        return "redirect:/group/detail?groupId=" + id;
     }
 
-
     // 그룹 삭제
-    @GetMapping("/delete")
+    @PostMapping("/delete")
     public String delete(@RequestParam("id") int id, HttpSession session){
         int userId  = (int) session.getAttribute("userId");
 
@@ -148,5 +175,51 @@ public class GroupController {
 
     }
 
+    // 그룹 일정 생성
+    @GetMapping("/createSchedule")
+    public String createScheduleForm(@RequestParam("scheduleLeader") int scheduleLeader,
+                                     @RequestParam("groupId") int groupId,
+                                     Model model){
+        model.addAttribute("scheduleLeader" , scheduleLeader);
+        model.addAttribute("groupId" , groupId);
+        return "/group/createSchedule";
+    }
+
+    @PostMapping("/createSchedule")
+    public String createSchedule(@ModelAttribute GroupScheduleDTO groupScheduleDTO){
+        groupService.createGroupSchedule(groupScheduleDTO);
+
+        return "redirect:/group/detail?groupId=" + groupScheduleDTO.getGroupId();
+    }
+
+
+    @GetMapping("/groupScheduleDetail")
+    public String groupScheduleDetail(@RequestParam("id") int groupScheduleId, Model model, HttpSession session){
+        GroupScheduleDTO groupScheduleDTO = groupService.getGroupScheduleDetail(groupScheduleId);
+        UserDTO user = userService.getUserById(groupScheduleDTO.getScheduleLeader());
+        int userId = (int)session.getAttribute("userId");
+
+        UserScheduleDTO userScheduleDTO = new UserScheduleDTO();
+        userScheduleDTO.setGroupScheduleId(groupScheduleId);
+        userScheduleDTO.setUserId(userId);
+
+        model.addAttribute("groupScheduleDTO", groupScheduleDTO);
+        model.addAttribute("leaderNickName", user.getNickName());
+
+        return "/group/groupScheduleDetail";
+    }
+
+    @GetMapping("/scheduleJoin")
+    public String groupScheduleJoin(@RequestParam("joinUserId") int joinUser,
+                                    @RequestParam("scheduleId") int scheduleId){
+
+        UserScheduleDTO userScheduleDTO = new UserScheduleDTO();
+        userScheduleDTO.setUserId(joinUser);
+        userScheduleDTO.setGroupScheduleId(scheduleId);
+
+        userService.createUserSchedule(userScheduleDTO);
+
+        return "redirect:/group/groupScheduleDetail?id=" +  userScheduleDTO.getGroupScheduleId();
+    }
 
 }

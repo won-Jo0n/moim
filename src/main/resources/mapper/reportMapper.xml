@@ -11,4 +11,8 @@
         INSERT INTO report(reportUser,reportedUser,type,content,boardId,title,commentId)
         VALUES(#{reportUser},#{reportedUser},#{type},#{content},#{boardId},#{title},#{commentId});
     </insert>
+    <select id="getReportById" parameterType="int" resultType="report">
+        SELECT * FROM report WHERE id=#{reportId};
+    </select>
+
 </mapper>

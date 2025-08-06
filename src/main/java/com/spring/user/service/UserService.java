@@ -1,7 +1,9 @@
 package com.spring.user.service;
 
 import com.spring.user.dto.UserDTO;
+import com.spring.user.dto.UserScheduleDTO;
 import com.spring.user.repository.UserRepository;
+import com.spring.utils.CheckedUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +14,12 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     public int join(UserDTO userDTO) {
-        return userRepository.join(userDTO);
+        boolean result = CheckedUtil.isValidPhone(userDTO.getMobile());
+        if(result){
+            return userRepository.join(userDTO);
+        }else{
+            throw new IllegalArgumentException("잘못된 전화번호 형식입니다.");
+        }
     }
 
     public UserDTO login(UserDTO userDTO) {
@@ -33,5 +40,17 @@ public class UserService {
 
     public int nickNameCheck(String nickName) {
         return userRepository.nickNameCheck(nickName);
+    }
+
+    public void createUserSchedule(UserScheduleDTO userScheduleDTO) {
+        userRepository.createUserSchedule(userScheduleDTO);
+    }
+
+    public UserScheduleDTO isJoin(UserScheduleDTO userScheduleDTO) {
+        return userRepository.isJoin(userScheduleDTO);
+    }
+
+    public void cancleUserSchedule(UserScheduleDTO result) {
+        userRepository.cancleUserSchedule(result);
     }
 }

@@ -14,6 +14,7 @@ public class GroupDTO {
     private int maxUserNum;
     private Timestamp createdAt;
     private int status;
+    private int fileId;
 
 
 }

@@ -2,10 +2,7 @@ package com.spring.admin.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.spring.admin.dto.ChartCountDTO;
-import com.spring.admin.dto.ChartDTO;
-import com.spring.admin.dto.PenaltiDTO;
-import com.spring.admin.dto.UserGenderRatioDTO;
+import com.spring.admin.dto.*;
 import com.spring.admin.service.AdminService;
 import com.spring.mbti.service.MbtiService;
 import com.spring.report.dto.ReportDTO;
@@ -31,10 +28,7 @@ public class AdminController {
         return "/admin/admin";
     }
 
-    @GetMapping("/chart")
-    public String chart(){
-        return "/admin/chart";
-    }
+
 
     @GetMapping("/report")
     public String report(Model model){
@@ -86,7 +80,7 @@ public class AdminController {
         return "redirect:/admin/penalties";
     }
 
-    @GetMapping("/chart2")
+    @GetMapping("/chart")
     public String chart2(Model model) throws JsonProcessingException {
         List<ChartDTO> statsList = new ArrayList<>();
 
@@ -101,6 +95,12 @@ public class AdminController {
         genderStats.setTitle("유저 성별 비율");
         genderStats.setType("bar");
         genderStats.setLabel("사용자 수");
+
+        List<UserAgeRatioDTO> userAgeRatioDTOS = mbtiService.getCountGroupByAge();
+        ChartDTO ageStats = new ChartDTO();
+        ageStats.setTitle("나이별 유저 비율");
+        ageStats.setType("bar");
+        ageStats.setLabel("사용자 수");
 
         // mbtiStats 데이터
         List<String> labels = new ArrayList<>();
@@ -119,7 +119,6 @@ public class AdminController {
             backgroundColors.add(backgroundColor);
             borderColors.add(backgroundColor.replace("0.5", "1"));
         }
-
         mbtiStats.setLabels(labels);
         mbtiStats.setData(data);
         mbtiStats.setBackgroundColors(backgroundColors);
@@ -142,26 +141,44 @@ public class AdminController {
             genderBackgroundColors.add(backgroundColor);
             genderBorderColors.add(backgroundColor.replace("0.5", "1"));
         }
-
-
         genderStats.setLabels(genderLabels);
         genderStats.setData(genderData);
         genderStats.setBackgroundColors(genderBackgroundColors);
         genderStats.setBorderColors(genderBorderColors);
         statsList.add(genderStats);
 
+        List<String> ageLabels = new ArrayList<>();
+        List<Integer> ageData = new ArrayList<>();
+        List<String> ageBackgroundColors = new ArrayList<>();
+        List<String> ageBorderColors = new ArrayList<>();
+
+        for (UserAgeRatioDTO u : userAgeRatioDTOS) {
+            ageLabels.add(u.getAgeRatio());
+            ageData.add(u.getValue());
+            // 차트 색상을 동적으로 생성
+            String backgroundColor = String.format("rgba(%d, %d, %d, 0.5)",
+                    random.nextInt(256), random.nextInt(256), random.nextInt(256));
+            ageBackgroundColors.add(backgroundColor);
+            ageBorderColors.add(backgroundColor.replace("0.5", "1"));
+        }
+
+        ageStats.setLabels(ageLabels);
+        ageStats.setData(ageData);
+        ageStats.setBackgroundColors(ageBackgroundColors);
+        ageStats.setBorderColors(ageBorderColors);
+        statsList.add(ageStats);
+
 
         ObjectMapper mapper = new ObjectMapper();
         String statsJson = mapper.writeValueAsString(statsList);
 
-        System.out.println(statsJson);
 
         model.addAttribute("statsList", statsList);
         model.addAttribute("statsJson", statsJson);
 
 
         // JSP 페이지로 이동
-        return "admin/chart2";
+        return "/admin/chart";
     }
 
 

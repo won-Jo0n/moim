@@ -9,6 +9,7 @@
 <body>
     <h2>모임 상세 페이지</h2>
     <p><strong>모임명:</strong> ${group.title}</p>
+    <img src="/file/preview?fileId=${group.fileId}" width="150" height="150"></img>
     <p><strong>모임 소개:</strong> ${group.description}</p>
     <p><strong>모임 지역:</strong> ${group.location}</p>
     <p><strong>최대 인원:</strong> ${group.maxUserNum}</p>
@@ -75,10 +76,15 @@
         </form>
     </c:if>
 
+    <c:if test="${sessionScope.userId eq group.leader}">
+        <a href="/group/createSchedule?scheduleLeader=${sessionScope.userId}&groupId=${group.id}">그룹일정 생성</a>
+    </c:if>
+
     <c:if test="${isLeader || isApprovedMember}">
         <h3> 게시판</h3>
         <c:forEach var="board" items="${boardList}">
              <div class="post-card" onclick="location.href='/groupboard/detail?id=${board.id}'">
+                <img src="/file/preview?fileId=${board.fileId}"  width="80" height="80"/>
                 <h4>${board.title}</h4>
                 <p>${board.content}</p>
                 <small>작성자: ${board.authorNickName}  작성일: ${board.createdAt}</small>
@@ -86,6 +92,44 @@
         </c:forEach>
     </c:if>
 
-    <a href="/group/list">← 목록으로 </a>
+    <c:choose>
+        <c:when test="${not empty groupScheduleList}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>리더</th>
+                        <th>제목</th>
+                        <th>설명</th>
+                        <th>시작 시간</th>
+                        <th>종료 시간</th>
+                        <th>최대 인원</th>
+                        <th>상태</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:forEach var="schedule" items="${groupScheduleList}">
+                        <tr onclick="clickGroupScheduleDetail(${schedule.id});">
+                            <td>${groupScheduleLeaderNickName[schedule.id]}</td>
+                            <td>${schedule.title}</td>
+                            <td>${schedule.description}</td>
+                            <td>${schedule.startTime}</td>
+                            <td>${schedule.endTime}</td>
+                            <td>${schedule.maxUserNum}</td>
+                            <td>${schedule.status}</td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
+            </table>
+        </c:when>
+        <c:otherwise>
+            <p class="no-schedules">등록된 그룹 스케줄이 없습니다.</p>
+        </c:otherwise>
+    </c:choose>
+    <a href="/group/list">목록으로 돌아가기</a>
+    <script>
+        const clickGroupScheduleDetail = (id)=>{
+            location.href="/group/groupScheduleDetail?id=" + id;
+        }
+    </script>
 </body>
 </html>

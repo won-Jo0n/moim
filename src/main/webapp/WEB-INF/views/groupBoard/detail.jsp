@@ -11,8 +11,34 @@
     <p><strong>제목:</strong> ${board.title}</p>
     <p><strong>작성자:</strong> ${board.authorNickName}</p>
     <p><strong>조회수:</strong>${board.hits}</p>
+    <img src="/file/preview?fileId=${board.fileId}"  width="100"/>
+
     <p><strong>내용:</strong></p>
     <p>${board.content}</p>
+
+    <h3>댓글</h3>
+    <c:forEach var="comment" items="${commentList}">
+        <div>
+            <strong>${comment.author}</strong>: ${comment.content}
+            <c:if test="${comment.author == sessionScope.nickName}">
+                <form action="/groupboardcomment/delete" method="post" >
+                    <input type="hidden" name="id" value="${comment.id}" />
+                    <input type="hidden" name="boardId" value="${board.id}" />
+                    <input type="submit" value="삭제" />
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                </form>
+            </c:if>
+        </div>
+    </c:forEach>
+
+    <form action="/groupboardcomment/create" method="post">
+        <input type="hidden" name="groupId" value="${board.groupId}" />
+        <input type="hidden" name="boardId" value="${board.id}" />
+        <textarea name="content" rows="3" cols="50" placeholder="댓글을 입력하세요."></textarea><br>
+        <input type="submit" value="댓글 작성" />
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+    </form>
+
 
     <!-- 수정/삭제 버튼: 작성자 본인만 표시 -->
     <c:if test="${isAuthor}">

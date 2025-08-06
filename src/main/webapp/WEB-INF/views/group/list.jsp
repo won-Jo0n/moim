@@ -29,6 +29,7 @@
         <thead>
             <tr>
                 <th>모임명</th>
+                <th>대표 사진</th>
                 <th>모임 지역</th>
                 <th>모임 소개</th>
                 <th>최대 인원</th>
@@ -40,6 +41,9 @@
             <c:forEach var="group" items="${groupList}">
                 <tr class="clickable-row" data-id="${group.id}">
                     <td>${group.title}</td>
+                    <td>
+                        <img src="/file/preview?fileId=${group.fileId}" width="80" height="80" />
+                    </td>
                     <td>${group.location}</td>
                     <td>${group.description}</td>
                     <td>${group.maxUserNum}</td>

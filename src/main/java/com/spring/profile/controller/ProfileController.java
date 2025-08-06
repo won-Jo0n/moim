@@ -1,46 +1,67 @@
 package com.spring.profile.controller;
 
+import com.spring.mbti.dto.MbtiBoardDTO;
 import com.spring.profile.dto.ProfileDTO;
 import com.spring.profile.service.ProfileService;
+import com.spring.user.dto.UserDTO;
+import com.spring.user.service.UserService;
+import com.spring.mbti.repository.MbtiBoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.util.Map;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
 public class ProfileController {
 
     private final ProfileService profileService;
+    private final MbtiBoardRepository boardRepository;
+    private final UserService userService;
 
-    // 마이페이지 접속 (본인만 가능)
-    @GetMapping("/mypage")
-    public String myPage(Model model, HttpSession session) {
-        Integer userId = (Integer) session.getAttribute("userId");
-        if (userId == null) return "redirect:/login";
+    // 마이페이지 메인
+    @GetMapping("/profile")
+    public String profileMain(Model model, HttpSession session, @RequestParam(value = "userId", required = false) Long userIdParam) {
+        Long sessionUserId = (Long) session.getAttribute("userId");
+        Long targetUserId = userIdParam != null ? userIdParam : sessionUserId;
 
-        Map<String, Object> result = profileService.getProfileWithMyBoards(userId);
-        model.addAttribute("profile", result.get("profile"));
-        model.addAttribute("myPosts", result.get("myPosts"));
+        ProfileDTO profile = profileService.findByUserId(targetUserId);
+        //List<MbtiBoardDTO> boardList = boardRepository.findByAuthor(targetUserId);
 
-        return "profile/profile"; // /WEB-INF/views/profile/profile.jsp
+        model.addAttribute("profile", profile);
+       // model.addAttribute("boardList", boardList);
+        model.addAttribute("isOwner", targetUserId.equals(sessionUserId));
+
+        return "profile/profile";
     }
 
-    // (선택) 테스트용: 게시글 작성 시 호출
-    @GetMapping("/mypage/test/post")
-    public String simulatePost(HttpSession session) {
-        Integer userId = (Integer) session.getAttribute("userId");
-
-        if (userId != null) {
-            profileService.onPostCreated(userId); // 게시글 작성 시 온도 +0.5, 포인트 +10, 등급 점수 +10
-        }
-
-        return "redirect:/mypage";
+    // 프로필 수정 페이지
+    @GetMapping("/profile/edit")
+    public String profileEditPage(Model model, HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        ProfileDTO profile = profileService.findByUserId(userId);
+        model.addAttribute("profile", profile);
+        return "profile/ProfileEdit";
     }
 
+    // 프로필 수정 처리
+    @PostMapping("/profile/update")
+    public String updateProfile(@ModelAttribute ProfileDTO profile, HttpSession session) {
+        int userId = (int) session.getAttribute("userId");
+        profile.setUserId(userId);
+        profileService.updateProfile(profile);
+        return "redirect:/profile";
+    }
 
-
+    // 친구 목록 페이지
+    @GetMapping("/profile/friends")
+    public String profileFriends(Model model, HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        List<ProfileDTO> friendList = profileService.findAcceptedFriends(userId);
+        model.addAttribute("friendList", friendList);
+        return "profile/ProfileFriends";
+    }
 }
