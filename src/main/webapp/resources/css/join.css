@@ -1,3 +1,6 @@
+/* join.css */
+
+/* 전체적인 폰트와 배경 설정 */
 body {
   font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
   background-color: #f5f6f7;
@@ -5,6 +8,7 @@ body {
   padding: 0;
 }
 
+/* 컨테이너 스타일 */
 .container {
   max-width: 460px;
   margin: 60px auto;
@@ -15,6 +19,7 @@ body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
+/* 로고와 제목 스타일 */
 .logo {
   text-align: center;
   margin-bottom: 30px;
@@ -31,6 +36,7 @@ h2 {
   color: #333;
 }
 
+/* 폼 입력 필드 공통 스타일 */
 input[type="text"],
 input[type="password"],
 input[type="date"],
@@ -49,6 +55,7 @@ label {
   color: #333;
 }
 
+/* 라디오 버튼 그룹 스타일 */
 input[type="radio"] {
   margin-right: 4px;
 }
@@ -57,6 +64,7 @@ input[type="radio"] {
   margin-right: 16px;
 }
 
+/* 가입하기 버튼 스타일 */
 input[type="submit"] {
   background-color: #03c75a;
   color: white;
@@ -70,4 +78,46 @@ input[type="submit"] {
 
 input[type="submit"]:hover {
   background-color: #02b14e;
+}
+
+
+/* 파일 입력 필드 디자인 */
+.file-upload-wrapper {
+  display: flex;
+  align-items: center;
+  margin: 8px 0 16px;
+  position: relative;
+  border-bottom: 1px solid #ccc; /* 하단 경계선으로 깔끔하게 처리 */
+  padding: 8px 0;
+}
+
+.file-upload-wrapper input[type="file"] {
+  display: none; /* 실제 파일 입력 필드는 숨김 */
+}
+
+.file-upload-label {
+  display: inline-block;
+  color: #03c75a; /* 네이버 그린 컬러로 강조 */
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0 10px;
+  transition: color 0.2s;
+}
+
+.file-upload-label:hover {
+  color: #02b14e; /* 호버 시 색상 변경 */
+}
+
+.file-name {
+  flex-grow: 1;
+  padding-left: 10px;
+  color: #888;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* 파일명이 길면 ...으로 표시 */
+}
+
+/* 파일 선택 후의 파일명 스타일 */
+.file-name.selected {
+  color: #333;
 }

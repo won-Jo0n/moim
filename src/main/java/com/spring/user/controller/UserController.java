@@ -118,6 +118,12 @@ public class UserController {
         return res;
     }
 
+    @PostMapping("/loginId-check")
+    public @ResponseBody int loginIdCheck(@RequestParam("loginId") String loginId){
+        int res = userService.loginIdCheck(loginId);
+        return res;
+    }
+
 
 
 }

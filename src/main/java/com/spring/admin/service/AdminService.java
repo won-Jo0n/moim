@@ -65,4 +65,8 @@ public class AdminService {
     public int countTodayPenalties() {
         return adminRepository.countTodayPenalties();
     }
+
+    public List<ReportDTO> getRecentReports() {
+        return adminRepository.getRecentReports();
+    }
 }

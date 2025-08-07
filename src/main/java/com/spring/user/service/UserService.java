@@ -57,4 +57,8 @@ public class UserService {
     public void updateUserStatus(UserDTO loginUser) {
         userRepository.updateUserStatus(loginUser);
     }
+
+    public int loginIdCheck(String loginId) {
+        return userRepository.loginIdCheck(loginId);
+    }
 }
