@@ -63,4 +63,8 @@
         WHERE DATE(reportedAt) = CURDATE();
     </select>
 
+    <select id="getRecentReports" resultType="report">
+        SELECT * FROM report ORDER BY reportedAt DESC LIMIT 5;
+    </select>
+
 </mapper>

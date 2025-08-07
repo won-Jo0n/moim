@@ -26,7 +26,7 @@ public class AdminController {
     private final MbtiService mbtiService;
 
     @GetMapping("/")
-    public String admin(Model model){
+    public String admin(Model model) throws JsonProcessingException {
 
 
         // 대기중인 신고 개수
@@ -40,6 +40,56 @@ public class AdminController {
         // 오늘 제재한 사용자 수
         int todayPenaltiesCount = adminService.countTodayPenalties();
         model.addAttribute("todayPenaltiesCount", todayPenaltiesCount);
+
+        // 최근 신고내역(5개)
+        List<ReportDTO> recentReports = adminService.getRecentReports();
+        Map<Integer, String> formattedDate = new HashMap<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
+
+        model.addAttribute("recentReports", recentReports);
+        for(ReportDTO report : recentReports){
+            formattedDate.put(report.getId(), report.getReportedAt().format(formatter));
+        }
+        model.addAttribute("formattedDate", formattedDate);
+
+        // MBTI별 사용자 분포
+        List<ChartDTO> statsList = new ArrayList<>();
+
+        List<ChartCountDTO> mbtiCountList = mbtiService.getCountGroupByMbti();
+        ChartDTO mbtiStats = new ChartDTO();
+        mbtiStats.setTitle("MBTI별 가입자 수");
+        mbtiStats.setType("bar");
+        mbtiStats.setLabel("가입자 수");
+
+        Random random = new Random();
+
+        // mbtiStats 데이터
+        List<String> labels = new ArrayList<>();
+        List<Integer> data = new ArrayList<>();
+        List<String> backgroundColors = new ArrayList<>();
+        List<String> borderColors = new ArrayList<>();
+
+        for (ChartCountDTO c : mbtiCountList) {
+            labels.add(c.getMbti());
+            data.add(c.getValue());
+            // 차트 색상을 동적으로 생성
+            String backgroundColor = String.format("rgba(%d, %d, %d, 0.5)",
+                    random.nextInt(256), random.nextInt(256), random.nextInt(256));
+            backgroundColors.add(backgroundColor);
+            borderColors.add(backgroundColor.replace("0.5", "1"));
+        }
+        mbtiStats.setLabels(labels);
+        mbtiStats.setData(data);
+        mbtiStats.setBackgroundColors(backgroundColors);
+        mbtiStats.setBorderColors(borderColors);
+        statsList.add(mbtiStats);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String statsJson = objectMapper.writeValueAsString(statsList);
+        model.addAttribute("statsJson", statsJson);
+
+
+
         return "/admin/admin";
     }
 
@@ -142,7 +192,7 @@ public class AdminController {
     }
 
     @GetMapping("/chart")
-    public String chart2(Model model) throws JsonProcessingException {
+    public String chart(Model model) throws JsonProcessingException {
         List<ChartDTO> statsList = new ArrayList<>();
 
         List<ChartCountDTO> mbtiCountList = mbtiService.getCountGroupByMbti();

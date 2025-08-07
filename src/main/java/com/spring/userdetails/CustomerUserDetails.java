@@ -24,8 +24,6 @@ public class CustomerUserDetails implements UserDetails, Serializable {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // UserDTO에 권한 정보가 있다면 여기서 매핑
-        // 예: userDTO.getRoles() 등
         return Collections.singletonList(new SimpleGrantedAuthority(userDTO.getRole()));
     }
 
@@ -36,7 +34,7 @@ public class CustomerUserDetails implements UserDetails, Serializable {
 
     @Override
     public String getUsername() {
-        return userDTO.getLoginId(); // UserDetails의 username은 loginId로 사용
+        return userDTO.getLoginId();
     }
 
     @Override
@@ -56,6 +54,6 @@ public class CustomerUserDetails implements UserDetails, Serializable {
 
     @Override
     public boolean isEnabled() {
-        return true; // userDTO.getStatus() == 1 등으로 활성 여부 판단
+        return userDTO != null && userDTO.getStatus() == 1;
     }
 }

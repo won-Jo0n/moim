@@ -65,4 +65,8 @@ public class AdminRepository {
     public int countTodayPenalties() {
         return sql.selectOne("Admin.countTodayPenalties");
     }
+
+    public List<ReportDTO> getRecentReports() {
+        return sql.selectList("Admin.getRecentReports");
+    }
 }
