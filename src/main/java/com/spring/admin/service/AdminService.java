@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -34,5 +35,18 @@ public class AdminService {
 
     public void clearPenalti(int id) {
         adminRepository.clearPenalti(id);
+    }
+
+
+    public List<UserDTO> getPaginatedPenalties(Map<String, Object> params) {
+        return adminRepository.getPaginatedPenalties(params);
+    }
+
+    public List<ReportDTO> getPaginatedReports(Map<String, Object> params) {
+        return adminRepository.getPaginatedReports(params);
+    }
+
+    public long countAllReports() {
+        return adminRepository.countAllReports();
     }
 }

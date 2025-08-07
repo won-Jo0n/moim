@@ -7,6 +7,11 @@
         SELECT * FROM mbti;
     </select>
 
+    <select id="getMbti" parameterType="int" resultType="mbti">
+        SELECT * FROM mbti WHERE id= #{id};
+    </select>
+
+
     <select id="getMbtiLabels" resultType="String">
         select mbti FROM mbti;
     </select>
@@ -50,6 +55,14 @@
                 ELSE CAST(SUBSTRING_INDEX(ageRatio, '대', 1) AS UNSIGNED) -- 'age_group' 대신 'ageRatio'로 수정했습니다.
             END;
         ]]>
+    </select>
+    
+    <select id="getMbtiGroupActivity" resultType="mbtiActivity">
+        SELECT m.mbti AS mbti, COUNT(*) AS value FROM userschedule us
+        JOIN user u ON us.userId = u.id
+        JOIN mbti m ON u.mbtiId = m.id
+        WHERE us.status = 1
+        GROUP BY m.mbti;
     </select>
 
 </mapper>
