@@ -4,6 +4,7 @@ import com.spring.group.service.GroupService;
 import com.spring.review.dto.ReviewDTO;
 import com.spring.review.service.ReviewSerivce;
 import com.spring.user.dto.UserDTO;
+
 import com.spring.user.dto.UserScheduleDTO;
 import com.spring.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -11,8 +12,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.ArrayList;
+
 
 @Controller
 @RequestMapping("/review")
@@ -48,6 +51,35 @@ public class ReviewController {
             return "";
         }
 
+    }
+
+    @GetMapping("/review")
+    public String reviewForm(@RequestParam("groupScheduleId") int groupScheduleId,
+                             @RequestParam("userId") int userId,
+                             HttpSession session,
+                             Model model) {
+        int reviewer = (int) session.getAttribute("userId");
+
+        model.addAttribute("groupScheduleId", groupScheduleId);
+        model.addAttribute("targetList", userId);
+        model.addAttribute("reviewer", reviewer);
+
+        return "/review/review";
+    }
+
+    @GetMapping("/groupschedule/detail")
+    public String scheduleDetail(@RequestParam("groupScheduleId") int groupScheduleId,
+                                 HttpSession session,
+                                 Model model) {
+        int reviewer = (int) session.getAttribute("userId");
+
+        List<UserDTO> targetList = reviewSerivce.findParticipantsExceptReviewer(groupScheduleId, reviewer);
+
+        model.addAttribute("groupScheduleId", groupScheduleId);
+        model.addAttribute("targetList", targetList);
+        model.addAttribute("reviewer", reviewer);
+
+        return "/groupschedule/detail";
     }
 
 }
