@@ -1,15 +1,21 @@
 package com.spring.websocket;
 
+import com.spring.chat.dto.ChatMessageDTO;
 import com.spring.chat.dto.ChatUserDTO;
 import com.spring.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
+import java.security.Principal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,6 +26,7 @@ public class WebSocketController {
     private final ChatService chatService;
     private final Map<String, String> sessionToUser = new ConcurrentHashMap<>();
     private final Map<String, Integer> sessionCount = new ConcurrentHashMap<>();
+
     /*
     @MessageMapping("/hello") // 클라이언트가 /app/hello 로 메시지를 보낼 때 매핑됩니다.
     @SendTo("/topic/greetings") // 이 메서드의 반환 값이 /topic/greetings 를 구독하는 모든 클라이언트에게 전송됩니다.
@@ -28,7 +35,7 @@ public class WebSocketController {
         System.out.println("로그인한 사용자 ID: " + principal.getName());
         return map;
     }
-    */
+     */
 
     /*
     @MessageMapping("/connect")
@@ -40,6 +47,22 @@ public class WebSocketController {
         return Map.of("userId", userId, "type", "FRIEND_ONLINE");
     }
      */
+
+    @MessageMapping("/chat")
+    public void chat(@Header("type") String type, @Payload Map<String, Object> data, Principal principal){
+        String userId = principal.getName();
+        String chatUserId = (String)data.get("chatUserId");
+        if(type.equals("SEND_MESSAGE")) {
+            ChatMessageDTO chatMessageDTO = chatService.sendChatMessage(Integer.parseInt(userId), Integer.parseInt(chatUserId), (String)data.get("content"));
+            messagingTemplate.convertAndSendToUser(userId, "/queue/main", chatMessageDTO, Map.of("type", type));
+            messagingTemplate.convertAndSendToUser(chatUserId, "/queue/main", chatMessageDTO, Map.of("type", "RECEIVE_MESSAGE"));
+        }else if(type.equals("READ_MESSAGE")){
+            int readChatId = (int)data.get("chatId");
+            int readChatCount = chatService.readChatMessage(Integer.parseInt(userId), Integer.parseInt(chatUserId), readChatId);
+            System.out.println(readChatId + " " + readChatCount);
+            //messagingTemplate.convertAndSendToUser(chatUserId, "/queue/main", null , Map.of("type", "READ_RECEIPT"));
+        }
+    }
 
     @EventListener
     public void handleSubscribed(SessionSubscribeEvent event) {
@@ -55,10 +78,10 @@ public class WebSocketController {
         for (ChatUserDTO friend : chatFriends) {
             if (sessionCount.getOrDefault(String.valueOf(friend.getId()), 0) > 0) {
                 messagingTemplate.convertAndSendToUser(userId, "/queue/main",
-                        Map.of("type", "FRIEND_ONLINE","sender", friend.getId()));
+                        Map.of("sender", friend.getId()), Map.of("type", "FRIEND_ONLINE"));
                 if (firstSession) {
                     messagingTemplate.convertAndSendToUser(String.valueOf(friend.getId()), "/queue/main",
-                            Map.of("type", "FRIEND_ONLINE","sender", userId));
+                            Map.of("sender", userId), Map.of("type", "FRIEND_ONLINE"));
                 }
             }
         }
@@ -77,7 +100,7 @@ public class WebSocketController {
                 for(ChatUserDTO friend : chatFriends){
                     if(sessionCount.getOrDefault(String.valueOf(friend.getId()), 0) > 0){
                         messagingTemplate.convertAndSendToUser(String.valueOf(friend.getId()), "/queue/main",
-                                Map.of("type", "FRIEND_OFFLINE","sender", userId));
+                                Map.of("sender", userId), Map.of("type", "FRIEND_OFFLINE"));
                     }
                 }
             }

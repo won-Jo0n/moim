@@ -35,9 +35,9 @@ public class ChatController {
     }
 
     @GetMapping("/read/{chatUserId}")
-    public int readChatMessage(@PathVariable int chatUserId, HttpSession session){
+    public int readChatMessage(@PathVariable int chatUserId, @RequestParam("chatId") int chatId, HttpSession session){
         int userId = (int)session.getAttribute("userId");
-        return chatService.readChatMessage(userId, chatUserId);
+        return chatService.readChatMessage(userId, chatUserId, chatId);
     }
 
     @GetMapping("/request/{chatUserId}")

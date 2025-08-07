@@ -42,10 +42,11 @@ public class ChatRepository {
         return sql.insert("Chat.sendChatMessage", chatMessageDTO);
     }
 
-    public int readChatMessage(int userId, int chatUserId) {
+    public int readChatMessage(int userId, int chatUserId, int chatId) {
         ChatMessageDTO chatMessageDTO = new ChatMessageDTO();
-        chatMessageDTO.setRequestUserId(userId);
-        chatMessageDTO.setResponseUserId(chatUserId);
+        chatMessageDTO.setRequestUserId(chatUserId);
+        chatMessageDTO.setResponseUserId(userId);
+        chatMessageDTO.setId(chatId);
         return sql.update("Chat.readChatMessage", chatMessageDTO);
     }
 

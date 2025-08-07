@@ -1,7 +1,82 @@
 const header = {
-    notReadCount : 0,
+    chatUnread : 0,
     chatUser : null
 };
+const stompClient = new StompJs.Client({
+  webSocketFactory: () => new SockJS("/ws-stomp"),
+});
+stompClient.onWebSocketError = (error) => {
+  console.error("Error with websocket", error);
+};
+stompClient.onStompError = (frame) => {
+  console.error("Broker reported error: " + frame.headers["message"]);
+  console.error("Additional details: " + frame.body);
+};
+stompClient.onDisconnect = (frame) => {
+  console.error("Server Disconnect");
+};
+stompClient.onConnect = (frame) => {
+  stompClient.subscribe("/user/queue/main", (msg) => {
+    const data = JSON.parse(msg.body);
+    switch (msg.headers.type) {
+      case "FRIEND_ONLINE":
+        $(`div[data-user-id="${data.sender}"] .online-indicator`).addClass("online");
+        break;
+      case "FRIEND_OFFLINE":
+        $(`div[data-user-id="${data.sender}"] .online-indicator`).removeClass("online");
+        break;
+      case "SEND_MESSAGE":
+      case "RECEIVE_MESSAGE":
+        if(msg.headers.type == "RECEIVE_MESSAGE"){
+            if(header.chatUser && header.chatUser.id == data.requestUserId){
+                createChatItem(data);
+                stompClient.publish({
+                    destination: "/app/chat",
+                    headers: { type : "READ_MESSAGE" },
+                    body: JSON.stringify({
+                        chatUserId : header.chatUser.id,
+                        chatId : header.chatUser.lastChatId,
+                    })
+                });
+            }else{
+                header.chatUnread++;
+                console.log("현재 채팅을 볼수없는 상태임");
+                //$(`div[data-user-id="${header.chatUser.id}"]`)
+            }
+        }
+        break;
+      case "READ_RECEIPT":
+        break;
+    }
+  });
+};
+$(function () {
+    //stompClient.heartbeat.outgoing = 20000; // 20초마다 서버로 하트비트 신호 전송
+    //stompClient.heartbeat.incoming = 20000;
+    stompClient.activate();
+    $.ajax({
+      url: "/chat/friends",
+      type: "GET",
+      contentType: "application/json",
+      success: function (data) {
+        //user.status가 3이면 임시 요청 중
+        //user.status가 2이면 임시 친구
+        //user.status가 1이면 친구
+        //user.status가 0 이나 -1이면 친구 아님
+        data.forEach((user) => {
+          createMessageItem(user);
+          if(user.status <= 2){
+            header.chatUnread += user.unreadCount;
+          }else{
+            header.chatUnread++;
+          }
+        });
+      },
+      error: function (xhr, status, error) {
+        console.error("채팅 기록을 가져오는 중 오류 발생:", error);
+      },
+    });
+  });
 
 function togglePopup(popupId, show) {
   document.getElementById(popupId).classList.toggle("hide", !show);
@@ -81,6 +156,14 @@ function openChat(element) {
       data.forEach((chat) => {
         createChatItem(chat);
       });
+      stompClient.publish({
+          destination: "/app/chat",
+          headers: { type : "READ_MESSAGE" },
+          body: JSON.stringify({
+              chatUserId : header.chatUser.id,
+              chatId : header.chatUser.lastChatId,
+          })
+      });
     },
     error: function (xhr, status, error) {
       console.error("채팅 기록을 가져오는 중 오류 발생:", error);
@@ -89,6 +172,7 @@ function openChat(element) {
 }
 
 function closeChat() {
+    header.chatUser = null;
   togglePopup("chat-popup", false);
   togglePopup("message-popup", true);
 }
@@ -114,20 +198,16 @@ function formatDateTime(datetimeString) {
 function sendMessage() {
     const inputElement = document.getElementById("chat-input");
     const message = inputElement.value.trim();
-    if (message) {
-      inputElement.value = "";
-        $.ajax({
-            url: `/chat/send/${header.chatUserId}`,
-            type: "GET",
-            contentType: "application/json",
-            data: { content : message },
-            success: function (data) {
-                createChatItem(data);
-            },
-            error: function (xhr, status, error) {
-              console.error("채팅 송신 오류 발생:", error);
-            },
-          });
+    if (message && header.chatUser) {
+        inputElement.value = "";
+        stompClient.publish({
+            destination: "/app/chat",
+            headers: { type : "SEND_MESSAGE" },
+            body: JSON.stringify({
+                chatUserId : header.chatUser.id,
+                content : message
+            })
+        });
     }
 }
 
@@ -187,54 +267,3 @@ function handleFriendRequest(action, buttonElement) {
 
   messageItem.style.display = "none"; //요청 처리 후 삭제? 일단 accept나 decline은 삭제해야됨
 }
-
-const stompClient = new StompJs.Client({
-  webSocketFactory: () => new SockJS("/ws-stomp"),
-});
-stompClient.onWebSocketError = (error) => {
-  console.error("Error with websocket", error);
-};
-stompClient.onStompError = (frame) => {
-  console.error("Broker reported error: " + frame.headers["message"]);
-  console.error("Additional details: " + frame.body);
-};
-stompClient.onDisconnect = (frame) => {
-  console.error("Server Disconnect");
-};
-stompClient.onConnect = (frame) => {
-  stompClient.subscribe("/user/queue/main", (msg) => {
-    const map = JSON.parse(msg.body);
-    switch (map.type) {
-      case "FRIEND_ONLINE":
-        $(`div[data-user-id="${map.sender}"] .online-indicator`).addClass("online");
-        break;
-      case "FRIEND_OFFLINE":
-        $(`div[data-user-id="${map.sender}"] .online-indicator`).removeClass("online");
-        break;
-    }
-  });
-};
-
-$(function () {
-    stompClient.activate();
-    $.ajax({
-      url: "/chat/friends",
-      type: "GET",
-      contentType: "application/json",
-      success: function (data) {
-
-      //user.status가 3이면 임시 요청 중
-          //user.status가 2이면 임시 친구
-          //user.status가 1이면 친구
-          //user.status가 0 이나 -1이면 친구 아님
-        data.forEach((user) => {
-          createMessageItem(user);
-          //const sender = 0;
-          //$(`div[data-user-id="${sender}"]`).append("asdf");
-        });
-      },
-      error: function (xhr, status, error) {
-        console.error("채팅 기록을 가져오는 중 오류 발생:", error);
-      },
-    });
-  });
