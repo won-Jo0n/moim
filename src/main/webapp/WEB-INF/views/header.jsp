@@ -150,8 +150,7 @@
             <div class="user-info">
               <img
                 id="chat-user-avatar"
-                src="https://via.placeholder.com/32"
-                alt="프로필 이미지"
+                src=""
               />
               <div class="user-details">
                 <h2 id="chat-user-name">상대방 닉네임</h2>

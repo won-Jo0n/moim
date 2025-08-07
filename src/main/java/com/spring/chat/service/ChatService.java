@@ -28,8 +28,8 @@ public class ChatService {
         return null;
     }
 
-    public int readChatMessage(int userId, int chatUserId) {
-        return chatRepository.readChatMessage(userId, chatUserId);
+    public int readChatMessage(int userId, int chatUserId, int chatId) {
+        return chatRepository.readChatMessage(userId, chatUserId, chatId);
     }
 
     public void requestChat(int userId, int chatUserId) {

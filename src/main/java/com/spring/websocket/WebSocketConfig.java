@@ -16,6 +16,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         config.enableSimpleBroker("/topic", "/queue");
         config.setApplicationDestinationPrefixes("/app");
         config.setUserDestinationPrefix("/user");
+
     }
 
     @Override
@@ -23,5 +24,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/ws-stomp")
                 .setHandshakeHandler(new CustomHandShakeHandler())
                 .withSockJS();
+
     }
 }
