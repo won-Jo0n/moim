@@ -12,12 +12,12 @@
     <form action="/review/review" method="post">
     <!--
         <input type="hidden" name="groupId" value="${sessionScope.groupId}" />
-        <input type="hidden" name="groupScheduleId" value="groupScheduleId" />
-        <input type="hidden" name="reviewer" value="reviewer" />
-        <input type="hidden" name="userId" value="userId" />
+        <input type="hidden" name="groupScheduleId" value="${groupScheduleId}" />
+        <input type="hidden" name="reviewer" value="${reviewer}" />
+        <input type="hidden" name="userId" value="${userId}" />
    -->
         <textarea name="content" placeholder="평가를 남겨주세요!"></textarea>
-        <label >별점</label>
+        <label>별점</label>
         <label>
             <input type="radio" name="score" value="1" required/>
             1점
@@ -42,5 +42,6 @@
 
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
     </form>
+
 </body>
 </html>
