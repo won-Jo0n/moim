@@ -25,6 +25,7 @@ public class ReviewController {
     private final GroupService groupService;
     private final UserService userService;
 
+    // 리뷰 작성 폼
     @GetMapping("/review")
     public String reviewForm(@RequestParam int id, Model model){
         List<UserScheduleDTO> scheduleList =  groupService.getScheduleGroupByGroup(id);
@@ -41,20 +42,21 @@ public class ReviewController {
         return "/review/review";
     }
 
+
+    // 리뷰 제출 처리
     @PostMapping("/review")
-    public String review(@ModelAttribute ReviewDTO reviewDTO){
+    public String review(@ModelAttribute ReviewDTO reviewDTO) {
         int result = reviewSerivce.createReview(reviewDTO);
-
-        if(result >= 1){
-            return "";
-        }else{
-            return "";
+        if (result >= 1) {
+            return "redirect:/group/detail?id=" + reviewDTO.getGroupId();
+        } else {
+            return "error"; // 또는 error 페이지로 리턴
         }
-
     }
 
 
-    @GetMapping("/groupschedule/detail")
+    // 모임 일정 상세 //review 본인 제외한 user 넘기기
+    @GetMapping("/group/groupScheduleDetail")
     public String scheduleDetail(@RequestParam("groupScheduleId") int groupScheduleId,
                                  HttpSession session,
                                  Model model) {
@@ -66,7 +68,7 @@ public class ReviewController {
         model.addAttribute("targetList", targetList);
         model.addAttribute("reviewer", reviewer);
 
-        return "/groupschedule/detail";
+        return "/group/groupScheduleDetail";
     }
 
 }
