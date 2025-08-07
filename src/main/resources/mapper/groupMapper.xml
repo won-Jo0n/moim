@@ -62,4 +62,19 @@
         SELECT * FROM groupSchedule WHERE id=#{groupScheduleId};
     </select>
 
+    <select id="getScheduleGroupByGroup" parameterType="int" resultType="userSchedule">
+        SELECT * FROM userschedule WHERE groupScheduleId = #{groupScheduleId};
+    </select>
+
+    <update id="acceptSchedule" parameterType="schedule">
+        UPDATE userschedule SET status = 1
+        WHERE userId = #{userId}
+        AND groupScheduleId = #{groupScheduleId};
+    </update>
+
+    <update id="endRecruit" parameterType="int">
+        UPDATE groupschedule SET status = 1
+        WHERE id = #{id};
+    </update>
+
 </mapper>

@@ -1,5 +1,6 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"  isELIgnored="false"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -25,7 +26,7 @@
         </tr>
     </thead>
     <tbody>
-        <c:forEach var="report" items="${reportList}">
+        <c:forEach var="report" items="${reportPage}">
             <tr onclick="handleReportClick(${report.id})">
                 <td>${report.id}</td>
                 <td>${reportUserMap[report.id]}</td>
@@ -38,11 +39,30 @@
                     </c:choose>
                 </td>
                 <td>${report.title}</td>
-                <td>${report.reportedAt}</td>
+                <td>
+                    <fmt:formatDate value="${report.reportedAt}" pattern="yyyy-MM-dd"/>
+                </td>
             </tr>
         </c:forEach>
     </tbody>
 </table>
+
+<div class="pagination">
+    <c:if test="${pageInfo.currentPage > 1}">
+        <a href="/admin/report?page=${pageInfo.currentPage - 1}">이전</a>
+    </c:if>
+
+    <c:forEach begin="1" end="${pageInfo.totalPage}" var="pageNumber">
+        <a href="/admin/report?page=${pageNumber}" class="${pageNumber eq pageInfo.currentPage ? 'active' : ''}">
+            ${pageNumber}
+        </a>
+    </c:forEach>
+
+    <c:if test="${pageInfo.currentPage < pageInfo.totalPage}">
+        <a href="/admin/report?page=${pageInfo.currentPage + 1}">다음</a>
+    </c:if>
+</div>
+
 <script>
     const handleReportClick = (reportId)=>{
         location.href="/report/detail?id="+reportId;

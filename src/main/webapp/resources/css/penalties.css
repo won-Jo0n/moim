@@ -105,3 +105,25 @@ a {
 a:hover {
     text-decoration: underline;
 }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+}
+.pagination a {
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    color: #4b5563;
+    transition: background-color 0.2s, color 0.2s;
+}
+.pagination a:hover,
+.pagination a.active {
+    background-color: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}

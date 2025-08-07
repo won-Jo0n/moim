@@ -3,6 +3,8 @@ package com.spring.group.service;
 import com.spring.group.dto.GroupDTO;
 import com.spring.group.dto.GroupScheduleDTO;
 import com.spring.group.repository.GroupRepository;
+import com.spring.schedule.dto.ScheduleDTO;
+import com.spring.user.dto.UserScheduleDTO;
 import com.spring.userjoingroup.dto.UserJoinGroupDTO;
 import com.spring.userjoingroup.repository.UserJoinGroupRepository;
 import lombok.RequiredArgsConstructor;
@@ -70,5 +72,17 @@ public class GroupService {
 
     public GroupScheduleDTO getGroupScheduleDetail(int groupScheduleId) {
         return groupRepository.getGroupScheduleDetail(groupScheduleId);
+    }
+
+    public List<UserScheduleDTO> getScheduleGroupByGroup(int groupScheduleId) {
+        return groupRepository.getScheduleGroupByGroup(groupScheduleId);
+    }
+
+    public void acceptSchedule(ScheduleDTO scheduleDTO) {
+        groupRepository.acceptSchedule(scheduleDTO);
+    }
+
+    public void endRecruit(int id) {
+        groupRepository.endRecruit(id);
     }
 }
