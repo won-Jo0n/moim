@@ -19,7 +19,6 @@ public class ChatController {
     public List<ChatUserDTO> getChatFriends(HttpSession session)
     {
         int userId = (int)session.getAttribute("userId");
-        List<ChatUserDTO> chatUserDTOList = chatService.getChatFriends(userId);
         return chatService.getChatFriends(userId);
     }
 
@@ -30,7 +29,7 @@ public class ChatController {
     }
 
     @GetMapping("/send/{chatUserId}")
-    public int sendChatMessage(@PathVariable int chatUserId, @RequestParam("content") String content, HttpSession session){
+    public ChatMessageDTO sendChatMessage(@PathVariable int chatUserId, @RequestParam("content") String content, HttpSession session){
         int userId = (int)session.getAttribute("userId");
         return chatService.sendChatMessage(userId, chatUserId, content);
     }

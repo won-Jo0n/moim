@@ -1,3 +1,8 @@
+const header = {
+    notReadCount : 0,
+    chatUser : null
+};
+
 function togglePopup(popupId, show) {
   document.getElementById(popupId).classList.toggle("hide", !show);
 }
@@ -53,20 +58,29 @@ function createMessageItem(user) {
     );
 }
 function openChat(element) {
-  const userId = $(element).attr("data-user-id");
+  const elem = $(element);
+  const imgSrc = elem.find(".avatar > img").attr("src");
+  const nickName = elem.find(".user-info > h3").text();
+  const mbti = elem.find(".user-info > p").text();
+  const userId = elem.attr("data-user-id");
+  header.chatUserId = userId;
   $.ajax({
-    url: `/chat/messages/${userId}`, // 서버 엔드포인트로 변경
+    url: `/chat/messages/${userId}`,
     type: "GET",
     contentType: "application/json",
     success: function (data) {
       $("#chat-body").empty();
       togglePopup("message-popup", false);
       togglePopup("chat-popup", true);
-
-      console.log("채팅 기록:", data);
-
-      document.getElementById("chat-user-name").textContent = data.userName;
-      document.getElementById("chat-user-avatar").src = data.userAvatar;
+      document.getElementById("chat-user-avatar").src = imgSrc;
+      document.getElementById("chat-user-name").textContent = nickName;
+      document.getElementById("chat-user-mbti").textContent = mbti;
+      header.chatUser = {
+        id : userId,
+      };
+      data.forEach((chat) => {
+        createChatItem(chat);
+      });
     },
     error: function (xhr, status, error) {
       console.error("채팅 기록을 가져오는 중 오류 발생:", error);
@@ -79,38 +93,67 @@ function closeChat() {
   togglePopup("message-popup", true);
 }
 
-function sendMessage() {
-  const inputElement = document.getElementById("chat-input");
-  const message = inputElement.value.trim();
-  if (message) {
-    const chatBody = document.getElementById("chat-body");
-    const messageElement = document.createElement("div");
-    messageElement.classList.add("chat-message", "sent");
-    messageElement.textContent = message;
-    chatBody.prepend(messageElement);
-    inputElement.value = "";
-    /*
-    $.ajax({
-        url: "/chat/send/1",
-        // 1을 buttonElement의 부모에 있는 data-user-id로 보내줘야한다
-        type: "GET",
-        contentType: "application/json",
-        success: function (data) {
-          togglePopup("message-popup", false);
-          togglePopup("chat-popup", true);
-
-          console.log("채팅 기록:", data);
-
-          document.getElementById("chat-user-name").textContent = data.userName;
-          document.getElementById("chat-user-avatar").src = data.userAvatar;
-        },
-        error: function (xhr, status, error) {
-          console.error("채팅 기록을 가져오는 중 오류 발생:", error);
-        },
-      });
-      */
+function formatDateTime(datetimeString) {
+  const date = datetimeString.substring(0, 10);
+  const time = datetimeString.substring(11, 16);
+  const [hours, minutes] = time.split(':');
+  let formattedHours = parseInt(hours);
+  const ampm = formattedHours >= 12 ? '오후' : '오전';
+  if (formattedHours > 12) {
+    formattedHours -= 12;
+  } else if (formattedHours === 0) {
+    formattedHours = 12;
   }
+  const formattedTime = `${ampm} ${formattedHours}:${minutes}`;
+  return {
+    date: date,
+    time: formattedTime
+  };
 }
+
+function sendMessage() {
+    const inputElement = document.getElementById("chat-input");
+    const message = inputElement.value.trim();
+    if (message) {
+      inputElement.value = "";
+        $.ajax({
+            url: `/chat/send/${header.chatUserId}`,
+            type: "GET",
+            contentType: "application/json",
+            data: { content : message },
+            success: function (data) {
+                createChatItem(data);
+            },
+            error: function (xhr, status, error) {
+              console.error("채팅 송신 오류 발생:", error);
+            },
+          });
+    }
+}
+
+function createChatItem(chat) {
+        const chatBody = document.getElementById("chat-body");
+        const messageClass = chat.requestUserId == header.chatUser.id ? "received" : "sent";
+        const readStatusClass = chat.isRead == 1 ? "" : "hide";
+        const chatDateTime = formatDateTime(chat.sendAt);
+        header.chatUser.lastChatId = chat.id;
+        const chatDate = chatDateTime.date;
+        if(chatDate != header.chatUser.lastChatDate){
+            //chatDate 날짜 div 새로 생성해야되므로 chatItem에 붙일 문자열 생성
+            header.chatUser.lastChatDate = chatDate;
+        }
+        const chatItem = `
+        <div class="chat-message-wrapper ${messageClass}" data-chat-id="${chat.id}">
+            <div class="chat-message">${chat.content}</div>
+            <div class="chat-message-status">
+                <span class="read-status ${readStatusClass}"><i class="fas fa-check"></i></span>
+                <span class="message-time">${chatDateTime.time}</span>
+            </div>
+        </div>
+        `;
+        chatBody.insertAdjacentHTML("beforeend", chatItem);
+        chatBody.scrollTop = chatBody.scrollHeight;
+      }
 
 function handleFriendRequest(action, buttonElement) {
     console.log(buttonElement);
@@ -163,10 +206,10 @@ stompClient.onConnect = (frame) => {
     const map = JSON.parse(msg.body);
     switch (map.type) {
       case "FRIEND_ONLINE":
-        console.log(map.sender);
+        $(`div[data-user-id="${map.sender}"] .online-indicator`).addClass("online");
         break;
       case "FRIEND_OFFLINE":
-        console.log(map.sender);
+        $(`div[data-user-id="${map.sender}"] .online-indicator`).removeClass("online");
         break;
     }
   });

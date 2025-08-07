@@ -164,11 +164,46 @@ body {
   border-bottom: 1px solid #dbdbdb;
 }
 .message-container-header h2 {
-  margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
   color: #262626;
 }
+
+.message-container-header .user-info {
+        display: flex;
+        align-items: center;
+      }
+
+      .message-container-header .user-info img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+
+      /* 닉네임과 MBTI를 묶어서 정렬하는 컨테이너 */
+      .user-details {
+        display: flex;
+        flex-direction: column; /* 세로로 정렬 */
+      }
+
+      .message-container-header .user-info h2 {
+        margin: 0;
+        font-size: 0.95rem;
+        font-weight: bold;
+        color: #262626;
+      }
+
+      /* MBTI 정보 스타일 */
+      .user-info #chat-user-mbti {
+        margin: 0;
+        text-align: center;
+        font-weight: bold;
+        font-size: 0.8rem;
+        color: #8e8e8e;
+      }
+
+
 .close-btn {
   cursor: pointer;
   font-size: 1.2rem;
@@ -408,17 +443,23 @@ body {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  margin-right: 10px;
+  margin-right:10px;
 }
+
 #chat-popup .message-container-header .user-info h3 {
-  font-size: 1rem;
+    margin-left:10px;
+    font-size: 0.75rem;
+    color: #8e8e8e;
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap;
 }
 .chat-body {
   flex: 1;
   padding: 15px;
   overflow-y: auto;
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
 }
 .chat-footer {
   padding: 10px 15px;
@@ -441,25 +482,60 @@ body {
   margin-left: 10px;
   cursor: pointer;
 }
-.chat-message {
-  max-width: 70%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 15px;
-  line-height: 1.4;
-}
-.chat-message.sent {
-  background-color: #0095f6;
-  color: white;
-  align-self: flex-end;
-  border-bottom-right-radius: 5px;
-}
-.chat-message.received {
-  background-color: #efefef;
-  color: #262626;
-  align-self: flex-start;
-  border-bottom-left-radius: 5px;
-}
+/* 채팅 메시지 스타일 */
+      .chat-message-wrapper {
+        display: flex;
+        margin-bottom: 10px;
+        max-width: 100%;
+      }
+
+      .chat-message-wrapper.sent {
+        align-self: flex-end;
+        flex-direction: row-reverse;
+      }
+
+      .chat-message-wrapper.received {
+        align-self: flex-start;
+      }
+
+      .chat-message {
+        max-width: 70%;
+        padding: 10px;
+        border-radius: 15px;
+        line-height: 1.4;
+        word-wrap: break-word;
+      }
+
+      .chat-message-wrapper.sent .chat-message {
+        background-color: #0095f6;
+        color: white;
+        border-bottom-right-radius: 5px;
+      }
+
+      .chat-message-wrapper.received .chat-message {
+        background-color: #efefef;
+        color: #262626;
+        border-bottom-left-radius: 5px;
+      }
+
+      /* 날짜 및 읽음 상태 스타일 */
+      .chat-message-status {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        font-size: 0.7rem;
+        color: #8e8e8e;
+        margin: 0 8px;
+      }
+
+      .read-status {
+        font-weight: bold;
+        color: #0095f6;
+      }
+
+      .chat-message-wrapper.sent .read-status {
+        text-align: right;
+      }
 
 @media (min-width: 768px) and (max-width: 1023px) {
   body {
