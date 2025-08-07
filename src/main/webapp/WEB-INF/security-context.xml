@@ -19,6 +19,7 @@
         <intercept-url pattern="/oauthLogin" access="permitAll" />
         <intercept-url pattern="/user/**" access="permitAll" />
         <intercept-url pattern="/naver/**" access="permitAll" />
+        <intercept-url pattern="/ws-stomp/**" access="permitAll" />
         <intercept-url pattern="/favicon.ico" access="permitAll" />
         <intercept-url pattern="/.well-known/**" access="permitAll" />
         <intercept-url pattern="/admin/**" access="hasRole('ADMIN')" />

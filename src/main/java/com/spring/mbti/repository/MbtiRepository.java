@@ -1,6 +1,7 @@
 package com.spring.mbti.repository;
 
 import com.spring.admin.dto.ChartCountDTO;
+import com.spring.admin.dto.MbtiGroupActivityAverageDTO;
 import com.spring.admin.dto.UserAgeRatioDTO;
 import com.spring.admin.dto.UserGenderRatioDTO;
 import com.spring.mbti.dto.MbtiDTO;
@@ -33,5 +34,13 @@ public class MbtiRepository {
 
     public List<UserAgeRatioDTO> getCountGroupByAge() {
         return sql.selectList("Mbti.getCountGroupByAge");
+    }
+
+    public MbtiDTO getMbti(int id) {
+        return sql.selectOne("Mbti.getMbti", id);
+    }
+
+    public List<MbtiGroupActivityAverageDTO> getMbtiGroupActivity() {
+        return sql.selectList("Mbti.getMbtiGroupActivity");
     }
 }
