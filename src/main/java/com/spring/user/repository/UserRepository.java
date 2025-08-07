@@ -45,4 +45,12 @@ public class UserRepository {
     public void createUserSchedule(UserScheduleDTO userScheduleDTO) {
         sql.insert("User.createUserSchedule",userScheduleDTO);
     }
+
+    public UserScheduleDTO isJoin(UserScheduleDTO userScheduleDTO) {
+        return sql.selectOne("User.isJoin", userScheduleDTO);
+    }
+
+    public void cancleUserSchedule(UserScheduleDTO result) {
+        sql.update("User.cancleUserSchedule", result);
+    }
 }

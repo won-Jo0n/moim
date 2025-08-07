@@ -1,0 +1,99 @@
+/* 전체 레이아웃 */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5; /* 약간 어두운 배경 */
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
+
+.chart-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* 차트 사이의 간격 */
+    justify-content: center; /* 가운데 정렬 */
+    max-width: 1200px; /* 전체 컨테이너 최대 너비 */
+    margin: auto;
+}
+
+.chart-container h2 {
+    width: 100%;
+    text-align: center;
+    color: #444;
+    margin-bottom: 20px;
+    font-size: 2em;
+    font-weight: 600;
+}
+
+/* 각 차트 블록 */
+.chart-block {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    flex: 1 1 300px; /* 유연한 크기 조절 */
+    min-width: 300px;
+}
+
+.chart-block:hover {
+    transform: translateY(-5px); /* 호버 시 살짝 위로 */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* 헤더 */
+.chart-header {
+    background-color: #4a69bd; /* 헤더 색상 */
+    color: #fff;
+    padding: 18px 25px;
+    font-size: 1.25em;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #3c56a1;
+}
+
+/* 토글 아이콘 */
+.toggle-icon {
+    font-size: 1.5em;
+    transition: transform 0.3s ease;
+}
+
+/* 토글 상태 */
+.chart-block.open .toggle-icon {
+    transform: rotate(180deg); /* 열릴 때 아이콘 회전 */
+}
+
+/* 차트 내용 */
+.chart-content {
+    padding: 20px;
+    max-height: 500px; /* 초기 높이 (차트가 보임) */
+    transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out;
+}
+
+/* 닫힌 상태의 차트 내용 */
+.chart-block:not(.open) .chart-content {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    overflow: hidden;
+}
+
+/* 캔버스 */
+canvas {
+    width: 100% !important;
+    height: auto !important;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .chart-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    .chart-block {
+        width: 90%;
+    }
+}

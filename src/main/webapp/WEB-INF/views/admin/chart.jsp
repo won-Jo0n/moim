@@ -3,7 +3,7 @@
 <html>
 <head>
     <title>차트 시각화</title>
-    <link rel="stylesheet" href="../resources/css/chart2.css"
+    <link rel="stylesheet" href="../resources/css/chart.css"
 </head>
 <body>
 
