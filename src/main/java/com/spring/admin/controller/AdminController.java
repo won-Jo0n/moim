@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Controller
@@ -25,7 +26,20 @@ public class AdminController {
     private final MbtiService mbtiService;
 
     @GetMapping("/")
-    public String admin(){
+    public String admin(Model model){
+
+
+        // 대기중인 신고 개수
+        Long pendingReportsCount = adminService.countNotprocessReports();
+        model.addAttribute("pendingReportsCount", pendingReportsCount);
+
+        // 총 사용자 수
+        Long totalUserCount = adminService.countAllUsers();
+        model.addAttribute("totalUserCount", totalUserCount);
+
+        // 오늘 제재한 사용자 수
+        int todayPenaltiesCount = adminService.countTodayPenalties();
+        model.addAttribute("todayPenaltiesCount", todayPenaltiesCount);
         return "/admin/admin";
     }
 
@@ -36,8 +50,11 @@ public class AdminController {
                          @RequestParam(value = "page", defaultValue = "1") int page,
                          @RequestParam(value = "size", defaultValue = "10") int size){
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
         Map<Integer, String> reportUserName = new HashMap<>();
         Map<Integer, String> reportedUserName = new HashMap<>();
+        Map<Integer, String> formattedDates  = new HashMap<>();
 
         Map<String, Object> params = new HashMap<>();
         params.put("limit", size);
@@ -53,6 +70,7 @@ public class AdminController {
 
             reportUserName.put(reportDTO.getId(),reportUser.getNickName());
             reportedUserName.put(reportDTO.getId(),reportedUser.getNickName());
+            formattedDates.put(reportDTO.getId(), reportDTO.getReportedAt().format(formatter));
         }
 
         long totalReports = adminService.countAllReports();
@@ -68,6 +86,7 @@ public class AdminController {
         model.addAttribute("reportUserMap", reportUserName);
         model.addAttribute("reportedUserMap", reportedUserName);
         model.addAttribute("pageInfo", pageInfo);
+        model.addAttribute("formattedDates", formattedDates);
 
         return "/admin/report";
     }
@@ -256,6 +275,13 @@ public class AdminController {
 
         // JSP 페이지로 이동
         return "/admin/chart";
+    }
+
+    @GetMapping("/processReport")
+    public String processReport(@RequestParam int id){
+        adminService.processReport(id);
+
+        return "redirect:/admin/report";
     }
 
 
