@@ -36,13 +36,31 @@
 
     <select id="getPaginatedReports" resultType="report">
         SELECT * FROM report
-        WHERE status = 1
         ORDER BY reportedAt DESC
         LIMIT #{limit} OFFSET #{offset}
     </select>
 
     <select id="countAllReports" resultType="long">
         SELECT COUNT(*) FROM report;
+    </select>
+
+    <select id="countNotprocessReports" resultType="Long">
+        SELECT COUNT(*) FROM report
+        WHERE status = 1;
+    </select>
+
+    <select id="countAllUsers" resultType="Long">
+        SELECT COUNT(*) FROM user WHERE status != -1;
+    </select>
+
+    <update id="processReport" parameterType="int">
+        UPDATE report SET status = 0 WHERE id = #{id};
+    </update>
+
+    <select id="countTodayPenalties" resultType="int">
+        SELECT COUNT(*)
+        FROM report
+        WHERE DATE(reportedAt) = CURDATE();
     </select>
 
 </mapper>

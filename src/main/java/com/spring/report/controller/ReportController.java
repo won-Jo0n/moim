@@ -9,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.format.DateTimeFormatter;
+
 @Controller
 @RequestMapping("/report")
 @RequiredArgsConstructor
@@ -40,12 +42,17 @@ public class ReportController {
 
     @GetMapping("/detail")
     public String reportDetail(@RequestParam("id") int reportId, Model model){
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         ReportDTO reportDTO = reportService.getReportById(reportId);
         model.addAttribute("report", reportDTO);
+
         UserDTO reportUser = userService.getUserById(reportDTO.getReportUser());
         UserDTO reportedUser = userService.getUserById(reportDTO.getReportedUser());
+        String reportedTime = reportDTO.getReportedAt().format(dateTimeFormatter);
+
         model.addAttribute("reportUser", reportUser);
         model.addAttribute("reportedUser", reportedUser);
+        model.addAttribute("reportedTime", reportedTime);
 
         return "/report/detail";
     }
