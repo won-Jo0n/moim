@@ -51,13 +51,17 @@
     </c:choose>
 
 
-    <c:if test="${isDone}">
-        <c:forEach var= "schedule" items="${scheduleList}">
-            <c:if test="${sessionScope.userId eq schedule.userId && schedule.status eq 1}">
-                <a href="/review/review?id=${groupScheduleDTO.id}">리뷰하러 가기</a>
-            </c:if>
-        </c:forEach>
-    </c:if>
+    <form action="/review/review" method="get">
+        <input type="hidden" name="groupScheduleId" value="${groupScheduleDTO.id}" />
+        <select name="userId">
+            <c:forEach var="schedule" items="${scheduleList}">
+                <c:if test="${schedule.userId ne sessionScope.userId && schedule.status eq 1}">
+                    <option value="${schedule.userId}">${schedule.nickName}</option>
+                </c:if>
+            </c:forEach>
+        </select>
+        <button type="submit">리뷰하러 가기</button>
+    </form>
 
     <script>
         const clickJoinSchedule = (joinUser, scheduleId)=>{
