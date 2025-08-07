@@ -32,7 +32,9 @@ public class ProfileController {
         //List<MbtiBoardDTO> boardList = boardRepository.findByAuthor(targetUserId);
 
         model.addAttribute("profile", profile);
+
        // model.addAttribute("boardList", boardList);
+
         model.addAttribute("isOwner", targetUserId.equals(sessionUserId));
 
         return "profile/profile";
