@@ -115,7 +115,16 @@
                             <td>${schedule.startTime}</td>
                             <td>${schedule.endTime}</td>
                             <td>${schedule.maxUserNum}</td>
-                            <td>${schedule.status}</td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${schedule.status eq 0}">
+                                        모집중
+                                    </c:when>
+                                    <c:when test="${schedule.status eq 1}">
+                                        모집 완료
+                                    </c:when>
+                                </c:choose>
+                            </td>
                         </tr>
                     </c:forEach>
                 </tbody>

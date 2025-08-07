@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor
@@ -34,5 +35,34 @@ public class AdminRepository {
 
     public void clearPenalti(int id) {
         sql.update("Admin.clearPenalti", id);
+    }
+
+
+    public List<UserDTO> getPaginatedPenalties(Map<String, Object> params) {
+        return sql.selectList("Admin.getPaginatedPenalties", params);
+    }
+
+    public List<ReportDTO> getPaginatedReports(Map<String, Object> params) {
+        return sql.selectList("Admin.getPaginatedReports", params);
+    }
+
+    public long countAllReports() {
+        return sql.selectOne("Admin.countAllReports");
+    }
+
+    public void porcessReport(int id) {
+        sql.update("Admin.processReport", id);
+    }
+
+    public Long countNotprocessReports() {
+        return sql.selectOne("Admin.countNotprocessReports");
+    }
+
+    public Long countAllUsers() {
+        return sql.selectOne("Admin.countAllUsers");
+    }
+
+    public int countTodayPenalties() {
+        return sql.selectOne("Admin.countTodayPenalties");
     }
 }

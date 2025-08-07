@@ -27,6 +27,8 @@
         <typeAlias type="com.spring.admin.dto.UserAgeRatioDTO" alias="userAgeRatio"></typeAlias>
         <typeAlias type="com.spring.group.dto.GroupScheduleDTO" alias="groupSchedule"></typeAlias>
         <typeAlias type="com.spring.user.dto.UserScheduleDTO" alias="userSchedule"></typeAlias>
+        <typeAlias type="com.spring.schedule.dto.ScheduleDTO" alias="schedule"></typeAlias>
+        <typeAlias type="com.spring.admin.dto.MbtiGroupActivityAverageDTO" alias="mbtiActivity"></typeAlias>
 
     </typeAliases>
 </configuration>

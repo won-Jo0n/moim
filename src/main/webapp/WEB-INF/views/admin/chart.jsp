@@ -1,87 +1,70 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-    <title>차트 시각화</title>
-    <link rel="stylesheet" href="../resources/css/chart.css"
+    <title>통계 차트</title>
+    <link rel="stylesheet" href="../resources/css/chart.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+<div class="chart-dashboard">
+    <h1 class="dashboard-title">📊 사용자 통계</h1>
 
-<div id="chartArea" class="chart-container">
-    <h2>통계 차트</h2>
-</div>
+    <div class="chart-grid">
+        <c:forEach var="chart" items="${statsList}" varStatus="status">
+            <div class="chart-card">
+                <h2 class="chart-title">${chart.title}</h2>
+                <canvas id="chart-${status.index}" class="chart-canvas"></canvas>
+            </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    const statsList = JSON.parse('${statsJson}');
-    const chartArea = document.getElementById('chartArea');
-
-    statsList.forEach((chartData, index) => {
-        // 차트 래퍼
-        const chartBlock = document.createElement('div');
-        chartBlock.className = 'chart-block';
-
-        // 헤더 + 드롭다운 버튼
-        const chartHeader = document.createElement('div');
-        chartHeader.className = 'chart-header';
-        chartHeader.innerHTML = `
-            ${chartData.title}
-            <span class="toggle-icon">&#9660;</span>
-        `;
-        chartBlock.appendChild(chartHeader);
-
-        // 차트 콘텐츠 (캔버스)
-        const chartContent = document.createElement('div');
-        chartContent.className = 'chart-content';
-        const canvas = document.createElement('canvas');
-        canvas.id = 'chart-' + index;
-        chartContent.appendChild(canvas);
-        chartBlock.appendChild(chartContent);
-        chartArea.appendChild(chartBlock);
-
-        // 토글 기능
-        chartHeader.addEventListener('click', () => {
-            chartBlock.classList.toggle('open');
-        });
-
-        // 차트 그리기
-        const ctx = canvas.getContext('2d');
-        new Chart(ctx, {
-            type: chartData.type,
-            data: {
-                labels: chartData.labels,
-                datasets: [{
-                    label: chartData.label,
-                    data: chartData.data,
-                    backgroundColor: chartData.backgroundColors,
-                    borderColor: chartData.borderColors,
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    title: {
-                        display: false
+            <script>
+                const ctx${status.index} = document.getElementById('chart-${status.index}').getContext('2d');
+                new Chart(ctx${status.index}, {
+                    type: '${chart.type}',
+                    data: {
+                        labels: [
+                            <c:forEach var="label" items="${chart.labels}" varStatus="i">
+                                "${label}"<c:if test="${!i.last}">,</c:if>
+                            </c:forEach>
+                        ],
+                        datasets: [{
+                            label: '${chart.label}',
+                            data: [
+                                <c:forEach var="d" items="${chart.data}" varStatus="i">
+                                    ${d}<c:if test="${!i.last}">,</c:if>
+                                </c:forEach>
+                            ],
+                            backgroundColor: [
+                                <c:forEach var="bg" items="${chart.backgroundColors}" varStatus="i">
+                                    "${bg}"<c:if test="${!i.last}">,</c:if>
+                                </c:forEach>
+                            ],
+                            borderColor: [
+                                <c:forEach var="bc" items="${chart.borderColors}" varStatus="i">
+                                    "${bc}"<c:if test="${!i.last}">,</c:if>
+                                </c:forEach>
+                            ],
+                            borderWidth: 1
+                        }]
                     },
-                    legend: {
-                        display: true,
-                        position: chartData.type === 'pie' ? 'bottom' : 'top'
-                    }
-                },
-                scales: chartData.type === 'bar' || chartData.type === 'line' ? {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            precision: 0
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'bottom'
+                            }
+                        },
+                        scales: {
+                            y: { beginAtZero: true },
+                            x: { grid: { display: false } }
                         }
                     }
-                } : {}
-            }
-        });
-    });
-</script>
-
-
+                });
+            </script>
+        </c:forEach>
+    </div>
+</div>
 </body>
 </html>

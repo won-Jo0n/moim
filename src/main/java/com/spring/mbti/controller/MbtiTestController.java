@@ -26,10 +26,10 @@ public class MbtiTestController {
         return "MbtiFormViews/mbtiTest";
     }
 
-
     @PostMapping("/submit")
     public String mbtiTestSubmit(@RequestParam Map<String, String> map,
                                  HttpSession session, Model model) {
+
         List<MbtiTestDTO> questionList = mbtiTestService.findAllQuestions();
         String[] answers = new String[questionList.size()];
         for (int i = 0; i < answers.length; i++) {
@@ -71,16 +71,13 @@ public class MbtiTestController {
         result.append(p > j ? "P" : "J");
         String mbtiResult = result.toString();
 
-        // 세션에서 loginId 꺼내서 → userId 조회
-        Object loginIdObj = session.getAttribute("loginId");
-        if (loginIdObj != null) {
-            String loginId = loginIdObj.toString(); // ex) "ngchan03"
-            int userId = mbtiTestService.findUserIdByLoginId(loginId); // 핵심
+        Object userIdObj = session.getAttribute("userId");
+        if (userIdObj != null) {
+            int userId = (userIdObj instanceof Integer) ? (int) userIdObj : Integer.parseInt(userIdObj.toString());
             mbtiTestService.calculateMbti(userId, scoreList);
         }
 
         model.addAttribute("mbtiResult", mbtiResult);
         return "MbtiFormViews/mbtiFormHome";
     }
-
 }
