@@ -1,15 +1,12 @@
 package com.spring.profile.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class ProfileDTO {
-    private int userId;
-    private String loginId;
+    private Long userId;
     private String nickname;
     private String mbti;
-    private int rating;
+    private int rating; // 1~5
     private String joinedAt;
 }

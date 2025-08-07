@@ -125,6 +125,11 @@
     <h1>${board.title}</h1>
     <div class="meta">작성자: ${board.authorInfo} | 작성일: ${board.formattedCreatedAt}</div>
     <div class="content">${board.content}</div>
+    <c:if test="${board.fileId != 0}">
+        <img style="width: 20%" src="/file/preview?fileId=${board.fileId}" alt="이미지"
+             onerror="this.src='/resources/images/default-thumb.jpg'" />
+    </c:if>
+
 
     <div class="actions">
         <c:if test="${isAuthor}">

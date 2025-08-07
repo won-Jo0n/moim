@@ -6,6 +6,7 @@ import com.spring.mbti.service.MbtiBoardCommentService;
 import com.spring.mbti.service.MbtiBoardService;
 import com.spring.user.dto.UserDTO;
 import com.spring.user.service.UserService;
+import com.spring.utils.FileUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +26,7 @@ public class MbtiBoardController {
     private final UserService userService;
     private final MbtiBoardService mbtiBoardService;
     private final MbtiBoardCommentService commentService;
+    private final FileUtil fileUtil;
 
     @GetMapping
     public String boardList(Model model) {
@@ -43,14 +45,12 @@ public class MbtiBoardController {
                        HttpSession session,
                        @RequestParam(value = "mbtiBoardFile", required = false)MultipartFile mbtiBoardFile) throws IOException {
 
-        if(!mbtiBoardFile.isEmpty()){
-            String originalFileName = mbtiBoardFile.getOriginalFilename();
-            String uuid = UUID.randomUUID().toString();
-            String storedFileName = uuid + "_" + originalFileName;
-            String savePath = "C:/upload/" + storedFileName;
-
-            mbtiBoardFile.transferTo(new File(savePath));
-
+        System.out.println(mbtiBoardFile.getOriginalFilename());
+        if (!mbtiBoardFile.isEmpty()) {
+            int fileId = fileUtil.fileSave(mbtiBoardFile);
+            boardDTO.setFileId(fileId);
+        } else {
+            boardDTO.setFileId(0);
         }
         int userId = (int) session.getAttribute("userId");
         System.out.println(userId);

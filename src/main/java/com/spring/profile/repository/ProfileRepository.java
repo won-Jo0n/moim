@@ -1,9 +1,9 @@
-// ✅ 클래스 이름: ProfileRepository (인터페이스 X)
 package com.spring.profile.repository;
 
+import com.spring.mbti.dto.MbtiBoardDTO;
 import com.spring.profile.dto.ProfileDTO;
 import lombok.RequiredArgsConstructor;
-import org.apache.ibatis.session.SqlSession;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,19 +11,18 @@ import java.util.List;
 @Repository
 @RequiredArgsConstructor
 public class ProfileRepository {
-
-    private final SqlSession sql;
-    private final String namespace = "com.spring.profile.repository.ProfileRepository.";
+    private final SqlSessionTemplate sql;
 
     public ProfileDTO findByUserId(Long userId) {
-        return sql.selectOne(namespace + "findByUserId", userId);
+        return sql.selectOne("Profile.findByUserId", userId);
     }
 
-    public void updateProfile(ProfileDTO dto) {
-        sql.update(namespace + "updateProfile", dto);
+    public List<ProfileDTO> findFriendsByUserId(Long userId) {
+        return sql.selectList("Profile.findFriendsByUserId", userId);
     }
 
-    public List<ProfileDTO> findAcceptedFriends(Long userId) {
-        return sql.selectList(namespace + "findAcceptedFriends", userId);
+    public MbtiBoardDTO findById(Long id) {
+        return sql.selectOne("MbtiBoard.findById", id);
     }
+
 }

@@ -1,39 +1,40 @@
-<mapper namespace="com.spring.profile.repository.ProfileRepository">
-    <!-- findByUserId -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Profile">
+
     <select id="findByUserId" resultType="com.spring.profile.dto.ProfileDTO">
-        SELECT
-        u.id AS userId,
+        SELECT u.id AS userId,
         u.nickname,
         m.mbti,
-        m.description,
         u.rating,
-        u.createdAt AS joinedAt
+        u.point,
+        DATE_FORMAT(u.createdAt, '%Y-%m-%d') AS joinedAt
         FROM user u
         LEFT JOIN mbti m ON u.mbtiId = m.id
         WHERE u.id = #{userId}
     </select>
 
-    <!-- updateProfile -->
-    <update id="updateProfile">
-        UPDATE user
-        SET nickname = #{nickname}
-        WHERE id = #{userId}
-    </update>
-
-    <!-- findAcceptedFriends -->
-    <select id="findAcceptedFriends" resultType="com.spring.profile.dto.ProfileDTO">
-        SELECT
-        u.id AS userId,
-        u.nickname,
-        m.mbti,
-        m.description,
-        u.rating,
-        u.createdAt AS joinedAt
+    <select id="findFriendsByUserId" resultMap="FriendMap">
+        SELECT u.id AS userId, u.nickname, m.mbti
         FROM friends f
-        JOIN user u ON f.friendId = u.id
+        JOIN user u ON f.responseUserId = u.id
         LEFT JOIN mbti m ON u.mbtiId = m.id
-        WHERE f.userId = #{userId}
-        AND f.status = 1
-        ORDER BY f.createdAt ASC
+        WHERE f.requestUserId = #{userId} AND f.status = 'ACCEPTED'
+        ORDER BY f.id DESC
     </select>
+
+    <resultMap id="FriendMap" type="com.spring.profile.dto.ProfileDTO">
+        <result property="userId" column="userId"/>
+        <result property="nickname" column="nickname"/>
+        <result property="mbti" column="mbti"/>
+    </resultMap>
+
+    <select id="findById" resultType="com.spring.mbti.dto.MbtiBoardDTO">
+        SELECT * FROM mbtiboard WHERE id = #{id}
+    </select>
+
+
 </mapper>

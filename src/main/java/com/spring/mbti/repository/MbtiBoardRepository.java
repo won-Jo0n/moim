@@ -4,6 +4,7 @@ import com.spring.mbti.dto.MbtiBoardCommentDTO;
 import com.spring.mbti.dto.MbtiBoardDTO;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSession;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MbtiBoardRepository {
 
-    private final SqlSession sql;
+    private final SqlSessionTemplate sql;
 
     private static final String NAMESPACE = "MbtiBoard."; // 매퍼 네임스페이스
 
@@ -43,6 +44,10 @@ public class MbtiBoardRepository {
         return sql.selectList(NAMESPACE + "findCommentsByBoardId", boardId);
     }
 
-    public List<MbtiBoardDTO> findByAuthor(Long targetUserId) {
+    public List<MbtiBoardDTO> findByAuthor(Long userId) {
+        return sql.selectList("MbtiBoard.findByAuthor", userId);
     }
+
+
+
 }
