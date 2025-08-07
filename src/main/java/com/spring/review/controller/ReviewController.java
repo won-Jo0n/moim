@@ -53,19 +53,6 @@ public class ReviewController {
 
     }
 
-    @GetMapping("/review")
-    public String reviewForm(@RequestParam("groupScheduleId") int groupScheduleId,
-                             @RequestParam("userId") int userId,
-                             HttpSession session,
-                             Model model) {
-        int reviewer = (int) session.getAttribute("userId");
-
-        model.addAttribute("groupScheduleId", groupScheduleId);
-        model.addAttribute("targetList", userId);
-        model.addAttribute("reviewer", reviewer);
-
-        return "/review/review";
-    }
 
     @GetMapping("/groupschedule/detail")
     public String scheduleDetail(@RequestParam("groupScheduleId") int groupScheduleId,
