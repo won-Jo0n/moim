@@ -1,0 +1,65 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to right, #fdfbfb, #ebedee);
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+}
+
+.chart-dashboard {
+    max-width: 70%;
+    margin: 40px auto;
+    padding: 20px;
+    border-radius: 16px;
+    background-color: #fff;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-title {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #e1306c;
+    margin-bottom: 40px;
+}
+
+.chart-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+}
+
+
+.chart-card {
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.chart-card:hover {
+    transform: translateY(-5px);
+}
+
+.chart-title {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 20px;
+}
+
+.chart-canvas {
+    width: 100% !important;
+    height: 250px !important;
+}
+
+@media screen and (max-width: 768px) {
+    .chart-grid {
+        grid-template-columns: 1fr; /* 모바일: 1열 */
+    }
+}

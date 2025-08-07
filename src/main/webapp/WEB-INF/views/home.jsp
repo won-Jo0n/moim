@@ -17,6 +17,7 @@
     <a href="/group/create">그룹생성</a>
     <a href="/mbti/test/">mbti 테스트</a>
     <a href="${pageContext.request.contextPath}/profile">마이페이지</a>
+    <a href="/user/delete?id=${sessionScope.userId}">탈퇴하기</a>
     <a href="/mbti/board">게시판</a>
 </body>
 </html>

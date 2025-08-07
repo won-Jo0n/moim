@@ -8,6 +8,7 @@ import com.spring.user.service.UserService;
 import com.spring.userdetails.CustomerUserDetails;
 import com.spring.utils.FileUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,17 +73,7 @@ public class UserController {
         return "redirect:/";
     }
 
-    @PostMapping("/login")
-    public String login(@ModelAttribute UserDTO userDTO, HttpSession session){
-        UserDTO loginUser = userService.login(userDTO);
-        if(loginUser != null){
-            session.setAttribute("userId", loginUser.getId());
-            return "home";
-        }else{
-            System.out.println("실패");
-            return "index";
-        }
-    }
+
 
     @GetMapping("/logout")
     public String logout(HttpSession session){
@@ -113,9 +105,9 @@ public class UserController {
     }
 
     @GetMapping("/delete")
-    public String delete(HttpSession session){
-        int userId = (int) session.getAttribute("userId");
-        userService.delete(userId);
+    public String delete(@RequestParam("id")int id,HttpSession session){
+        userService.delete(id);
+        session.invalidate();
 
         return "redirect:/";
     }

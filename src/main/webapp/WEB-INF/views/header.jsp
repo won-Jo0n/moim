@@ -83,7 +83,7 @@
     <div id="message-container">
       <div
         id="message-btn"
-        onclick="openTab('friends'); togglePopup('message-popup', true);"
+        onclick="togglePopup('message-popup', true);"
       >
         <i class="far fa-comments"></i>
       </div>
@@ -98,38 +98,38 @@
         </div>
         <div class="tabs">
           <button
-            id="tab-friends"
+            id="tab-button-0"
             class="tab-button active"
-            onclick="openTab('friends')"
+            onclick="openTab('0')"
           >
             친구
           </button>
           <button
-            id="tab-non-friends"
+            id="tab-button-1"
             class="tab-button"
-            onclick="openTab('non-friends')"
+            onclick="openTab('1')"
           >
             임시
           </button>
           <button
-            id="tab-search"
+            id="tab-button-2"
             class="tab-button"
-            onclick="openTab('search')"
+            onclick="openTab('2')"
           >
             검색
           </button>
         </div>
-        <div id="friends-tab" class="tab-content">
+        <div id="tab-0" class="tab-content">
           <div class="message-list">
             <p class="empty-message-box">친구가 없습니다.</p>
           </div>
         </div>
-        <div id="non-friends-tab" class="tab-content hide">
+        <div id="tab-1" class="tab-content hide">
           <div class="message-list">
             <p class="empty-message-box">임시 친구가 없습니다.</p>
           </div>
         </div>
-        <div id="search-tab" class="tab-content hide">
+        <div id="tab-2" class="tab-content hide">
           <div class="search-controls">
             <button class="random-match-btn">랜덤 매칭 시작</button>
             <div class="search-box">
@@ -147,12 +147,19 @@
 
       <div id="chat-popup" class="common-popup hide">
         <div class="message-container-header">
-          <div class="user-info">
-            <img id="chat-user-avatar" src="" />
-            <h3 id="chat-user-name"></h3>
+            <div class="user-info">
+              <img
+                id="chat-user-avatar"
+                src="https://via.placeholder.com/32"
+                alt="프로필 이미지"
+              />
+              <div class="user-details">
+                <h2 id="chat-user-name">상대방 닉네임</h2>
+                <p id="chat-user-mbti">MBTI 정보</p>
+              </div>
+            </div>
+            <i class="fas fa-xmark close-btn" onclick="closeChat()"></i>
           </div>
-          <i class="fas fa-xmark close-btn" onclick="closeChat()"></i>
-        </div>
         <div id="chat-body" class="chat-body"></div>
         <div class="chat-footer">
           <input type="text" id="chat-input" placeholder="메시지 보내기..." />

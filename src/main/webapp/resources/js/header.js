@@ -1,7 +1,11 @@
+const header = {
+    notReadCount : 0,
+    chatUser : null
+};
+
 function togglePopup(popupId, show) {
   document.getElementById(popupId).classList.toggle("hide", !show);
 }
-
 function openTab(tabName) {
   document
     .querySelectorAll(".tab-content")
@@ -10,77 +14,78 @@ function openTab(tabName) {
     .querySelectorAll(".tab-button")
     .forEach((btn) => btn.classList.remove("active"));
 
-  document.getElementById(tabName + "-tab").classList.remove("hide");
-  document.getElementById("tab-" + tabName).classList.add("active");
+  document.getElementById("tab-"+tabName).classList.remove("hide");
+  document.getElementById("tab-button-" + tabName).classList.add("active");
 }
-
-function createMessageItem(friendStatus, friend) {
-  return $(`<div class="message-item"
-                    data-user-id='${friend.id}'
-                    ${
-                      friendStatus == "FRIENDS" || friendStatus == "TEMPORARY"
-                        ? " onclick='openChat(this)'"
-                        : ""
-                    }
-                  >
-                    <div class="avatar">
-                      <img src="${friend.avatar}" />
-                      ${
-                        friendStatus == "FRIENDS"
-                          ? "<div class='online-indicator'></div>"
-                          : ""
-                      }
-                    </div>
-                    <div class="user-info">
-                      <h3>${friend.nickName}</h3>
-                      <p>${friend.mbti}</p>
-                    </div>
-                    <div class="main-text">
-                      <p>${friend.msg}</p>
-                    </div>
-                    ${
-                      friendStatus == "FRIENDS" || friendStatus == "TEMPORARY"
-                        ? "<div class='message-info'><span>" +
-                          friend.lastSend +
-                          "</span><div>" +
-                          friend.notread +
-                          "</div></div>"
-                        : ""
-                    }
-                    ${
-                      friendStatus == "PENDING"
-                        ? "<button class='accept-btn' onclick='handleFriendRequest('accept', this)'><i class='fas fa-check'></i></button><button class='decline-btn' onclick='handleFriendRequest('decline', this)'><i class='fas fa-xmark'></i></button>"
-                        : ""
-                    }
-                    ${
-                      friendStatus == "NONE"
-                        ? "<button class='request-btn' onclick='handleFriendRequest('request', this)'>채팅</button>"
-                        : ""
-                    }
-              </div>`);
+function createMessageItem(user) {
+    const messageList= $("#tab-" + ((Math.min(2, Math.max(0, user.status)) + 2) % 3) + " .message-list");
+    messageList.append(
+      $(`<div class="message-item"
+            data-user-id='${user.id}'
+            ${user.status <= 2 ? " onclick='openChat(this)'" : ""}
+          >
+            <div class="avatar">
+              <img src="/file/preview/?id=${user.fileId}" />
+              ${user.status == 1 ? "<div class='online-indicator'></div>" : ""}
+            </div>
+            <div class="user-info">
+              <h3>${user.nickName}</h3>
+              <p>${user.mbti}</p>
+            </div>
+            <div class="main-text">
+              <p>${user.lastChatContent}</p>
+            </div>
+            ${
+              user.status <= 1
+                ? "<div class='message-info'><span>" +
+                  user.lastChatTime +
+                  "</span><div>" +
+                  (user.unreadCount > 0 ? user.unreadCount : "") +
+                  "</div></div>"
+                : ""
+            }
+            ${
+              user.status == 3
+                ? "<button class='accept-btn' onclick='handleFriendRequest('accept', this)'><i class='fas fa-check'></i></button><button class='decline-btn' onclick='handleFriendRequest('decline', this)'><i class='fas fa-xmark'></i></button>"
+                : ""
+            }
+            ${
+              user.status <= 0
+                ? "<button class='request-btn' onclick='handleFriendRequest('request', this)'>채팅</button>"
+                : ""
+            }
+      </div>`)
+    );
 }
-
 function openChat(element) {
-  $("#chat-body").empty();
-  /*
+  const elem = $(element);
+  const imgSrc = elem.find(".avatar > img").attr("src");
+  const nickName = elem.find(".user-info > h3").text();
+  const mbti = elem.find(".user-info > p").text();
+  const userId = elem.attr("data-user-id");
+  header.chatUserId = userId;
   $.ajax({
-    url: "/chat/friends", // 서버 엔드포인트로 변경
+    url: `/chat/messages/${userId}`,
     type: "GET",
     contentType: "application/json",
     success: function (data) {
+      $("#chat-body").empty();
       togglePopup("message-popup", false);
       togglePopup("chat-popup", true);
-
-      console.log("채팅 기록:", data);
-
-      document.getElementById("chat-user-name").textContent = data.userName;
-      document.getElementById("chat-user-avatar").src = data.userAvatar;
+      document.getElementById("chat-user-avatar").src = imgSrc;
+      document.getElementById("chat-user-name").textContent = nickName;
+      document.getElementById("chat-user-mbti").textContent = mbti;
+      header.chatUser = {
+        id : userId,
+      };
+      data.forEach((chat) => {
+        createChatItem(chat);
+      });
     },
     error: function (xhr, status, error) {
       console.error("채팅 기록을 가져오는 중 오류 발생:", error);
     },
   });
-  */
 }
 
 function closeChat() {
@@ -88,40 +93,70 @@ function closeChat() {
   togglePopup("message-popup", true);
 }
 
-function sendMessage() {
-  const inputElement = document.getElementById("chat-input");
-  const message = inputElement.value.trim();
-  if (message) {
-    const chatBody = document.getElementById("chat-body");
-    const messageElement = document.createElement("div");
-    messageElement.classList.add("chat-message", "sent");
-    messageElement.textContent = message;
-    chatBody.prepend(messageElement);
-    inputElement.value = "";
-    /*
-    $.ajax({
-        url: "/chat/send/1",
-        // 1을 buttonElement의 부모에 있는 data-user-id로 보내줘야한다
-        type: "GET",
-        contentType: "application/json",
-        success: function (data) {
-          togglePopup("message-popup", false);
-          togglePopup("chat-popup", true);
-
-          console.log("채팅 기록:", data);
-
-          document.getElementById("chat-user-name").textContent = data.userName;
-          document.getElementById("chat-user-avatar").src = data.userAvatar;
-        },
-        error: function (xhr, status, error) {
-          console.error("채팅 기록을 가져오는 중 오류 발생:", error);
-        },
-      });
-      */
+function formatDateTime(datetimeString) {
+  const date = datetimeString.substring(0, 10);
+  const time = datetimeString.substring(11, 16);
+  const [hours, minutes] = time.split(':');
+  let formattedHours = parseInt(hours);
+  const ampm = formattedHours >= 12 ? '오후' : '오전';
+  if (formattedHours > 12) {
+    formattedHours -= 12;
+  } else if (formattedHours === 0) {
+    formattedHours = 12;
   }
+  const formattedTime = `${ampm} ${formattedHours}:${minutes}`;
+  return {
+    date: date,
+    time: formattedTime
+  };
 }
 
+function sendMessage() {
+    const inputElement = document.getElementById("chat-input");
+    const message = inputElement.value.trim();
+    if (message) {
+      inputElement.value = "";
+        $.ajax({
+            url: `/chat/send/${header.chatUserId}`,
+            type: "GET",
+            contentType: "application/json",
+            data: { content : message },
+            success: function (data) {
+                createChatItem(data);
+            },
+            error: function (xhr, status, error) {
+              console.error("채팅 송신 오류 발생:", error);
+            },
+          });
+    }
+}
+
+function createChatItem(chat) {
+        const chatBody = document.getElementById("chat-body");
+        const messageClass = chat.requestUserId == header.chatUser.id ? "received" : "sent";
+        const readStatusClass = chat.isRead == 1 ? "" : "hide";
+        const chatDateTime = formatDateTime(chat.sendAt);
+        header.chatUser.lastChatId = chat.id;
+        const chatDate = chatDateTime.date;
+        if(chatDate != header.chatUser.lastChatDate){
+            //chatDate 날짜 div 새로 생성해야되므로 chatItem에 붙일 문자열 생성
+            header.chatUser.lastChatDate = chatDate;
+        }
+        const chatItem = `
+        <div class="chat-message-wrapper ${messageClass}" data-chat-id="${chat.id}">
+            <div class="chat-message">${chat.content}</div>
+            <div class="chat-message-status">
+                <span class="read-status ${readStatusClass}"><i class="fas fa-check"></i></span>
+                <span class="message-time">${chatDateTime.time}</span>
+            </div>
+        </div>
+        `;
+        chatBody.insertAdjacentHTML("beforeend", chatItem);
+        chatBody.scrollTop = chatBody.scrollHeight;
+      }
+
 function handleFriendRequest(action, buttonElement) {
+    console.log(buttonElement);
   const messageItem = buttonElement.closest(".message-item");
   const userName = messageItem.querySelector("h3").textContent;
     /*
@@ -171,89 +206,35 @@ stompClient.onConnect = (frame) => {
     const map = JSON.parse(msg.body);
     switch (map.type) {
       case "FRIEND_ONLINE":
-        console.log(map.sender);
+        $(`div[data-user-id="${map.sender}"] .online-indicator`).addClass("online");
         break;
       case "FRIEND_OFFLINE":
-        console.log(map.sender);
+        $(`div[data-user-id="${map.sender}"] .online-indicator`).removeClass("online");
         break;
     }
   });
 };
 
 $(function () {
-  stompClient.activate();
-    /*
+    stompClient.activate();
     $.ajax({
       url: "/chat/friends",
       type: "GET",
       contentType: "application/json",
       success: function (data) {
-        console.log(data); //후처리 해야함
 
-        const messageList = $("#" + tabName + "-tab .message-list");
-
-          const data = [
-            {
-              id: 0,
-              nickName: "권택준",
-              mbti: "ISFP",
-              msg: "ㅇㅇㅇㅇㅇㅇㅇㅇㅇ",
-            },
-            {
-              id: 1,
-              nickName: "권택준1",
-              mbti: "ENTJ",
-              msg: "ㅇㅇㅇㅇㅇㅇㅇㅇㅇdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
-            },
-            {
-              id: 2,
-              nickName: "권택준2",
-              mbti: "ISFP",
-              msg: "ㅇㅇㅇㅇㅇㅇㅇㅇㅇ",
-            },
-            {
-              id: 3,
-              nickName: "권택준3",
-              mbti: "ISFP",
-              msg: "ㅇㅇㅇㅇㅇㅇㅇㅇㅇ",
-            },
-            {
-              id: 4,
-              nickName: "권택준4",
-              mbti: "ISFP",
-              msg: "ㅇㅇㅇㅇㅇㅇㅇㅇㅇ",
-            },
-            {
-              id: 5,
-              nickName: "권택준5",
-              mbti: "ISFP",
-              msg: "ㅇㅇㅇㅇㅇㅇㅇㅇㅇ",
-            },
-            {
-              id: 6,
-              nickName: "권택준6",
-              mbti: "ISFP",
-              msg: "ㅇㅇㅇㅇㅇㅇㅇㅇㅇ",
-            },
-          ];
-
-          data.forEach((friend) => {
-            if (tabName == "friends")
-              messageList.append(createMessageItem("FRIENDS", friend));
-            else if (tabName == "non-friends") {
-              messageList.append(createMessageItem("PENDING", friend));
-              messageList.append(createMessageItem("TEMPORARY", friend));
-            } else {
-              messageList.append(createMessageItem("NONE", friend));
-            }
-
-            //const sender = 0;
-            //$(`div[data-user-id="${sender}"]`).append("asdf");
-          });
+      //user.status가 3이면 임시 요청 중
+          //user.status가 2이면 임시 친구
+          //user.status가 1이면 친구
+          //user.status가 0 이나 -1이면 친구 아님
+        data.forEach((user) => {
+          createMessageItem(user);
+          //const sender = 0;
+          //$(`div[data-user-id="${sender}"]`).append("asdf");
+        });
       },
       error: function (xhr, status, error) {
         console.error("채팅 기록을 가져오는 중 오류 발생:", error);
       },
     });
-    */
-});
+  });

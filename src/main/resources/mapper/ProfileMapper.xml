@@ -5,6 +5,7 @@
 
 <mapper namespace="Profile">
 
+
     <select id="findByUserId" resultType="com.spring.profile.dto.ProfileDTO">
         SELECT u.id AS userId,
         u.nickname,

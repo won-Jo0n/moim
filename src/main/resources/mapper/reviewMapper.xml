@@ -3,8 +3,46 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="Review">
+
     <insert id="create" parameterType="review">
         INSERT INTO review(groupId,groupScheduleId,reviewer,userId,content,score)
         VALUES(#{groupId},#{groupScheduleId},#{reviewer},#{userId},#{content},#{score});
     </insert>
+
+    <select id="findParticipantsForReview" parameterType="int" resultType="review">
+        SELECT us.userId, us.groupScheduleId, u.nickName
+        FROM userschedule us
+        JOIN user u ON us.userId = u.id
+        WHERE us.groupScheduleId = #{groupScheduleId}
+        AND us.status = 1
+    </select>
+
+    <select id="findAverageScoreByUser" parameterType="int" resultType="double">
+        SELECT AVG(score)
+        FROM review
+        WHERE userId = #{userId} AND status = 1
+    </select>
+
+    <update id="updateUserRating" parameterType="map">
+        UPDATE user
+        SET rating = #{rating}
+        WHERE id = #{userId}
+    </update>
+
+    <select id="findParticipantsExceptReviewer" parameterType="map" resultType="user">
+        SELECT u.id, u.nickName
+        FROM userschedule us
+        JOIN user u ON us.userId = u.id
+        WHERE us.groupScheduleId = #{groupScheduleId}
+        AND us.status = 1
+        AND u.id != #{reviewer}
+    </select>
+
+
+
+
+
+
+
+
 </mapper>

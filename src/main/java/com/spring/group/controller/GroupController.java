@@ -5,12 +5,14 @@ import com.spring.group.dto.GroupScheduleDTO;
 import com.spring.group.service.GroupService;
 import com.spring.groupboard.dto.GroupBoardDTO;
 import com.spring.groupboard.service.GroupBoardService;
+import com.spring.mbti.dto.MbtiDTO;
+import com.spring.mbti.service.MbtiService;
+import com.spring.schedule.dto.ScheduleDTO;
 import com.spring.user.dto.UserDTO;
 import com.spring.user.dto.UserScheduleDTO;
 import com.spring.user.service.UserService;
 import com.spring.userjoingroup.dto.UserJoinGroupDTO;
 import com.spring.userjoingroup.repository.UserJoinGroupRepository;
-import com.spring.userjoingroup.service.UserJoinGroupService;
 import com.spring.utils.FileUtil;
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,10 +35,10 @@ import java.util.Map;
 public class GroupController {
     private final GroupService groupService;
     private final UserJoinGroupRepository userJoinGroupRepository;
-    private final UserJoinGroupService userJoinGroupService;
     private final GroupBoardService groupBoardService;
     private final FileUtil fileUtil;
     private final UserService userService;
+    private final MbtiService mbtiService;
 
     // 그룹 생성 작성폼
     @GetMapping("/create")
@@ -124,6 +128,10 @@ public class GroupController {
         for(GroupScheduleDTO g : groupScheduleList){
             UserDTO leader = userService.getUserById(g.getScheduleLeader());
             groupScheduleLeader.put(g.getId(), leader.getNickName());
+            if(g.getStartTime().isBefore(LocalDateTime.now())){
+                groupService.endRecruit(g.getId());
+                g.setStatus(1);
+            }
         }
         model.addAttribute("groupScheduleLeaderNickName", groupScheduleLeader);
 
@@ -148,9 +156,7 @@ public class GroupController {
                          @RequestParam("city") String city,
                          @RequestParam("country") String country,
                          @RequestParam("maxUserNum") int maxUserNum) {
-
         String location = city + " " + country;
-
         GroupDTO groupDTO = new GroupDTO(); // 수정할 그룹 정보 세팅
         groupDTO.setId(id);
         groupDTO.setTitle(title);
@@ -161,7 +167,6 @@ public class GroupController {
         groupService.update(groupDTO); // DB 업데이트
         return "redirect:/group/detail?groupId=" + id;
     }
-
 
     // 그룹 삭제
     @PostMapping("/delete")
@@ -197,31 +202,78 @@ public class GroupController {
         return "redirect:/group/detail?groupId=" + groupScheduleDTO.getGroupId();
     }
 
-    @GetMapping("/groupScheduleDetail")
-    public String groupScheduleDetail(@RequestParam("id") int groupScheduleId, Model model){
-        GroupScheduleDTO groupScheduleDTO = groupService.getGroupScheduleDetail(groupScheduleId);
-        UserDTO user = userService.getUserById(groupScheduleDTO.getScheduleLeader());
 
+    @GetMapping("/groupScheduleDetail")
+    public String groupScheduleDetail(@RequestParam("id") int groupScheduleId, Model model, HttpSession session){
+        GroupScheduleDTO groupScheduleDTO = groupService.getGroupScheduleDetail(groupScheduleId);
+        List<UserScheduleDTO> scheduleList = groupService.getScheduleGroupByGroup(groupScheduleId);
+        List<ScheduleDTO> scheduleDTOList = new ArrayList<>();
+
+        for(UserScheduleDTO user: scheduleList){
+            UserDTO joinUser = userService.getUserById(user.getUserId());
+            MbtiDTO mbti = mbtiService.getMbti(joinUser.getMbtiId());
+
+            ScheduleDTO schedule = new ScheduleDTO();
+            schedule.setNickName(joinUser.getNickName());
+            schedule.setStatus(user.getStatus());
+            schedule.setRegion(joinUser.getRegion());
+            schedule.setUserId(joinUser.getId());
+            schedule.setGroupScheduleId(user.getGroupScheduleId());
+            schedule.setRating(joinUser.getRating());
+            schedule.setMbti(mbti.getMbti());
+            scheduleDTOList.add(schedule);
+        }
+
+        UserDTO user = userService.getUserById(groupScheduleDTO.getScheduleLeader());
+        int userId = (int)session.getAttribute("userId");
+
+        UserScheduleDTO userScheduleDTO = new UserScheduleDTO();
+        userScheduleDTO.setGroupScheduleId(groupScheduleId);
+        userScheduleDTO.setUserId(userId);
+
+        if(groupScheduleDTO.getEndTime().isBefore(LocalDateTime.now())){
+            model.addAttribute("isDone", true);
+        }else{
+            model.addAttribute("isDone", false);
+        }
 
         model.addAttribute("groupScheduleDTO", groupScheduleDTO);
         model.addAttribute("leaderNickName", user.getNickName());
+        model.addAttribute("scheduleList", scheduleDTOList);
 
         return "/group/groupScheduleDetail";
-
     }
 
     @GetMapping("/scheduleJoin")
     public String groupScheduleJoin(@RequestParam("joinUserId") int joinUser,
                                     @RequestParam("scheduleId") int scheduleId){
-        UserScheduleDTO userScheduleDTO = new UserScheduleDTO();
 
+        UserScheduleDTO userScheduleDTO = new UserScheduleDTO();
         userScheduleDTO.setUserId(joinUser);
         userScheduleDTO.setGroupScheduleId(scheduleId);
 
         userService.createUserSchedule(userScheduleDTO);
 
-        return "#";
+        return "redirect:/group/groupScheduleDetail?id=" +  userScheduleDTO.getGroupScheduleId();
+    }
+
+    @GetMapping("/accept")
+    public String accept(@ModelAttribute ScheduleDTO scheduleDTO){
+        System.out.println("신청자: "+scheduleDTO.getUserId());
+        System.out.println("그룹일정 id: " + scheduleDTO.getGroupScheduleId());
+
+        groupService.acceptSchedule(scheduleDTO);
+
+        return "redirect:/group/groupScheduleDetail?id="+scheduleDTO.getGroupScheduleId();
 
     }
+
+    @GetMapping("/endRecruit")
+    public String endRecruit(@RequestParam("groupScheduleId") int id){
+        groupService.endRecruit(id);
+
+        return "redirect:/group/groupScheduleDetail?id="+id;
+    }
+
 
 }

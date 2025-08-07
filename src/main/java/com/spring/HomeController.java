@@ -1,7 +1,10 @@
 package com.spring;
 
 import com.spring.user.dto.UserDTO;
+import com.spring.user.service.UserService;
 import com.spring.userdetails.CustomerUserDetails;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -10,9 +13,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 
 @Controller
+@RequiredArgsConstructor
 public class HomeController {
+    private final UserService userService;
     @GetMapping("/")
     public String index(){
         return "index";
@@ -23,13 +29,22 @@ public class HomeController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomerUserDetails userDetails = (CustomerUserDetails) auth.getPrincipal();
         UserDTO loginUser = userDetails.getUserDTO();
-        System.out.println(loginUser.getLoginId());
+        if(loginUser.getStatus() == -1) return "redirect:/";
+
+        if (loginUser.getStatus() == 0 && loginUser.getBanEndTime() != null && loginUser.getBanEndTime().isAfter(LocalDateTime.now())) {
+            // 사용자에게 보낼 메시지 (예외 메시지)
+            String message = String.format("정지된 계정입니다. 제재 해제 시간: %s", loginUser.getBanEndTime());
+            throw new DisabledException(message); // 로그인 거부
+        }
+        if (loginUser.getStatus() == 0 && loginUser.getBanEndTime() != null && loginUser.getBanEndTime().isBefore(LocalDateTime.now())) {
+            // 사용자 상태를 정상으로 되돌리는 로직
+            loginUser.setStatus(1);
+            loginUser.setBanEndTime(null);
+            userService.updateUserStatus(loginUser); // DB에 업데이트
+        }
+
         session.setAttribute("userId", loginUser.getId());
 
-        String loginId = userDetails.toString();
-        if(userDetails == null){
-            System.out.println("null");
-        }
         model.addAttribute("loginUser", loginUser);
         return "home";
     }

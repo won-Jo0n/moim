@@ -42,6 +42,7 @@ public class ProfileController {
         model.addAttribute("profile", profile);
         model.addAttribute("boardList", boardList);
         model.addAttribute("friendList", friendList);
+
         return "profile/profile";
     }
 

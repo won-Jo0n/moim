@@ -21,7 +21,13 @@ public class GroupBoardCommentService {
         return groupBoardCommentRepository.findByBoardId(boardId);
     }
 
+    public void update(int id, String content) {
+        groupBoardCommentRepository.update(id, content);
+    }
+
     public void delete(int id) {
         groupBoardCommentRepository.delete(id);
     }
+
+
 }
