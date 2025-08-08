@@ -28,5 +28,8 @@ public class FriendsRepository {
         return sql.update("Friends.updateFriend", friendsDTO);
     }
 
+    public int cancelFriend(FriendsDTO dto){
+        return sql.update("Friends.cancelFriend", dto);
+    }
 
 }

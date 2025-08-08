@@ -57,4 +57,6 @@ public class UserRepository {
     public int loginIdCheck(String loginId) {
         return sql.selectOne("User.loginIdCheck", loginId);
     }
+
+
 }

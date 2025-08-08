@@ -61,4 +61,6 @@ public class UserService {
     public int loginIdCheck(String loginId) {
         return userRepository.loginIdCheck(loginId);
     }
+
+
 }

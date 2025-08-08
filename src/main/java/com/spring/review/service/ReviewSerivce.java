@@ -13,22 +13,31 @@ import java.util.List;
 public class ReviewSerivce {
     private final ReviewRepository reviewRepository;
 
+    public boolean existsReview(int groupScheduleId, int reviewer, int userId) {
+        Integer cnt = reviewRepository.countByScheduleReviewerTarget(groupScheduleId, reviewer, userId);
+        return cnt != null && cnt > 0;
+    }
 
-    public int createReview(ReviewDTO reviewDTO) {
+    // 리뷰 저장 + 평점 업데이트
+    public int createReviewAndUpdateRating(ReviewDTO reviewDTO) {
+        // 리뷰 저장
         int result = reviewRepository.createReview(reviewDTO);
-
-        if(result>=1) {
-            Double avg = reviewRepository.findAverageScoreByUser(reviewDTO.getUserId());
-            if(avg!=null){
-                int rounded = (int) Math.round(avg);
-                reviewRepository.updateUserRating(reviewDTO.getUserId(), rounded);
+        // 저장 성공 시 평균 평점 계산 후 업데이트
+        if (result > 0) {
+            Double avgScore = reviewRepository.calculateAverageScore(reviewDTO.getUserId());
+            if (avgScore == null) {
+                avgScore = 0.0;
             }
+            int roundedScore = (int) Math.round(avgScore);
+            reviewRepository.updateUserRating(reviewDTO.getUserId(), roundedScore);
         }
-
         return result;
     }
+
 
     public List<UserDTO> findParticipantsExceptReviewer(int groupScheduleId, int reviewer) {
         return reviewRepository.findParticipantsExceptReviewer(groupScheduleId, reviewer);
     }
+
+
 }

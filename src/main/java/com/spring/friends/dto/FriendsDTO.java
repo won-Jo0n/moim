@@ -6,6 +6,6 @@ import java.sql.Timestamp;
 
 @Data
 public class FriendsDTO {
-    int id, requestUserId, responseUserId, status;
-    Timestamp requestedAt, responsedAt;
+    private int requestUserId, responseUserId, status;
+    private String requestedAt, responsedAt;
 }

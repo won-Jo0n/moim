@@ -40,6 +40,8 @@
     </style>
 </head>
 <body>
+    <form action="/group/create" method="post" enctype="multipart/form-data">
+
 
     <div class="container container-form my-5">
         <div class="card p-4">
