@@ -14,12 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
-import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -81,8 +78,8 @@ public class MbtiBoardController {
         Object sessionUserIdObj = session.getAttribute("userId");
         boolean isAuthor = false;
         if (sessionUserIdObj != null) {
-            Long sessionUserId = Long.valueOf(sessionUserIdObj.toString());
-            isAuthor = java.util.Objects.equals(board.getAuthor(), sessionUserId);
+            int sessionUserId = Integer.parseInt(sessionUserIdObj.toString()); // int로 맞춤
+            isAuthor = (board.getAuthor() == sessionUserId);
         }
 
         model.addAttribute("board", board);
@@ -116,13 +113,36 @@ public class MbtiBoardController {
     }
 
     @PostMapping("/edit")
-    public String update(@ModelAttribute MbtiBoardDTO boardDTO) {
+    public String update(@ModelAttribute MbtiBoardDTO boardDTO, HttpSession session) {
+        MbtiBoardDTO origin = mbtiBoardService.findById((long) boardDTO.getId());
+        if (origin == null) return "redirect:/mbti/board";
+
+        Object sessionUserIdObj = session.getAttribute("userId");
+        if (sessionUserIdObj == null) return "redirect:/user/login";
+
+        int sessionUserId = Integer.parseInt(sessionUserIdObj.toString());
+        if (origin.getAuthor() != sessionUserId) {
+            return "redirect:/mbti/board/detail/" + origin.getId();
+        }
+
         mbtiBoardService.update(boardDTO);
         return "redirect:/mbti/board/detail/" + boardDTO.getId();
     }
 
+
     @PostMapping("/delete/{id}")
-    public String delete(@PathVariable Long id) {
+    public String delete(@PathVariable Long id, HttpSession session) {
+        MbtiBoardDTO board = mbtiBoardService.findById(id);
+        if (board == null) return "redirect:/mbti/board";
+
+        Object sessionUserIdObj = session.getAttribute("userId");
+        if (sessionUserIdObj == null) return "redirect:/user/login";
+
+        int sessionUserId = Integer.parseInt(sessionUserIdObj.toString());
+        if (board.getAuthor() != sessionUserId) {
+            return "redirect:/mbti/board/detail/" + board.getId();
+        }
+
         mbtiBoardService.delete(id);
         return "redirect:/mbti/board";
     }

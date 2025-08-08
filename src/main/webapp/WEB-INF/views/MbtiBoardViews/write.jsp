@@ -38,14 +38,25 @@
 <body>
 <div class="form-container">
     <h1>게시글 작성</h1>
-    <form action="/mbti/board/write" method="post" enctype="multipart/form-data">
-    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+    <form action="/mbti/board/write" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
         <label>제목: <input type="text" name="title" required/></label>
         <label>내용: <textarea name="content" required></textarea></label>
-        <label for="file">파일 첨부</label>
-        <input type="file" id="mbtiBoardFile" name="mbtiBoardFile"> <br>
+        <label for="mbtiBoardFile">파일 첨부</label>
+        <input type="file" id="mbtiBoardFile" name="mbtiBoardFile" /> <br>
         <input type="submit" value="작성 완료"/>
     </form>
 </div>
+
+<script>
+function validateForm() {
+    const fileInput = document.getElementById("mbtiBoardFile");
+    if (!fileInput.value) {
+        alert("파일을 첨부해 주세요.");
+        return false;
+    }
+    return true;
+}
+</script>
 </body>
 </html>

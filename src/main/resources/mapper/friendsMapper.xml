@@ -23,15 +23,25 @@
         WHERE me.id = #{loginId} and friends.status = 0;
     </select>
     <insert id="addFriend" parameterType="friends">
-        INSERT INTO friends (requestUserId, responseUserId)
-        VALUES (#{requestUserId}, #{responseUserId})
+        INSERT INTO friends (requestUserId, responseUserId, status, requestedAt)
+        VALUES (#{requestUserId}, #{responseUserId}, 0, NOW())
         ON DUPLICATE KEY UPDATE
-        status = 0;
+        status = IF(status=1, status, 0),
+        requestedAt = IF(status=1, requestedAt, NOW()),
+        responsedAt = NULL
     </insert>
+
     <update id="updateFriend" parameterType="friends">
         UPDATE friends
         SET status = #{status}
         WHERE (requestUserId = #{requestUserId} AND responseUserId = #{responseUserId})
         OR (requestUserId = #{responseUserId} AND responseUserId = #{requestUserId});
+    </update>
+
+    <update id="cancelFriend" parameterType="com.spring.friends.dto.FriendsDTO">
+        UPDATE friends
+        SET status = -1
+        WHERE requestUserId = #{requestUserId}
+        AND responseUserId = #{responseUserId}
     </update>
 </mapper>
