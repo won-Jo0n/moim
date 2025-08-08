@@ -3,26 +3,35 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="Friends">
-    <select id="getAllFriends" parameterType="int" resultType="user">
-        SELECT DISTINCT user.id as id, user.nickname as nickName, friends.responsedAt, lastChat.sendAt FROM user
-        JOIN friends
-        ON (
-        (friends.requestUserId = #{userId} AND friends.responseUserId = user.id)
-        OR
-        (friends.responseUserId = #{userId} AND friends.requestUserId = user.id)
-        ) AND friends.status = 1
-        LEFT JOIN (
-        SELECT
-        CASE
-        WHEN chat.requestUserId = #{userId} THEN chat.responseUserId
-        ELSE chat.requestUserId
-        END AS friendId,
-        MAX(chat.sendAt) AS sendAt
-        FROM chat
-        WHERE chat.requestUserId = #{userId} OR chat.responseUserId = #{userId}
-        GROUP BY friendId
-        ) AS lastChat
-        ON lastChat.friendId = user.id
-        ORDER BY lastChat.sendAt DESC, friends.responsedAt DESC, user.nickName ASC;
+    <select id="getFriends" parameterType="int" resultType="user">
+        SELECT u.* FROM friends f
+        JOIN user u
+        ON u.id = CASE
+        WHEN f.requestUserId = #{loginId} THEN f.responseUserId
+        ELSE f.requestUserId
+        END
+        WHERE
+        (f.requestUserId = #{loginId} OR f.responseUserId = #{loginId})
+        AND f.status = 1;
     </select>
+    <select id="pendingFriends" parameterType="int" resultType="user">
+        SELECT friend.* FROM friends
+        JOIN user AS me on
+        me.id = friends.responseUserId
+        JOIN user AS friend on
+        friend.id = friends.requestUserId
+        WHERE me.id = #{loginId} and friends.status = 0;
+    </select>
+    <insert id="addFriend" parameterType="friends">
+        INSERT INTO friends (requestUserId, responseUserId)
+        VALUES (#{requestUserId}, #{responseUserId})
+        ON DUPLICATE KEY UPDATE
+        status = 0;
+    </insert>
+    <update id="updateFriend" parameterType="friends">
+        UPDATE friends
+        SET status = #{status}
+        WHERE (requestUserId = #{requestUserId} AND responseUserId = #{responseUserId})
+        OR (requestUserId = #{responseUserId} AND responseUserId = #{requestUserId});
+    </update>
 </mapper>
