@@ -17,7 +17,7 @@ public class FriendsRepository {
     }
 
     public List<UserDTO> pendingFriends(int loginId){
-        return sql.selectOne("Friends.pendingFriends", loginId);
+        return sql.selectList("Friends.pendingFriends", loginId);
     }
 
     public int addFriend(FriendsDTO friendsDTO){

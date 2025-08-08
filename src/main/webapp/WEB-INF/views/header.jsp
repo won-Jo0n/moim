@@ -52,12 +52,12 @@
         <nav class="sidebar-nav">
           <ul>
             <li>
-              <a href="#" role="button" class="active"
+              <a href="/home" role="button" class="active"
                 ><i class="fas fa-house"></i> <span>홈</span></a
               >
             </li>
             <li>
-              <a href="#" role="button"
+              <a href="/profile" role="button"
                 ><i class="fas fa-user-gear"></i> <span>마이페이지</span></a
               >
             </li>
@@ -67,7 +67,7 @@
               >
             </li>
             <li>
-              <a href="#" role="button"
+              <a href="/group/list" role="button"
                 ><i class="fas fa-users"></i> <span>모임</span></a
               >
             </li>
@@ -91,11 +91,6 @@
           ></i>
         </div>
         <div class="notification-list">
-          <ul>
-            <li>새로운 메시지가 도착했습니다.</li>
-            <li>모임 초대 요청이 있습니다.</li>
-            <li>회원님의 게시글에 댓글이 달렸습니다.</li>
-          </ul>
         </div>
       </div>
     </aside>
@@ -152,7 +147,7 @@
         </div>
         <div id="tab-2" class="tab-content hide">
           <div class="search-controls">
-            <button class="random-match-btn">랜덤 매칭 시작</button>
+            <button class="random-match-btn" onclick="matching()">랜덤 매칭 시작</button>
             <div class="search-box">
               <input type="text" placeholder="닉네임으로 검색..." />
               <i class="fas fa-search search-icon"></i>
