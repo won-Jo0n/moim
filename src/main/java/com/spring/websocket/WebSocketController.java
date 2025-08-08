@@ -57,10 +57,17 @@ public class WebSocketController {
             messagingTemplate.convertAndSendToUser(userId, "/queue/main", chatMessageDTO, Map.of("type", type));
             messagingTemplate.convertAndSendToUser(chatUserId, "/queue/main", chatMessageDTO, Map.of("type", "RECEIVE_MESSAGE"));
         }else if(type.equals("READ_MESSAGE")){
-            int readChatId = (int)data.get("chatId");
-            int readChatCount = chatService.readChatMessage(Integer.parseInt(userId), Integer.parseInt(chatUserId), readChatId);
-            System.out.println(readChatId + " " + readChatCount);
-            //messagingTemplate.convertAndSendToUser(chatUserId, "/queue/main", null , Map.of("type", "READ_RECEIPT"));
+            int chatId = (int)data.get("chatId");
+            int readCount = chatService.readChatMessage(Integer.parseInt(userId), Integer.parseInt(chatUserId), chatId);
+            //if(readCount > 0) { //임시 해제
+                Map<String, Object> map = new HashMap<>();
+                map.put("reader", userId);
+                map.put("sender", chatUserId);
+                map.put("chatId", chatId);
+                map.put("readCount", readCount);
+                messagingTemplate.convertAndSendToUser(userId, "/queue/main", map, Map.of("type", type));
+                messagingTemplate.convertAndSendToUser(chatUserId, "/queue/main", map, Map.of("type", "READ_RECEIPT"));
+            //}
         }
     }
 
