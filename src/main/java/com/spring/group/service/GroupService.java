@@ -85,4 +85,8 @@ public class GroupService {
     public void endRecruit(int id) {
         groupRepository.endRecruit(id);
     }
+
+    public Integer findGroupIdByScheduleId(int groupScheduleId) {
+        return groupRepository.findGroupIdByScheduleId(groupScheduleId);
+    }
 }

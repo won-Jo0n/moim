@@ -14,7 +14,7 @@
             <label for="title">모임 이름</label><br>
             <input type="text" id="title" name="title" placeholder="모임 이름을 입력하세요" required><br><br>
             <!-- 모임 대표사진 -->
-            <input type="file" name="groupFile"/>
+            <input type="file" name="groupFile" required/>
 
             <!-- 모임 소개 -->
             <label for="description">모임 소개</label><br>

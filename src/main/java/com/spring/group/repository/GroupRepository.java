@@ -70,4 +70,8 @@ public class GroupRepository {
     public void endRecruit(int id) {
         sql.update("Group.endRecruit", id);
     }
+
+    public Integer findGroupIdByScheduleId(int groupScheduleId) {
+        return sql.selectOne("Group.findGroupIdByScheduleId", groupScheduleId);
+    }
 }

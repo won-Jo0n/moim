@@ -4,28 +4,24 @@
 
 <mapper namespace="Review">
 
-    <insert id="create" parameterType="review">
+    <!-- 리뷰 저장 -->
+    <insert id="createReview" parameterType="review">
         INSERT INTO review(groupId,groupScheduleId,reviewer,userId,content,score)
         VALUES(#{groupId},#{groupScheduleId},#{reviewer},#{userId},#{content},#{score});
     </insert>
 
-    <select id="findParticipantsForReview" parameterType="int" resultType="review">
-        SELECT us.userId, us.groupScheduleId, u.nickName
-        FROM userschedule us
-        JOIN user u ON us.userId = u.id
-        WHERE us.groupScheduleId = #{groupScheduleId}
-        AND us.status = 1
-    </select>
-
-    <select id="findAverageScoreByUser" parameterType="int" resultType="double">
-        SELECT AVG(score)
+    <!-- 평균 점수 계산 -->
+    <select id="calculateAverageScore" parameterType="int" resultType="double">
+        SELECT ROUND(AVG(score), 2)
         FROM review
-        WHERE userId = #{userId} AND status = 1
+        WHERE userId = #{userId}
+        AND status = 1
     </select>
 
+    <!-- user 테이블 rating 업데이트 -->
     <update id="updateUserRating" parameterType="map">
         UPDATE user
-        SET rating = #{rating}
+        SET rating = #{avgScore}
         WHERE id = #{userId}
     </update>
 
@@ -38,11 +34,14 @@
         AND u.id != #{reviewer}
     </select>
 
-
-
-
-
-
-
+    <!-- 중복 리뷰 존재 여부 -->
+    <select id="countByScheduleReviewerTarget" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM review
+        WHERE groupScheduleId = #{groupScheduleId}
+        AND reviewer       = #{reviewer}
+        AND userId         = #{userId}
+        AND status = 1
+    </select>
 
 </mapper>

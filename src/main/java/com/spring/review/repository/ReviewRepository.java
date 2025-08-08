@@ -16,26 +16,22 @@ public class ReviewRepository {
     private final SqlSessionTemplate sql;
 
     public int createReview(ReviewDTO reviewDTO) {
-        return sql.insert("Review.create",reviewDTO);
-    }
-
-    // serschedule에서 status = 1인 사람 조회
-    public List<ReviewDTO> findParticipantsForReview(int groupScheduleId) {
-        return sql.selectList("Review.findParticipantsForReview", groupScheduleId);
+        return sql.insert("Review.createReview",reviewDTO);
     }
 
     // review 테이블에서 userId 기준으로 평균점수 구하기
-    public Double findAverageScoreByUser(int userId) {
-        return sql.selectOne("Review.findAverageScoreByUser", userId);
+    public Double calculateAverageScore(int userId) {
+        return sql.selectOne("Review.calculateAverageScore", userId);
     }
 
     // review 저장 후 rating 업데이트
-    public void updateUserRating(int userId, int rating) {
+    public int updateUserRating(int userId, double avgScore) {
         Map<String, Object> param = new HashMap<>();
         param.put("userId", userId);
-        param.put("rating", rating);
-        sql.update("Review.updateUserRating", param);
+        param.put("avgScore", avgScore);
+        return sql.update("Review.updateUserRating", param);
     }
+
 
     // 참여한 사람들 중 reviwer를 제외한 리뷰 대상자
     public List<UserDTO> findParticipantsExceptReviewer(int groupScheduleId, int reviewer) {
@@ -44,4 +40,13 @@ public class ReviewRepository {
         param.put("reviewer", reviewer);
         return sql.selectList("Review.findParticipantsExceptReviewer", param);
     }
+
+    public Integer countByScheduleReviewerTarget(int groupScheduleId, int reviewer, int userId) {
+        Map<String, Integer> param = new HashMap<>();
+        param.put("groupScheduleId", groupScheduleId);
+        param.put("reviewer", reviewer);
+        param.put("userId", userId);
+        return sql.selectOne("Review.countByScheduleReviewerTarget", param);
+    }
+
 }
