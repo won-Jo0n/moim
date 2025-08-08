@@ -57,11 +57,6 @@
         UPDATE report SET status = 0 WHERE id = #{id};
     </update>
 
-    <select id="countTodayPenalties" resultType="int">
-        SELECT COUNT(*)
-        FROM report
-        WHERE DATE(reportedAt) = CURDATE();
-    </select>
 
     <select id="getRecentReports" resultType="report">
         SELECT * FROM report ORDER BY reportedAt DESC LIMIT 5;

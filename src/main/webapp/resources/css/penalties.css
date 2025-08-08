@@ -6,6 +6,9 @@ body {
     color: #111827;
     margin: 0;
     padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 h2 {
@@ -14,27 +17,40 @@ h2 {
     color: #1f2937;
 }
 
-form {
+
+.user-search-container,
+.user-search-result,
+.penalties-list-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto 2rem auto;
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.user-search-container form {
     display: flex;
-    align-items: center;
+    justify-content: center;
     gap: 1rem;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
+    margin-bottom: 0;
 }
 
 input[type="text"] {
-    padding: 0.6rem 1rem;
+    flex-grow: 1;
+    max-width: 300px;
+    padding: 0.8rem 1rem;
     border: 1px solid #d1d5db;
     border-radius: 0.5rem;
     outline: none;
     font-size: 1rem;
-    width: 240px;
 }
 
 input[type="submit"] {
     background-color: #3b82f6;
     color: white;
-    padding: 0.6rem 1.2rem;
+    padding: 0.8rem 1.5rem;
     border: none;
     border-radius: 0.5rem;
     cursor: pointer;
@@ -47,12 +63,97 @@ input[type="submit"]:hover {
 }
 
 select {
-    padding: 0.6rem;
+    padding: 0.8rem;
     border-radius: 0.5rem;
     border: 1px solid #d1d5db;
     background-color: white;
     font-size: 1rem;
 }
+
+
+.user-info-card {
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    background-color: #f9fafb;
+    box-shadow: none;
+    border: 1px solid #e5e7eb;
+}
+
+.user-info-card p {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+    color: #4b5563;
+}
+
+.user-info-card p strong {
+    color: #1f2937;
+    margin-right: 0.5rem;
+}
+
+.user-info-card .penaltied-user {
+    color: #ef4444;
+    font-weight: 700;
+}
+
+/* 사용자 페이지 가기 링크 버튼 디자인 */
+.action-link {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    background-color: #4caf50; /* 버튼 색상 변경 */
+    color: white;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: 1rem;
+    transition: background-color 0.2s;
+}
+
+.action-link:hover {
+    background-color: #45a049;
+    text-decoration: none;
+}
+
+.penalties-section {
+    margin-top: 1.5rem;
+}
+
+.penalties-section p {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.penalties-section form {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 0;
+}
+
+
+.back-button-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto 2rem auto;
+    text-align: right; /* 버튼을 오른쪽으로 정렬 */
+}
+
+.back-button {
+    background-color: #6b7280; /* 회색 버튼 */
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.back-button:hover {
+    background-color: #4b5563;
+}
+
 
 table {
     width: 100%;
@@ -74,6 +175,10 @@ th {
     color: #374151;
     font-weight: 600;
 }
+tr:hover {
+    background-color: #f5f5f5;
+    cursor: pointer;
+}
 
 td {
     color: #4b5563;
@@ -94,17 +199,6 @@ button:hover {
     background-color: #dc2626;
 }
 
-a {
-    display: inline-block;
-    margin: 0.5rem 0 1rem 0;
-    color: #2563eb;
-    text-decoration: none;
-    font-weight: 500;
-}
-
-a:hover {
-    text-decoration: underline;
-}
 
 .pagination {
     display: flex;
@@ -113,6 +207,7 @@ a:hover {
     gap: 0.5rem;
     margin-top: 2rem;
 }
+
 .pagination a {
     padding: 0.5rem 1rem;
     border: 1px solid #d1d5db;
@@ -121,6 +216,7 @@ a:hover {
     color: #4b5563;
     transition: background-color 0.2s, color 0.2s;
 }
+
 .pagination a:hover,
 .pagination a.active {
     background-color: #3b82f6;

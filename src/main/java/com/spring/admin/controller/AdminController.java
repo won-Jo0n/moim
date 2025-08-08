@@ -14,6 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -37,9 +39,9 @@ public class AdminController {
         Long totalUserCount = adminService.countAllUsers();
         model.addAttribute("totalUserCount", totalUserCount);
 
-        // 오늘 제재한 사용자 수
-        int todayPenaltiesCount = adminService.countTodayPenalties();
-        model.addAttribute("todayPenaltiesCount", todayPenaltiesCount);
+        // 제재중인 사용자 수
+        int penaltiesUser = adminService.getPenaltiesUser().size();
+        model.addAttribute("penaltiesUser", penaltiesUser);
 
         // 최근 신고내역(5개)
         List<ReportDTO> recentReports = adminService.getRecentReports();
@@ -146,11 +148,18 @@ public class AdminController {
                             @RequestParam(value = "page", defaultValue = "1")int page,
                             @RequestParam(value = "size", defaultValue = "10") int size){
         Map<String, Object> params = new HashMap<>();
+        Map<Integer, String> formattedTime = new HashMap<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
 
         params.put("limit", size);
         params.put("offset", (page - 1) * size);
 
         List<UserDTO> penaltiesUserPage = adminService.getPaginatedPenalties(params);
+
+        for(UserDTO user : penaltiesUserPage){
+            formattedTime.put(user.getId(), user.getBanEndTime().format(formatter));
+        }
 
         List<UserDTO> penaltiesUser = adminService.getPenaltiesUser();
         long totalUsers = penaltiesUser.size();
@@ -166,14 +175,29 @@ public class AdminController {
         model.addAttribute("penaltiesUser", penaltiesUser);
         model.addAttribute("penaltiesUserPage", penaltiesUserPage);
         model.addAttribute("pageInfo", pageInfo);
+        model.addAttribute("formattedTime", formattedTime);
 
         return "/admin/penalties";
     }
 
     @PostMapping("/penaltiesSearch")
-    public String penaltiesSearch(@RequestParam("nickName") String nickName, Model model){
+    public String penaltiesSearch(@RequestParam("nickName") String nickName, Model model, HttpSession session){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         UserDTO userDTO = adminService.getUserByNickName(nickName);
+
+        if(userDTO == null){
+            session.setAttribute("errorMsg", "존재하지 않는 사용자입니다.");
+            return "redirect:/admin/penalties";
+        }
+
+        if(userDTO.getStatus() == 0){
+            String formattedTime = userDTO.getBanEndTime().format(formatter);
+            model.addAttribute("formattedTime", formattedTime);
+        }
+
         model.addAttribute("resultUser", userDTO);
+
+
         return "/admin/penalties";
     }
 
