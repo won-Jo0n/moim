@@ -37,11 +37,12 @@ public class ProfileController {
 
         ProfileDTO profile = profileService.getProfile(userId);
         List<MbtiBoardDTO> boardList = mbtiBoardService.findByAuthor(userId);
-        List<ProfileDTO> friendList = profileService.getFriendList(userId); // 친구 3개 표시용
+        // FriendsService 의존성 주입받아서 사용하면됨 택준이형이 만들어놨어
+        //List<ProfileDTO> friendList = profileService.getFriendList(userId); // 친구 3개 표시용
 
         model.addAttribute("profile", profile);
         model.addAttribute("boardList", boardList);
-        model.addAttribute("friendList", friendList);
+        //model.addAttribute("friendList", friendList);
 
         return "profile/profile";
     }
