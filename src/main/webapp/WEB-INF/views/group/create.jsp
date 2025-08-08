@@ -40,14 +40,7 @@
     </style>
 </head>
 <body>
-
-    <h2>모임 만들기</h2>
     <form action="/group/create" method="post" enctype="multipart/form-data">
-            <!-- 제목 -->
-            <label for="title">모임 이름</label><br>
-            <input type="text" id="title" name="title" placeholder="모임 이름을 입력하세요" required><br><br>
-            <!-- 모임 대표사진 -->
-            <input type="file" name="groupFile" required/>
 
 
     <div class="container container-form my-5">

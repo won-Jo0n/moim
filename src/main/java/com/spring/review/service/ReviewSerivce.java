@@ -28,7 +28,8 @@ public class ReviewSerivce {
             if (avgScore == null) {
                 avgScore = 0.0;
             }
-            reviewRepository.updateUserRating(reviewDTO.getUserId(), avgScore);
+            int roundedScore = (int) Math.round(avgScore);
+            reviewRepository.updateUserRating(reviewDTO.getUserId(), roundedScore);
         }
         return result;
     }
