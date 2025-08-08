@@ -31,6 +31,7 @@
             padding: 12px 24px;
             border-radius: 8px;
             cursor: pointer;
+            margin-top: 30px;
         }
     </style>
 </head>

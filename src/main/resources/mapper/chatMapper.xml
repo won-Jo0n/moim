@@ -29,20 +29,7 @@
                 ELSE
                     CONCAT(TIMESTAMPDIFF(YEAR, u.lastLogin, NOW()), '년 전')
             END AS lastLoginTime,
-            CASE
-                WHEN cs.sendAt IS NULL THEN ''
-                WHEN DATE(cs.sendAt) = CURDATE() THEN
-                    CONCAT(
-                        IF(HOUR(cs.sendAt) < 12, '오전', '오후'),
-                        ' ',
-                        LPAD(IF(HOUR(cs.sendAt) > 12, HOUR(cs.sendAt) - 12, HOUR(cs.sendAt)), 2, '0'),
-                        ':',
-                        LPAD(MINUTE(cs.sendAt), 2, '0')
-                    )
-                WHEN DATEDIFF(CURDATE(), DATE(cs.sendAt)) = 1 THEN '어제'
-                WHEN YEAR(cs.sendAt) = YEAR(CURDATE()) THEN DATE_FORMAT(cs.sendAt, '%m-%d')
-                ELSE DATE_FORMAT(cs.sendAt, '%Y-%m-%d')
-            END AS lastChatTime
+            cs.sendAt AS lastChatTime
         FROM user AS u
         JOIN mbti AS m
             ON m.id = u.mbtiId
@@ -51,7 +38,7 @@
                 (f.requestUserId = #{userId} AND f.responseUserId = u.id)
                 OR (f.responseUserId = #{userId} AND f.requestUserId = u.id)
             )
-            AND f.status >= 1
+            AND f.status >= 1 AND u.status != -1
         LEFT JOIN (
             SELECT
                 CASE
@@ -107,7 +94,9 @@
         (requestUserId = #{responseUserId} AND responseUserId = #{requestUserId}) AND status = 1;
     </select>
     <update id="readChatMessage" parameterType="chatMessage">
-        UPDATE chat SET isRead = 1 WHERE requestUserId = #{requestUserId} AND responseUserId = #{responseUserId};
+        <![CDATA[
+            UPDATE chat SET isRead = 1 WHERE requestUserId = #{requestUserId} AND responseUserId = #{responseUserId} AND id <= #{id} AND isRead = 0;
+        ]]>
     </update>
     <insert id="sendChatMessage" parameterType="chatMessage">
         INSERT INTO chat (requestUserId, responseUserId, content) VALUES (#{requestUserId}, #{responseUserId}, #{content});

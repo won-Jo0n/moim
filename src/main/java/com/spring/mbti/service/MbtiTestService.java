@@ -17,10 +17,10 @@ public class MbtiTestService {
     public List<MbtiTestDTO> findAllQuestions() {
         return mbtiTestRepository.findAllQuestions();
     }
+
     public int findUserIdByLoginId(String loginId) {
         return mbtiTestRepository.findUserIdByLoginId(loginId);
     }
-
 
     // 2. 점수로 MBTI 계산하고 DB 저장까지 처리
     public String calculateMbti(int userId, List<Integer> answers) {
@@ -43,13 +43,20 @@ public class MbtiTestService {
         result.append(scoreMap.getOrDefault("tf", 0) >= scoreMap.getOrDefault("ft", 0) ? "T" : "F");
         result.append(scoreMap.getOrDefault("jp", 0) >= scoreMap.getOrDefault("pj", 0) ? "J" : "P");
 
+        System.out.println("===== [MBTI DEBUG] =====");
+        System.out.println(">> userId: " + userId);
+        System.out.println(">> scoreList: " + answers);
+
         String mbtiCode = result.toString();
+        System.out.println(">> mbtiCode: " + mbtiCode);
 
         // 3. MBTI 결과를 user 테이블에 반영
         int mbtiId = mbtiTestRepository.findMbtiIdByCode(mbtiCode);
         mbtiTestRepository.updateUserMbti(userId, mbtiId);
+        System.out.println(">> mbtiId: " + mbtiId);
 
         return mbtiCode;
     }
+
 
 }

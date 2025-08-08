@@ -62,8 +62,8 @@
               >
             </li>
             <li>
-              <a href="#" role="button"
-                ><i class="fas fa-bell"></i> <span>알림</span></a
+              <a href="#" role="button" onclick="toggleNotificationSidebar(true)">
+              <i class="fas fa-bell"></i> <span>알림</span></a
               >
             </li>
             <li>
@@ -80,6 +80,27 @@
         </nav>
       </div>
     </aside>
+
+    <aside class="notification-sidebar" id="notificationSidebar">
+      <div class="notification-sidebar-inner">
+        <div class="notification-header">
+          <h2>알림</h2>
+          <i
+            class="fas fa-xmark close-notification-btn"
+            onclick="toggleNotificationSidebar(false)"
+          ></i>
+        </div>
+        <div class="notification-list">
+          <ul>
+            <li>새로운 메시지가 도착했습니다.</li>
+            <li>모임 초대 요청이 있습니다.</li>
+            <li>회원님의 게시글에 댓글이 달렸습니다.</li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+
+
     <div id="message-container">
       <div
         id="message-btn"
@@ -150,8 +171,7 @@
             <div class="user-info">
               <img
                 id="chat-user-avatar"
-                src="https://via.placeholder.com/32"
-                alt="프로필 이미지"
+                src=""
               />
               <div class="user-details">
                 <h2 id="chat-user-name">상대방 닉네임</h2>

@@ -1,0 +1,98 @@
+body {
+            background-color: #fafafa;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .report-container {
+            width: 100%;
+            max-width: 600px;
+            background-color: #fff;
+            border: 1px solid #dbdbdb;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 24px;
+            box-sizing: border-box;
+        }
+
+        .section {
+            padding: 16px 0;
+            border-bottom: 1px solid #efefef;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 500;
+            color: #262626;
+            margin: 0 0 10px;
+        }
+
+        h3 {
+            font-size: 16px;
+            font-weight: 500;
+            color: #262626;
+            margin: 0 0 8px;
+        }
+
+        p, a {
+            font-size: 15px;
+            color: #262626;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .meta-text {
+            color: #8e8e8e;
+            font-size: 13px;
+        }
+
+        .user-info-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-info .role {
+            font-size: 12px;
+            color: #8e8e8e;
+        }
+
+        .content-box {
+            background-color: #fafafa;
+            border: 1px solid #efefef;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 8px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .action-link {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            font-weight: 600;
+            color: #0095f6;
+            text-decoration: none;
+        }
+
+        .action-link:hover {
+            text-decoration: underline;
+        }

@@ -49,4 +49,22 @@ public class AdminRepository {
     public long countAllReports() {
         return sql.selectOne("Admin.countAllReports");
     }
+
+    public void porcessReport(int id) {
+        sql.update("Admin.processReport", id);
+    }
+
+    public Long countNotprocessReports() {
+        return sql.selectOne("Admin.countNotprocessReports");
+    }
+
+    public Long countAllUsers() {
+        return sql.selectOne("Admin.countAllUsers");
+    }
+
+
+
+    public List<ReportDTO> getRecentReports() {
+        return sql.selectList("Admin.getRecentReports");
+    }
 }

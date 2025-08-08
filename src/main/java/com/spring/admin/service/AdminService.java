@@ -49,4 +49,22 @@ public class AdminService {
     public long countAllReports() {
         return adminRepository.countAllReports();
     }
+
+    public void processReport(int id) {
+        adminRepository.porcessReport(id);
+    }
+
+    public Long countNotprocessReports() {
+        return adminRepository.countNotprocessReports();
+    }
+
+    public Long countAllUsers() {
+        return adminRepository.countAllUsers();
+    }
+
+
+
+    public List<ReportDTO> getRecentReports() {
+        return adminRepository.getRecentReports();
+    }
 }

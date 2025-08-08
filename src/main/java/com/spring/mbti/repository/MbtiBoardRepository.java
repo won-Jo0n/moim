@@ -45,7 +45,9 @@ public class MbtiBoardRepository {
     }
 
 
-//    public List<MbtiBoardDTO> findByAuthor(Long targetUserId) {
-//    }
+    public List<MbtiBoardDTO> findByAuthor(Long userId) {
+        return sql.selectList("MbtiBoard.findByAuthor", userId);
+    }
+
 
 }

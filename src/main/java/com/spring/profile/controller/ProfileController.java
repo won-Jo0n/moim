@@ -1,69 +1,93 @@
 package com.spring.profile.controller;
 
-import com.spring.mbti.dto.MbtiBoardDTO;
 import com.spring.profile.dto.ProfileDTO;
 import com.spring.profile.service.ProfileService;
-import com.spring.user.dto.UserDTO;
-import com.spring.user.service.UserService;
-import com.spring.mbti.repository.MbtiBoardRepository;
+import com.spring.mbti.dto.MbtiBoardDTO;
+import com.spring.mbti.service.MbtiBoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/profile")
 public class ProfileController {
 
     private final ProfileService profileService;
-    private final MbtiBoardRepository boardRepository;
-    private final UserService userService;
+    private final MbtiBoardService mbtiBoardService;
 
-    // 마이페이지 메인
-    @GetMapping("/profile")
-    public String profileMain(Model model, HttpSession session, @RequestParam(value = "userId", required = false) Long userIdParam) {
-        Long sessionUserId = (Long) session.getAttribute("userId");
-        Long targetUserId = userIdParam != null ? userIdParam : sessionUserId;
+    @GetMapping
+    public String myPage(HttpSession session, Model model) {
+        Object userIdObj = session.getAttribute("userId");
+        Long userId = null;
 
-        ProfileDTO profile = profileService.findByUserId(targetUserId);
-        //List<MbtiBoardDTO> boardList = boardRepository.findByAuthor(targetUserId);
+        if (userIdObj instanceof Integer) {
+            userId = ((Integer) userIdObj).longValue();
+        } else if (userIdObj instanceof Long) {
+            userId = (Long) userIdObj;
+        }
+
+        if (userId == null) return "redirect:/login";
+
+        ProfileDTO profile = profileService.getProfile(userId);
+        List<MbtiBoardDTO> boardList = mbtiBoardService.findByAuthor(userId);
+        // FriendsService 의존성 주입받아서 사용하면됨 택준이형이 만들어놨어
+        //List<ProfileDTO> friendList = profileService.getFriendList(userId); // 친구 3개 표시용
 
         model.addAttribute("profile", profile);
-
-       // model.addAttribute("boardList", boardList);
-
-        model.addAttribute("isOwner", targetUserId.equals(sessionUserId));
+        model.addAttribute("boardList", boardList);
+        //model.addAttribute("friendList", friendList);
 
         return "profile/profile";
     }
 
-    // 프로필 수정 페이지
-    @GetMapping("/profile/edit")
-    public String profileEditPage(Model model, HttpSession session) {
-        Long userId = (Long) session.getAttribute("userId");
+    @GetMapping("/mbti/board/{id}")
+    public String detail(@PathVariable Long id, Model model) {
+        MbtiBoardDTO board = mbtiBoardService.findById(id);
+        model.addAttribute("board", board);
+        return "MbtiBoardViews/detail";
+    }
+
+    @GetMapping("/profile/update")
+    public String editForm(HttpSession session, Model model) {
+        Object userIdObj = session.getAttribute("userId");
+        Long userId = null;
+
+        if (userIdObj instanceof Integer) {
+            userId = ((Integer) userIdObj).longValue();
+        } else if (userIdObj instanceof Long) {
+            userId = (Long) userIdObj;
+        }
+
+        if (userId == null) return "redirect:/login";
+
         ProfileDTO profile = profileService.findByUserId(userId);
         model.addAttribute("profile", profile);
         return "profile/ProfileEdit";
     }
 
-    // 프로필 수정 처리
-    @PostMapping("/profile/update")
-    public String updateProfile(@ModelAttribute ProfileDTO profile, HttpSession session) {
-        int userId = (int) session.getAttribute("userId");
-        profile.setUserId(userId);
-        profileService.updateProfile(profile);
-        return "redirect:/profile";
-    }
 
-    // 친구 목록 페이지
-    @GetMapping("/profile/friends")
-    public String profileFriends(Model model, HttpSession session) {
-        Long userId = (Long) session.getAttribute("userId");
-        List<ProfileDTO> friendList = profileService.findAcceptedFriends(userId);
-        model.addAttribute("friendList", friendList);
-        return "profile/ProfileFriends";
+    @GetMapping("/friends")
+    public String friendList(HttpSession session, Model model) {
+        Object userIdObj = session.getAttribute("userId");
+        Long userId = null;
+
+        if (userIdObj instanceof Integer) {
+            userId = ((Integer) userIdObj).longValue();
+        } else if (userIdObj instanceof Long) {
+            userId = (Long) userIdObj;
+        }
+
+        if (userId == null) return "redirect:/login";
+
+        List<ProfileDTO> friends = profileService.getFriendList(userId);
+        model.addAttribute("friends", friends);
+        return "profile/friends";
     }
 }

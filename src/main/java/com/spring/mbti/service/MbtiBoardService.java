@@ -1,6 +1,7 @@
 package com.spring.mbti.service;
 
 import com.spring.mbti.dto.MbtiBoardDTO;
+import com.spring.mbti.repository.MbtiBoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Service;
@@ -35,5 +36,9 @@ public class MbtiBoardService {
         sqlSession.delete("MbtiBoard.delete", id);
     }
 
+    private final MbtiBoardRepository boardRepository;
 
+    public List<MbtiBoardDTO> findByAuthor(Long userId) {
+        return boardRepository.findByAuthor(userId);
+    }
 }

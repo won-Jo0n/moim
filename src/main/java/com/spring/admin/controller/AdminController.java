@@ -14,6 +14,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Controller
@@ -25,7 +28,70 @@ public class AdminController {
     private final MbtiService mbtiService;
 
     @GetMapping("/")
-    public String admin(){
+    public String admin(Model model) throws JsonProcessingException {
+
+
+        // 대기중인 신고 개수
+        Long pendingReportsCount = adminService.countNotprocessReports();
+        model.addAttribute("pendingReportsCount", pendingReportsCount);
+
+        // 총 사용자 수
+        Long totalUserCount = adminService.countAllUsers();
+        model.addAttribute("totalUserCount", totalUserCount);
+
+        // 제재중인 사용자 수
+        int penaltiesUser = adminService.getPenaltiesUser().size();
+        model.addAttribute("penaltiesUser", penaltiesUser);
+
+        // 최근 신고내역(5개)
+        List<ReportDTO> recentReports = adminService.getRecentReports();
+        Map<Integer, String> formattedDate = new HashMap<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
+
+        model.addAttribute("recentReports", recentReports);
+        for(ReportDTO report : recentReports){
+            formattedDate.put(report.getId(), report.getReportedAt().format(formatter));
+        }
+        model.addAttribute("formattedDate", formattedDate);
+
+        // MBTI별 사용자 분포
+        List<ChartDTO> statsList = new ArrayList<>();
+
+        List<ChartCountDTO> mbtiCountList = mbtiService.getCountGroupByMbti();
+        ChartDTO mbtiStats = new ChartDTO();
+        mbtiStats.setTitle("MBTI별 가입자 수");
+        mbtiStats.setType("bar");
+        mbtiStats.setLabel("가입자 수");
+
+        Random random = new Random();
+
+        // mbtiStats 데이터
+        List<String> labels = new ArrayList<>();
+        List<Integer> data = new ArrayList<>();
+        List<String> backgroundColors = new ArrayList<>();
+        List<String> borderColors = new ArrayList<>();
+
+        for (ChartCountDTO c : mbtiCountList) {
+            labels.add(c.getMbti());
+            data.add(c.getValue());
+            // 차트 색상을 동적으로 생성
+            String backgroundColor = String.format("rgba(%d, %d, %d, 0.5)",
+                    random.nextInt(256), random.nextInt(256), random.nextInt(256));
+            backgroundColors.add(backgroundColor);
+            borderColors.add(backgroundColor.replace("0.5", "1"));
+        }
+        mbtiStats.setLabels(labels);
+        mbtiStats.setData(data);
+        mbtiStats.setBackgroundColors(backgroundColors);
+        mbtiStats.setBorderColors(borderColors);
+        statsList.add(mbtiStats);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String statsJson = objectMapper.writeValueAsString(statsList);
+        model.addAttribute("statsJson", statsJson);
+
+
+
         return "/admin/admin";
     }
 
@@ -36,8 +102,11 @@ public class AdminController {
                          @RequestParam(value = "page", defaultValue = "1") int page,
                          @RequestParam(value = "size", defaultValue = "10") int size){
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
         Map<Integer, String> reportUserName = new HashMap<>();
         Map<Integer, String> reportedUserName = new HashMap<>();
+        Map<Integer, String> formattedDates  = new HashMap<>();
 
         Map<String, Object> params = new HashMap<>();
         params.put("limit", size);
@@ -53,6 +122,7 @@ public class AdminController {
 
             reportUserName.put(reportDTO.getId(),reportUser.getNickName());
             reportedUserName.put(reportDTO.getId(),reportedUser.getNickName());
+            formattedDates.put(reportDTO.getId(), reportDTO.getReportedAt().format(formatter));
         }
 
         long totalReports = adminService.countAllReports();
@@ -68,6 +138,7 @@ public class AdminController {
         model.addAttribute("reportUserMap", reportUserName);
         model.addAttribute("reportedUserMap", reportedUserName);
         model.addAttribute("pageInfo", pageInfo);
+        model.addAttribute("formattedDates", formattedDates);
 
         return "/admin/report";
     }
@@ -77,11 +148,18 @@ public class AdminController {
                             @RequestParam(value = "page", defaultValue = "1")int page,
                             @RequestParam(value = "size", defaultValue = "10") int size){
         Map<String, Object> params = new HashMap<>();
+        Map<Integer, String> formattedTime = new HashMap<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
 
         params.put("limit", size);
         params.put("offset", (page - 1) * size);
 
         List<UserDTO> penaltiesUserPage = adminService.getPaginatedPenalties(params);
+
+        for(UserDTO user : penaltiesUserPage){
+            formattedTime.put(user.getId(), user.getBanEndTime().format(formatter));
+        }
 
         List<UserDTO> penaltiesUser = adminService.getPenaltiesUser();
         long totalUsers = penaltiesUser.size();
@@ -97,14 +175,29 @@ public class AdminController {
         model.addAttribute("penaltiesUser", penaltiesUser);
         model.addAttribute("penaltiesUserPage", penaltiesUserPage);
         model.addAttribute("pageInfo", pageInfo);
+        model.addAttribute("formattedTime", formattedTime);
 
         return "/admin/penalties";
     }
 
     @PostMapping("/penaltiesSearch")
-    public String penaltiesSearch(@RequestParam("nickName") String nickName, Model model){
+    public String penaltiesSearch(@RequestParam("nickName") String nickName, Model model, HttpSession session){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         UserDTO userDTO = adminService.getUserByNickName(nickName);
+
+        if(userDTO == null){
+            session.setAttribute("errorMsg", "존재하지 않는 사용자입니다.");
+            return "redirect:/admin/penalties";
+        }
+
+        if(userDTO.getStatus() == 0){
+            String formattedTime = userDTO.getBanEndTime().format(formatter);
+            model.addAttribute("formattedTime", formattedTime);
+        }
+
         model.addAttribute("resultUser", userDTO);
+
+
         return "/admin/penalties";
     }
 
@@ -123,7 +216,7 @@ public class AdminController {
     }
 
     @GetMapping("/chart")
-    public String chart2(Model model) throws JsonProcessingException {
+    public String chart(Model model) throws JsonProcessingException {
         List<ChartDTO> statsList = new ArrayList<>();
 
         List<ChartCountDTO> mbtiCountList = mbtiService.getCountGroupByMbti();
@@ -256,6 +349,13 @@ public class AdminController {
 
         // JSP 페이지로 이동
         return "/admin/chart";
+    }
+
+    @GetMapping("/processReport")
+    public String processReport(@RequestParam int id){
+        adminService.processReport(id);
+
+        return "redirect:/admin/report";
     }
 
 

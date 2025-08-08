@@ -6,8 +6,16 @@
 
     <!-- 게시글 저장 -->
     <insert id="save" parameterType="com.spring.mbti.dto.MbtiBoardDTO">
-        INSERT INTO mbtiboard (mbtiId, author, title, content, createdAt, status)
-        VALUES (#{mbtiId}, #{author}, #{title}, #{content}, NOW(), 1)
+        INSERT INTO mbtiboard
+        (
+        mbtiId, author, title, content, createdAt, status
+        <if test="fileId != null">, fileId</if>
+        )
+        VALUES
+        (
+        #{mbtiId}, #{author}, #{title}, #{content}, NOW(), 1
+        <if test="fileId != null">, #{fileId}</if>
+        )
     </insert>
 
     <!-- 전체 게시글 조회 (닉네임 포함) -->
@@ -77,5 +85,24 @@
         SET status = 0
         WHERE id = #{id}
     </update>
+
+    <select id="findByAuthor" parameterType="long" resultType="com.spring.mbti.dto.MbtiBoardDTO">
+        SELECT
+        b.id,
+        b.mbtiId,
+        b.author,
+        b.title,
+        b.content,
+        b.fileId,
+        b.createdAt,
+        b.status,
+        u.nickname AS authorinfo,
+        DATE_FORMAT(b.createdAt, '%Y-%m-%d') AS formattedCreatedAt
+        FROM mbtiboard b
+        LEFT JOIN user u ON b.author = u.id
+        WHERE b.author = #{userId}
+        ORDER BY b.createdAt DESC
+    </select>
+
 
 </mapper>

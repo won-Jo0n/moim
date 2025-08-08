@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Controller
 @RequiredArgsConstructor
@@ -29,11 +30,14 @@ public class HomeController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomerUserDetails userDetails = (CustomerUserDetails) auth.getPrincipal();
         UserDTO loginUser = userDetails.getUserDTO();
+
+        // OAuth 로그인을 위한 예외처리
         if(loginUser.getStatus() == -1) return "redirect:/";
 
         if (loginUser.getStatus() == 0 && loginUser.getBanEndTime() != null && loginUser.getBanEndTime().isAfter(LocalDateTime.now())) {
-            // 사용자에게 보낼 메시지 (예외 메시지)
-            String message = String.format("정지된 계정입니다. 제재 해제 시간: %s", loginUser.getBanEndTime());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String formattedDate = loginUser.getBanEndTime().format(formatter);
+            String message = String.format("정지된 계정입니다. 제재 해제 날짜: %s", formattedDate);
             throw new DisabledException(message); // 로그인 거부
         }
         if (loginUser.getStatus() == 0 && loginUser.getBanEndTime() != null && loginUser.getBanEndTime().isBefore(LocalDateTime.now())) {
