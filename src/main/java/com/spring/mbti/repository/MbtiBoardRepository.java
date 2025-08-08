@@ -43,6 +43,10 @@ public class MbtiBoardRepository {
     public List<MbtiBoardCommentDTO> findCommentsByBoardId(int boardId) {
         return sql.selectList(NAMESPACE + "findCommentsByBoardId", boardId);
     }
+    public int incrementHits(Long id) {
+        return sql.update("MbtiBoard.incrementHits", id); // MbtiBoard = namespace, incrementHits = XML id
+    }
+
 
 
     public List<MbtiBoardDTO> findByAuthor(Long userId) {
