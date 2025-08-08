@@ -77,4 +77,10 @@
         WHERE id = #{id};
     </update>
 
+    <select id="findGroupIdByScheduleId" parameterType="int" resultType="int">
+        SELECT groupId
+        FROM groupSchedule
+        WHERE id = #{groupScheduleId}
+    </select>
+
 </mapper>
