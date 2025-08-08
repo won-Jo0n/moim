@@ -53,4 +53,8 @@ public class UserRepository {
     public void cancleUserSchedule(UserScheduleDTO result) {
         sql.update("User.cancleUserSchedule", result);
     }
+
+    public int loginIdCheck(String loginId) {
+        return sql.selectOne("User.loginIdCheck", loginId);
+    }
 }

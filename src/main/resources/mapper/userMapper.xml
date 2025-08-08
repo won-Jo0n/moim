@@ -38,5 +38,8 @@
     <update id="cancleUserSchedule" parameterType="userSchedule">
         UPDATE userSchedule SET status = -1 WHERE userId = #{userId}, groupScheduleId = #{groupScheduleId};
     </update>
+    <select id="loginIdCheck" parameterType="String" resultType="int">
+        SELECT COUNT(*) FROM user WHERE loginId = #{loginId};
+    </select>
 
 </mapper>

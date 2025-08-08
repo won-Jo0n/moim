@@ -15,7 +15,7 @@
     <img src="../resources/images/logo.png" alt="Logo">
   </div>
   <h2>회원가입</h2>
-  <form action="/user/join" method="post" enctype="multipart/form-data">
+  <form id="joinForm" action="/user/join" method="post" enctype="multipart/form-data">
     <c:if test="${not empty OAuthData}">
       <input type="hidden" name="command" value="OAuthJoin"/>
       <input type="hidden" name="loginId" value="${OAuthData.id}" />
@@ -28,24 +28,29 @@
 
     <c:if test="${empty OAuthData}">
       <input type="hidden" name="command" value="join"/>
-      <input type="text" name="loginId" placeholder="아이디 입력">
+      <input id="loginId" type="text" name="loginId" placeholder="아이디 입력" onblur="idCheck()">
+      <p id="id-check-result"></p>
       <input type="password" name="password" placeholder="비밀번호 입력">
       <label>성별:</label><br>
       <div class="gender-group">
-        <input type="radio" id="male" name="gender" value="M">
+        <input type="radio" id="male" name="gender" value="M" required>
         <label for="male">남성</label>
         <input type="radio" id="female" name="gender" value="F">
         <label for="female">여성</label>
       </div>
-      <input id="nickName" type="text" name="nickName" placeholder="닉네임" onkeyup="nickNameCheck()"/>
+      <input id="nickName" type="text" name="nickName" placeholder="닉네임" onblur="nickNameCheck()"/>
       <p id="check-result"></p>
       <label for="birthDate">생년월일</label>
       <input id="birthDate" type="date" name="birthDate"/>
       <input id="mobile" type="text" name="mobile" placeholder="전화번호를 입력해주세요" maxlength="13"/>
-      <p id="mobile-check-result"></p>
     </c:if>
 
-    <input type="file" name="profile">
+    <label>프로필 사진</label>
+    <div class="file-upload-wrapper">
+        <label for="profile-upload" class="file-upload-label">파일 선택</label>
+        <span id="file-name" class="file-name">선택된 파일 없음</span>
+        <input type="file" id="profile-upload" name="profile" onchange="displayFileName(this)">
+    </div>
 
     <label for="mbti">당신의 MBTI를 선택하세요:</label>
     <select name="mbtiId" id="mbti" required>
@@ -146,6 +151,36 @@
               }
           });
       }
+
+    const idCheck = ()=>{
+            const loginId = document.getElementById("loginId").value;
+            const checkResult = document.getElementById("id-check-result");
+
+            const idRegex = /^[a-z0-9]{4,12}$/;
+
+            if (!idRegex.test(loginId) && loginId.trim()) {
+                    checkResult.style.color = "red";
+                    checkResult.innerHTML = "아이디는 영문 소문자, 숫자를 사용하여 4~12자 이내로 입력해주세요.";
+                    return;
+            }
+
+            $.ajax({
+                type : "post",
+                url : "/user/loginId-check",
+                data : {"loginId" : loginId},
+                success : function(res){
+                    if(res == 0){
+                        checkResult.style.color="green";
+                        checkResult.innerHTML = "사용 가능한 아이디 입니다.";
+                    }else {
+                        checkResult.style.color="red";
+                        checkResult.innerHTML = "이미 사용중인 아이디 입니다.";
+                    }
+                },error : function(err){
+                    console.log("에러발생", err)
+                }
+            });
+        }
   $(document).ready(function() {
     const nickName = document.getElementById("nickName").value;
     if(nickName){
@@ -165,12 +200,51 @@
   });
 
 
-  const phoneRegex = /^01[016789]-\d{3,4}-\d{4}$/;
-  const phone = document.getElementById('mobile').value;
+  const joinForm = document.getElementById('joinForm');
+    joinForm.addEventListener('submit', function(event) {
+        const passwordInput = document.querySelector('input[name="password"]');
+        const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
 
-  if (!phoneRegex.test(phone)) {
-    alert("유효한 전화번호를 입력해주세요.");
-  }
+        const phoneRegex = /^01[016789]-\d{3,4}-\d{4}$/;
+        const phone = document.getElementById('mobile').value;
+
+
+
+        if (passwordInput && !passwordRegex.test(passwordInput.value)) {
+            alert("비밀번호는 8~16자 이내로 영문, 숫자, 특수문자를 각각 1개 이상 포함해야 합니다.");
+            event.preventDefault();
+            return;
+        }
+        if (phone.trim() !== '' && !phoneRegex.test(phone)) {
+            alert("전화번호를 확인해주세요.");
+            event.preventDefault();
+        }
+    });
+
+    function displayFileName(input) {
+        const fileNameSpan = document.getElementById('file-name');
+        if (input.files && input.files.length > 0) {
+            fileNameSpan.textContent = input.files[0].name;
+            fileNameSpan.classList.add('selected'); // 파일 선택 시 클래스 추가
+        } else {
+            fileNameSpan.textContent = '선택된 파일 없음';
+            fileNameSpan.classList.remove('selected'); // 파일 선택 해제 시 클래스 제거
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+        const dd = String(today.getDate()).padStart(2, '0');
+        const todayFormatted = yyyy + '-' + mm + '-' + dd;
+
+        // 생년월일 입력 필드에 max 속성 설정
+        const birthDateInput = document.getElementById('birthDate');
+        if (birthDateInput) {
+          birthDateInput.setAttribute('max', todayFormatted);
+        }
+      });
 
 </script>
 </body>

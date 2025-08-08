@@ -38,5 +38,33 @@
     </div>
 </div>
 
+<div id="errorModal" class="modal">
+  <div class="modal-content">
+    <span class="close-button">&times;</span>
+    <p id="errorMessage"></p>
+  </div>
+</div>
+<script>
+    <c:if test="${not empty sessionScope.loginErrorMsg}">
+        const modal = document.getElementById("errorModal");
+        const messageParagraph = document.getElementById("errorMessage");
+        const closeButton = document.querySelector(".close-button");
+
+        messageParagraph.textContent = "${sessionScope.loginErrorMsg}";
+        modal.classList.add('modal-show');
+
+        closeButton.addEventListener("click", () => {
+            modal.classList.remove('modal-show');
+        });
+
+        window.addEventListener("click", (event) => {
+            if (event.target === modal) {
+                modal.classList.remove('modal-show');
+            }
+        });
+
+        <c:remove var="loginErrorMsg" scope="session"/>
+    </c:if>
+</script>
 </body>
 </html>
