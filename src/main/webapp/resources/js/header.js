@@ -63,10 +63,13 @@ stompClient.onConnect = (frame) => {
         else console.log(data.reader + "가 나의 글을 " + data.readCount + "개 읽음");
         //isReader면 내가 읽고나서 다른 클라이언트 한테 뿌리는 사람
 
-
-
-
         //다른 사용자가 이것을 읽었음을 확인헀음.
+        break;
+      case "MATCH_JOIN":
+        console.log("MATCH JOIN");
+        break;
+      case "MATCH_FOUND":
+        console.log("MATCH FOUND : " + data.nickName);
         break;
     }
   });
@@ -195,16 +198,63 @@ function openChat(element) {
 function toggleNotificationSidebar(show) {
         const sidebar = document.getElementById("notificationSidebar");
         if (show) {
+            $("#notificationSidebar .notification-list").empty();
+          $.ajax({
+              url: "/friends/pending",
+              type: "GET",
+              contentType: "application/json",
+              success: function (data) {
+                const list = $("#notificationSidebar .notification-list");
+                data.forEach((notification) => {
+                    list.append(createNotificationItem(notification));
+                });
+              },
+              error: function (xhr, status, error) {
+                console.error("알림 가져오는 중 오류 발생:", error);
+              }
+          });
           sidebar.classList.add("show");
         } else {
           sidebar.classList.remove("show");
         }
-      }
+}
+
+function update(reqId, status, element){
+    $.ajax({
+          url: "/friends/update",
+          type: "GET",
+          contentType: "application/json",
+          data : {
+            reqId : reqId,
+            status : status
+          },
+          success: function (data) {
+            element.parentElement.remove();
+          },
+          error: function (xhr, status, error) {
+            console.error("알림 가져오는 중 오류 발생:", error);
+          }
+      });
+}
+
+function createNotificationItem(notification){
+    return $(`<div>${notification.nickName}
+                    <button onclick="update(${notification.id}, 1, this)">수락</button>
+                    <button onclick="update(${notification.id}, -1, this)">거절</button>
+                </div>`);
+}
 
 function closeChat() {
     header.chatUser = null;
   togglePopup("chat-popup", false);
   togglePopup("message-popup", true);
+}
+
+function matching(){
+    stompClient.publish({
+      destination: "/app/match",
+      body: "asdf"
+    });
 }
 
 function formatLastChatTime(sendAtString) {
@@ -293,10 +343,11 @@ function createChatItem(chat) {
         chatBody.scrollTop = chatBody.scrollHeight;
       }
 
-function handleFriendRequest(action, buttonElement) {
-    console.log(buttonElement);
+function handleFriendRequest(action, element) {
+    /*
   const messageItem = buttonElement.closest(".message-item");
   const userName = messageItem.querySelector("h3").textContent;
+  */
     /*
     $.ajax({
         url: `/chat/${action}/1`,
@@ -311,6 +362,7 @@ function handleFriendRequest(action, buttonElement) {
       });
       */
 
+    /*
   if (action === "accept") {
     console.log(`${userName}님의 친구 요청을 수락했습니다.`);
     // 여기에 친구 수락 로직 (예: 서버 API 호출) 추가
@@ -324,4 +376,5 @@ function handleFriendRequest(action, buttonElement) {
   }
 
   messageItem.style.display = "none"; //요청 처리 후 삭제? 일단 accept나 decline은 삭제해야됨
+  */
 }

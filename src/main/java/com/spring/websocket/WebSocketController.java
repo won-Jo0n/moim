@@ -3,6 +3,10 @@ package com.spring.websocket;
 import com.spring.chat.dto.ChatMessageDTO;
 import com.spring.chat.dto.ChatUserDTO;
 import com.spring.chat.service.ChatService;
+import com.spring.friends.dto.FriendsDTO;
+import com.spring.friends.service.FriendsService;
+import com.spring.user.dto.UserDTO;
+import com.spring.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.Header;
@@ -18,24 +22,20 @@ import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 import java.security.Principal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Controller
 @RequiredArgsConstructor
 public class WebSocketController {
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatService chatService;
+    private final FriendsService friendsService;
+    private final UserService userService;
     private final Map<String, String> sessionToUser = new ConcurrentHashMap<>();
     private final Map<String, Integer> sessionCount = new ConcurrentHashMap<>();
-
-    /*
-    @MessageMapping("/hello") // 클라이언트가 /app/hello 로 메시지를 보낼 때 매핑됩니다.
-    @SendTo("/topic/greetings") // 이 메서드의 반환 값이 /topic/greetings 를 구독하는 모든 클라이언트에게 전송됩니다.
-    public Map<String, Object> greeting(Map<String, Object> map, Principal principal) throws Exception {
-        //int userId = (int)headerAccessor.getSessionAttributes().get("userId");
-        System.out.println("로그인한 사용자 ID: " + principal.getName());
-        return map;
-    }
-     */
+    private final Queue<String> matchingQueue = new ConcurrentLinkedQueue<>();
+    private final Object matchingLock = new Object();
 
     /*
     @MessageMapping("/connect")
@@ -47,6 +47,28 @@ public class WebSocketController {
         return Map.of("userId", userId, "type", "FRIEND_ONLINE");
     }
      */
+
+    @MessageMapping("/match")
+    public void matchMaking(@Payload String s, Principal principal){
+        String userId = principal.getName();
+        synchronized (matchingLock){
+            String opponentId = matchingQueue.poll();
+            if(opponentId != null){
+                UserDTO userDTO1 = userService.getUserById(Integer.parseInt(opponentId));
+                messagingTemplate.convertAndSendToUser(userId, "/queue/main", userDTO1, Map.of("type", "MATCH_FOUND"));
+                UserDTO userDTO2 = userService.getUserById(Integer.parseInt(userId));
+                messagingTemplate.convertAndSendToUser(opponentId, "/queue/main", userDTO2, Map.of("type", "MATCH_FOUND"));
+                FriendsDTO friendsDTO = new FriendsDTO();
+                friendsDTO.setRequestUserId(Integer.parseInt(opponentId));
+                friendsDTO.setResponseUserId(Integer.parseInt(userId));
+                friendsService.addFriend(friendsDTO);
+                System.out.println(userId + "와 " + opponentId + "의 매칭 생성");
+            }else{
+                matchingQueue.add(userId);
+                messagingTemplate.convertAndSendToUser(userId, "/queue/main", Map.of("", ""), Map.of("type", "MATCH_JOIN"));
+            }
+        }
+    }
 
     @MessageMapping("/chat")
     public void chat(@Header("type") String type, @Payload Map<String, Object> data, Principal principal){
@@ -102,6 +124,11 @@ public class WebSocketController {
         if (userId != null) {
             sessionToUser.remove(sessionId);
             sessionCount.computeIfPresent(userId, (k, v) -> v > 1 ? v - 1 : null);
+
+            synchronized (matchingLock) {
+                matchingQueue.remove(userId);
+            }
+
             if(sessionCount.getOrDefault(userId, 0) <= 0){
                 List<ChatUserDTO> chatFriends = chatService.getChatFriends(Integer.parseInt(userId));
                 for(ChatUserDTO friend : chatFriends){
