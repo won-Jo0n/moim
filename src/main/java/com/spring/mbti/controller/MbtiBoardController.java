@@ -14,10 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -47,10 +46,10 @@ public class MbtiBoardController {
 
         System.out.println(mbtiBoardFile.getOriginalFilename());
         if (!mbtiBoardFile.isEmpty()) {
-            int fileId = fileUtil.fileSave(mbtiBoardFile);
+            int fileId = fileUtil.fileSave(mbtiBoardFile); // file 테이블 insert 후 PK 반환
             boardDTO.setFileId(fileId);
         } else {
-            boardDTO.setFileId(0);
+            boardDTO.setFileId(null); // 핵심
         }
         int userId = (int) session.getAttribute("userId");
         System.out.println(userId);
@@ -67,19 +66,20 @@ public class MbtiBoardController {
 
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable Long id, Model model, HttpSession session) {
-        MbtiBoardDTO board = mbtiBoardService.findById(id);
+        // ✅ 세션당 1회만 조회수 증가 (서비스에 중복 방지 포함)
+        mbtiBoardService.increaseHitsIfFirstView(session, id);
 
-        if (board == null) {
-            return "redirect:/mbti/board/detail";
-        }
+        // ✅ 증가 후 재조회
+        MbtiBoardDTO board = mbtiBoardService.findById(id);
+        if (board == null) return "redirect:/mbti/board";
 
         List<MbtiBoardCommentDTO> commentList = commentService.findAllByBoardId(id);
 
         Object sessionUserIdObj = session.getAttribute("userId");
         boolean isAuthor = false;
         if (sessionUserIdObj != null) {
-            Long sessionUserId = Long.valueOf(sessionUserIdObj.toString());
-            isAuthor = sessionUserId.equals((long) board.getAuthor()); // Null 안 터짐
+            int sessionUserId = Integer.parseInt(sessionUserIdObj.toString()); // int로 맞춤
+            isAuthor = (board.getAuthor() == sessionUserId);
         }
 
         model.addAttribute("board", board);
@@ -87,6 +87,7 @@ public class MbtiBoardController {
         model.addAttribute("isAuthor", isAuthor);
         return "MbtiBoardViews/detail";
     }
+
 
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable Long id, Model model, HttpSession session) {
@@ -112,13 +113,36 @@ public class MbtiBoardController {
     }
 
     @PostMapping("/edit")
-    public String update(@ModelAttribute MbtiBoardDTO boardDTO) {
+    public String update(@ModelAttribute MbtiBoardDTO boardDTO, HttpSession session) {
+        MbtiBoardDTO origin = mbtiBoardService.findById((long) boardDTO.getId());
+        if (origin == null) return "redirect:/mbti/board";
+
+        Object sessionUserIdObj = session.getAttribute("userId");
+        if (sessionUserIdObj == null) return "redirect:/user/login";
+
+        int sessionUserId = Integer.parseInt(sessionUserIdObj.toString());
+        if (origin.getAuthor() != sessionUserId) {
+            return "redirect:/mbti/board/detail/" + origin.getId();
+        }
+
         mbtiBoardService.update(boardDTO);
         return "redirect:/mbti/board/detail/" + boardDTO.getId();
     }
 
+
     @PostMapping("/delete/{id}")
-    public String delete(@PathVariable Long id) {
+    public String delete(@PathVariable Long id, HttpSession session) {
+        MbtiBoardDTO board = mbtiBoardService.findById(id);
+        if (board == null) return "redirect:/mbti/board";
+
+        Object sessionUserIdObj = session.getAttribute("userId");
+        if (sessionUserIdObj == null) return "redirect:/user/login";
+
+        int sessionUserId = Integer.parseInt(sessionUserIdObj.toString());
+        if (board.getAuthor() != sessionUserId) {
+            return "redirect:/mbti/board/detail/" + board.getId();
+        }
+
         mbtiBoardService.delete(id);
         return "redirect:/mbti/board";
     }

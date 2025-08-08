@@ -28,5 +28,9 @@ public class FriendsService {
         return friendsRepository.updateFriend(friendDTO);
     }
 
+    public int cancelFriend(FriendsDTO dto){
+        return friendsRepository.cancelFriend(dto);
+    }
 
 }
+
