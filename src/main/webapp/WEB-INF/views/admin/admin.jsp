@@ -52,8 +52,8 @@
             <div class="card summary-card penalties">
                 <div class="card-icon"><i class="fa-solid fa-ban"></i></div>
                 <div class="card-info">
-                    <h4>오늘의 제재 건수</h4>
-                    <span class="count">${todayPenaltiesCount}</span>
+                    <h4>정지중인 사용자 수</h4>
+                    <span class="count">${penaltiesUser}</span>
                 </div>
             </div>
         </section>
