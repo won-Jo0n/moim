@@ -24,10 +24,11 @@
         <intercept-url pattern="/admin/**" access="hasRole('ADMIN')" />
         <intercept-url pattern="/**" access="hasAnyRole('USER', 'ADMIN')" />
 
+
         <!-- 로그인 설정 -->
         <form-login
                 login-page="/"
-                default-target-url="/home"
+                authentication-success-handler-ref="loginSuccessHandler"
                 authentication-failure-handler-ref="customAuthenticationFailureHandler"
                 username-parameter="loginId"
                 password-parameter="password" />
