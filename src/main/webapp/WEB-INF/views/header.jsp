@@ -3,11 +3,11 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
-    <link rel="stylesheet" href="resources/css/header.css" />
+    <link rel="stylesheet" href="/resources/css/header.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
-    <script src="resources/js/header.js"></script>
+    <script src="/resources/js/header.js"></script>
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-inner">
         <div class="sidebar-header">

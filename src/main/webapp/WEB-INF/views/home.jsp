@@ -10,7 +10,6 @@
 </head>
 <body>
     <p>home</p>
-    <%@ include file="header.jsp" %>
     <img src = "/file/preview?fileId=${loginUser.fileId}" style = "width: 300px; height: 300px;"/>
     <a href="/user/modify">수정하기</a>
     <a href="/user/logout">로그아웃</a>
