@@ -6,11 +6,9 @@
 <head>
     <meta charset="UTF-8">
     <title>모임 참여요청 목록</title>
-
 </head>
 <body>
     <h2>모임 참여요청 목록</h2>
-
     <c:choose>
       <c:when test="${empty pendingList}">
         <p>현재 대기 중인 참여 요청이 없습니다.</p>

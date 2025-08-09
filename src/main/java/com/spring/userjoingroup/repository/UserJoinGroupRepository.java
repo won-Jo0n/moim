@@ -39,4 +39,18 @@ public interface UserJoinGroupRepository {
     // 게시글 목록 조회를 위한
     UserJoinGroupDTO findOneByGroupIdAndUserId(@Param("groupId") int groupId,
                                                @Param("userId") int userId);
+
+    // 승인된 멤버 목록(리더 제외)
+    List<UserJoinGroupDTO> findApprovedMembersByGroupId(@Param("groupId") int groupId);
+
+    // manager 여부
+    boolean isManager(@Param("userId") int userId, @Param("groupId") int groupId);
+
+    // 승인 멤버 여부
+    boolean isApprovedMember(@Param("userId") int userId, @Param("groupId") int groupId);
+
+    // 역할 변경 (member <-> manager)
+    int updateRole(@Param("groupId") int groupId,
+                   @Param("userId") int userId,
+                   @Param("role") String role);
 }

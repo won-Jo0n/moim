@@ -68,6 +68,42 @@
         </form>
     </c:if>
 
+    <!-- 모임장일 경우에만 매니저 지정/해제 보기 버튼 표시 -->
+    <c:if test="${sessionScope.userId eq group.leader}">
+      <h3>매니저 관리</h3>
+      <c:choose>
+        <c:when test="${empty approvedMembers}">
+          승인된 멤버가 없습니다.
+        </c:when>
+        <c:otherwise>
+          <c:forEach var="m" items="${approvedMembers}">
+            <div style="margin-bottom:8px;">
+              <strong>${m.userName}</strong>
+              <c:choose>
+                <c:when test="${m.role eq 'manager'}">
+                  <span style="margin-left:8px; color:#666;">[매니저]</span>
+                  <form action="/group/manager/revoke" method="post" style="display:inline;">
+                    <input type="hidden" name="groupId" value="${group.id}" />
+                    <input type="hidden" name="userId" value="${m.userId}" />
+                    <button type="submit">매니저 해제</button>
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                  </form>
+                </c:when>
+                <c:otherwise>
+                  <form action="/group/manager/assign" method="post" style="display:inline;">
+                    <input type="hidden" name="groupId" value="${group.id}" />
+                    <input type="hidden" name="userId" value="${m.userId}" />
+                    <button type="submit">매니저 지정</button>
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                  </form>
+                </c:otherwise>
+              </c:choose>
+            </div>
+          </c:forEach>
+        </c:otherwise>
+      </c:choose>
+    </c:if>
+
     <!-- 승인된 사람이거나 모임장일때만 모임게시판 글 작성 버튼 표시-->
     <c:if test="${isApprovedMember or isLeader}">
         <form action="/groupboard/create" method="get">
@@ -76,7 +112,7 @@
         </form>
     </c:if>
 
-    <c:if test="${sessionScope.userId eq group.leader}">
+    <c:if test="${canCreateSchedule}">
         <a href="/group/createSchedule?scheduleLeader=${sessionScope.userId}&groupId=${group.id}">그룹일정 생성</a>
     </c:if>
 

@@ -27,16 +27,13 @@ public class UserJoinGroupController {
     public String applyToGroup(@ModelAttribute UserJoinGroupDTO userJoinGroupDTO,
                                HttpSession session) {
         UserJoinGroupDTO existing = userJoinGroupRepository.findOne(userJoinGroupDTO);
-
         if (existing != null) {
             throw new IllegalStateException("이미 신청한 모임입니다.");
         }
-
         userJoinGroupDTO.setStatus("pending");
         userJoinGroupDTO.setRole("member");
         userJoinGroupDTO.setJoinedAt(null); // 승인 전이므로 null
         userJoinGroupRepository.insertRequest(userJoinGroupDTO);
-
         return "redirect:/group/detail?groupId=" + userJoinGroupDTO.getGroupId();
     }
 
@@ -45,30 +42,30 @@ public class UserJoinGroupController {
     public String cancel(@RequestParam("groupId") int groupId, HttpSession session) {
         int userId = (int) session.getAttribute("userId");
         userJoinGroupService.cancelApplication(userId, groupId);
-
         return "redirect:/group/detail?groupId=" + groupId;
     }
 
-    // 모임장이 신청자 확인 // 신청자 목록 보기
+    // 모임장이 신청자 확인 + 승인된 멤버 목록 (매니저 지정/해제 버튼 노출)
     @GetMapping("/requests")
     public String viewRequests(@RequestParam("groupId") int groupId,
                                Model model,
                                HttpSession session) {
         GroupDTO group = groupService.findById(groupId);
         int loginUserId = (int) session.getAttribute("userId");
-
-        // 모임장이 아닐 경우 접근 차단
-        if(loginUserId != group.getLeader()){
+        // 리더만 접근
+        if (loginUserId != group.getLeader()) {
             return "redirect:/group/detail?groupId=" + groupId;
         }
 
+        // 대기 목록 + 승인 목록
         List<UserJoinGroupDTO> pendingList = userJoinGroupService.getPendingRequests(groupId);
+        List<UserJoinGroupDTO> approvedMembers = userJoinGroupRepository.findApprovedMembersByGroupId(groupId);
 
         model.addAttribute("pendingList", pendingList);
-        model.addAttribute("groupId",groupId);
+        model.addAttribute("approvedMembers", approvedMembers);
+        model.addAttribute("groupId", groupId);
         return "group/requestList";
     }
-
 
     // 승인 처리
     @PostMapping("/approve")
@@ -93,6 +90,47 @@ public class UserJoinGroupController {
         userJoinGroupService.leaveGroup(userId, groupId);
         return "redirect:/group/detail?groupId="+groupId;
     }
+
+    // 매니저 권한 부여/해제
+    @PostMapping("/manager/grant")
+    public String grantManager(@RequestParam("groupId") int groupId,
+                               @RequestParam("targetUserId") int targetUserId,
+                               HttpSession session) {
+        int leaderId = (int) session.getAttribute("userId");
+        GroupDTO group = groupService.findById(groupId);
+
+        // 리더만 가능
+        if (leaderId != group.getLeader()) {
+            return "redirect:/group/detail?groupId=" + groupId;
+        }
+        // 승인된 멤버에게만 부여
+        if (!userJoinGroupRepository.isApprovedMember(targetUserId, groupId)) {
+            return "redirect:/groupjoin/requests?groupId=" + groupId;
+        }
+        // 리더 자신에게는 불필요
+        if (targetUserId == group.getLeader()) {
+            return "redirect:/groupjoin/requests?groupId=" + groupId;
+        }
+
+        userJoinGroupRepository.updateRole(groupId, targetUserId, "manager");
+        return "redirect:/groupjoin/requests?groupId=" + groupId;
+    }
+
+    @PostMapping("/manager/revoke")
+    public String revokeManager(@RequestParam("groupId") int groupId,
+                                @RequestParam("targetUserId") int targetUserId,
+                                HttpSession session) {
+        int leaderId = (int) session.getAttribute("userId");
+        GroupDTO group = groupService.findById(groupId);
+
+        if (leaderId != group.getLeader()) {
+            return "redirect:/group/detail?groupId=" + groupId;
+        }
+        // manager -> member로 되돌림
+        userJoinGroupRepository.updateRole(groupId, targetUserId, "member");
+        return "redirect:/groupjoin/requests?groupId=" + groupId;
+    }
 }
+
 
 

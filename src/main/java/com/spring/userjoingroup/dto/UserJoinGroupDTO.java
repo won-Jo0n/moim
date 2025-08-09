@@ -12,6 +12,7 @@ public class UserJoinGroupDTO {
     private String role;
     private String status; // pending / approved / rejected
 
-    // 닉네임 조인용 (JOIN user)
+    // JOIN 표시용
     private String nickName;
+    private String userName;
 }
