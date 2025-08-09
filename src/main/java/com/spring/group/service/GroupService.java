@@ -89,4 +89,6 @@ public class GroupService {
     public Integer findGroupIdByScheduleId(int groupScheduleId) {
         return groupRepository.findGroupIdByScheduleId(groupScheduleId);
     }
+
+
 }

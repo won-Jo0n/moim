@@ -40,9 +40,6 @@
     </style>
 </head>
 <body>
-    <form action="/group/create" method="post" enctype="multipart/form-data">
-
-
     <div class="container container-form my-5">
         <div class="card p-4">
             <h2 class="card-title text-center mb-4">새로운 모임 만들기</h2>
@@ -101,6 +98,8 @@
                     </select>
                     <div class="invalid-feedback">구/군을 선택해주세요.</div>
                 </div>
+
+                <input type="hidden" id="location" name="location" />
 
                 <!-- 최대 인원 -->
                 <div class="mb-4">

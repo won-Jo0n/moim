@@ -3,10 +3,10 @@
 
 <html>
 <head>
-    <title>참여 신청자 목록</title>
+    <title>모임 참여요청/멤버 관리</title>
 </head>
 <body>
-    <h2>참여 신청자 목록</h2>
+    <h2>모임 참여요청 목록</h2>
 
     <table>
         <thead>
@@ -17,6 +17,14 @@
             </tr>
         </thead>
         <tbody>
+
+        <c:forEach var="m" items="${pendingList}">
+          <div>${m.userName} | 상태: ${m.status}</div>
+        </c:forEach>
+
+        <c:forEach var="m" items="${approvedMembers}">
+          <div>${m.userName} | 역할: ${m.role}</div>
+        </c:forEach>
 
         <c:choose>
           <c:when test="${empty pendingList}">
@@ -46,8 +54,40 @@
           </c:otherwise>
           </c:choose>
         </tbody>
-
     </table>
+
+    <h2>승인된 멤버 (매니저 지정/해제)</h2>
+      <c:choose>
+        <c:when test="${empty approvedMembers}">
+          <p>승인된 멤버가 없습니다.</p>
+        </c:when>
+        <c:otherwise>
+          <c:forEach var="m" items="${approvedMembers}">
+            <div style="margin-bottom:8px;">
+              <strong>${m.userName}</strong>
+              <c:choose>
+                <c:when test="${m.role eq 'manager'}">
+                  <span style="margin-left:8px; color:#666;">[매니저]</span>
+                  <form action="/groupjoin/manager/revoke" method="post" style="display:inline; margin-left:6px;">
+                    <input type="hidden" name="groupId" value="${groupId}" />
+                    <input type="hidden" name="targetUserId" value="${m.userId}" />
+                    <button type="submit">매니저 해제</button>
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                  </form>
+                </c:when>
+                <c:otherwise>
+                  <form action="/groupjoin/manager/grant" method="post" style="display:inline; margin-left:6px;">
+                    <input type="hidden" name="groupId" value="${groupId}" />
+                    <input type="hidden" name="targetUserId" value="${m.userId}" />
+                    <button type="submit">매니저 지정</button>
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                  </form>
+                </c:otherwise>
+              </c:choose>
+            </div>
+          </c:forEach>
+        </c:otherwise>
+      </c:choose>
 
 <a href="/group/detail?groupId=${groupId}">← 모임 상세로</a>
 </body>

@@ -14,7 +14,7 @@
     <select id="findAll" resultType="group">
         SELECT * FROM `group`
         WHERE status = 1
-        ORDER BY createdAt DESC;
+        ORDER BY createdAt DESC;  
     </select>
 
     <!-- 그룹 검색 조회 -->
@@ -73,7 +73,7 @@
     </update>
 
     <update id="endRecruit" parameterType="int">
-        UPDATE groupschedule SET status = 1
+        UPDATE groupSchedule SET status = 1
         WHERE id = #{id};
     </update>
 

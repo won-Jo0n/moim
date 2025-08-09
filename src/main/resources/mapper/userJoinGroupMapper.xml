@@ -6,63 +6,101 @@
 
     <!-- 그룹 생성 시 leader insert -->
     <insert id="insert" parameterType="userJoinGroup">
-        INSERT INTO userJoinGroup (userId, groupId,role)
-        VALUES (#{userId}, #{groupId},#{role});
+        INSERT INTO userjoingroup (userId, groupId, role, status)
+        VALUES (#{userId}, #{groupId},#{role}, 'approved');
     </insert>
 
     <!-- 모임 참여 신청 insert -->
     <insert id="insertRequest" parameterType="userJoinGroup">
-        INSERT INTO userJoinGroup (userId, groupId, status, role)
+        INSERT INTO userjoingroup (userId, groupId, status, role)
         VALUES (#{userId}, #{groupId}, #{status}, #{role});
     </insert>
 
     <!-- 모임 참여 중복 신청 방지 -->
     <select id="findOne" parameterType="userJoinGroup" resultType="userJoinGroup">
-        SELECT * FROM userJoinGroup
+        SELECT * FROM userjoingroup
         WHERE userId = #{userId} AND groupId = #{groupId}
     </select>
 
     <!-- 그룹 삭제 시 연관 데이터 삭제 -->
     <delete id="deleteByGroupId" parameterType="int">
-        DELETE FROM userJoinGroup WHERE groupId = #{groupId};
+        DELETE FROM userjoingroup WHERE groupId = #{groupId};
     </delete>
 
     <!-- 신청 취소 -->
     <delete id="deleteByUserAndGroup" parameterType="userJoinGroup">
-        DELETE FROM userJoinGroup
+        DELETE FROM userjoingroup
         WHERE userId = #{userId} AND groupId = #{groupId} AND status = 'pending';
     </delete>
 
     <!-- 대기 중인 신청자 목록 조회 -->
     <select id="findPendingByGroupId" parameterType="userJoinGroup" resultType="userJoinGroup">
-        SELECT uj.userId, uj.groupId, uj.joinedAt, uj.role, u.nickName
-        FROM userJoinGroup uj
+        SELECT uj.userId, uj.groupId, uj.joinedAt, uj.role, uj.status,u.nickName AS userName
+        FROM userjoingroup uj
         JOIN user u ON uj.userId = u.id
         WHERE uj.groupId = #{groupId}
         AND uj.status = 'pending'
-        AND uj.userId != (
-        SELECT leader FROM `group` WHERE id = #{groupId});
+        AND uj.userId != (SELECT leader FROM `group` WHERE id = #{groupId});
     </select>
 
     <!-- 승인/거절 처리 -->
     <update id="updateStatus" parameterType="userJoinGroup">
-        UPDATE userJoinGroup
+        UPDATE userjoingroup
         SET status = #{status}, joinedAt = #{joinedAt}
         WHERE userId = #{userId} AND groupId = #{groupId};
     </update>
 
     <!-- 탈퇴 -->
     <delete id="leaveGroup" parameterType="map">
-        DELETE FROM userJoinGroup
+        DELETE FROM userjoingroup
         WHERE userId = #{userId} AND groupId = #{groupId} AND status = 'approved';
     </delete>
 
-    <!-- 게시글 목록 조회를 위한  -->
+    <!-- 게시글 목록 조회  -->
     <select id="findOneByGroupIdAndUserId" resultType="userJoinGroup">
         SELECT * FROM userjoingroup
         WHERE groupId = #{groupId}
         AND userId = #{userId}
     </select>
+
+    <!-- 승인된 멤버 목록(리더 제외) + 현재 role 반환 -->
+    <select id="findApprovedMembersByGroupId" parameterType="int" resultType="userJoinGroup">
+        SELECT uj.userId, uj.groupId, uj.joinedAt, uj.role, uj.status,u.nickName AS userName
+        FROM userjoingroup uj
+        JOIN user u ON u.id = uj.userId
+        WHERE uj.groupId = #{groupId}
+        AND uj.status = 'approved'
+        AND uj.userId != (SELECT leader FROM `group` WHERE id = #{groupId})
+        ORDER BY u.nickName ASC
+    </select>
+
+    <!-- manager 여부 -->
+    <select id="isManager" parameterType="map" resultType="boolean">
+        SELECT EXISTS (
+        SELECT 1 FROM userjoingroup
+        WHERE userId = #{userId}
+        AND groupId = #{groupId}
+        AND role = 'manager'
+        ) AS result
+    </select>
+
+    <!-- 승인멤버 여부 -->
+    <select id="isApprovedMember" parameterType="map" resultType="boolean">
+        SELECT EXISTS (
+        SELECT 1 FROM userjoingroup
+        WHERE userId = #{userId}
+        AND groupId = #{groupId}
+        AND status = 'approved'
+        ) AS result
+    </select>
+
+    <!-- 역할 변경 (member <-> manager) -->
+    <update id="updateRole" parameterType="map">
+        UPDATE userjoingroup
+        SET role = #{role}
+        WHERE groupId = #{groupId}
+        AND userId = #{userId}
+    </update>
 
 
 </mapper>
