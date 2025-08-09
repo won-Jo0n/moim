@@ -29,6 +29,6 @@
         <typeAlias type="com.spring.user.dto.UserScheduleDTO" alias="userSchedule"></typeAlias>
         <typeAlias type="com.spring.schedule.dto.ScheduleDTO" alias="schedule"></typeAlias>
         <typeAlias type="com.spring.admin.dto.MbtiGroupActivityAverageDTO" alias="mbtiActivity"></typeAlias>
-
+        <typeAlias type="com.spring.friends.dto.FriendsDTO" alias="friends"></typeAlias>
     </typeAliases>
 </configuration>

@@ -52,22 +52,22 @@
         <nav class="sidebar-nav">
           <ul>
             <li>
-              <a href="#" role="button" class="active"
+              <a href="/home" role="button" class="active"
                 ><i class="fas fa-house"></i> <span>홈</span></a
               >
             </li>
             <li>
-              <a href="#" role="button"
+              <a href="/profile" role="button"
                 ><i class="fas fa-user-gear"></i> <span>마이페이지</span></a
               >
             </li>
             <li>
-              <a href="#" role="button"
-                ><i class="fas fa-bell"></i> <span>알림</span></a
+              <a href="#" role="button" onclick="toggleNotificationSidebar(true)">
+              <i class="fas fa-bell"></i> <span>알림</span></a
               >
             </li>
             <li>
-              <a href="#" role="button"
+              <a href="/group/list" role="button"
                 ><i class="fas fa-users"></i> <span>모임</span></a
               >
             </li>
@@ -80,6 +80,22 @@
         </nav>
       </div>
     </aside>
+
+    <aside class="notification-sidebar" id="notificationSidebar">
+      <div class="notification-sidebar-inner">
+        <div class="notification-header">
+          <h2>알림</h2>
+          <i
+            class="fas fa-xmark close-notification-btn"
+            onclick="toggleNotificationSidebar(false)"
+          ></i>
+        </div>
+        <div class="notification-list">
+        </div>
+      </div>
+    </aside>
+
+
     <div id="message-container">
       <div
         id="message-btn"
@@ -131,7 +147,7 @@
         </div>
         <div id="tab-2" class="tab-content hide">
           <div class="search-controls">
-            <button class="random-match-btn">랜덤 매칭 시작</button>
+            <button class="random-match-btn" onclick="matching()">랜덤 매칭 시작</button>
             <div class="search-box">
               <input type="text" placeholder="닉네임으로 검색..." />
               <i class="fas fa-search search-icon"></i>

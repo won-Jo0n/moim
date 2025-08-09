@@ -176,6 +176,8 @@
         <img src="/img/default-profile.png" alt="프로필 이미지">
         <h2>${profile.nickname}</h2>
         <span class="badge">${profile.mbti}</span>
+
+        <!-- 별점 -->
         <div class="rating">
             <c:forEach begin="1" end="5" var="i">
                 <c:choose>
@@ -183,8 +185,14 @@
                     <c:otherwise>☆</c:otherwise>
                 </c:choose>
             </c:forEach>
-            (${profile.rating}/5)
         </div>
+
+        <!-- 친구 요청 버튼: 본인 페이지가 아닐 때만 -->
+        <c:if test="${sessionScope.userId ne profile.userId}">
+            <button id="friendBtn" data-target="${profile.userId}" onclick="toggleFriendRequest(this)">
+                친구 요청
+            </button>
+        </c:if>
     </div>
 
     <div class="tabs">
@@ -211,7 +219,6 @@
                 </div>
             </div>
         </c:forEach>
-
     </div>
 
     <!-- 친구 목록 -->
@@ -238,11 +245,9 @@
 
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
-                // 탭 비활성화
                 tabs.forEach(t => t.classList.remove('active'));
                 sections.forEach(s => s.classList.remove('active'));
 
-                // 현재 탭 활성화
                 tab.classList.add('active');
                 const targetId = tab.getAttribute('data-target');
                 document.getElementById(targetId).classList.add('active');
@@ -253,6 +258,34 @@
     function toggleMenu() {
         const menu = document.getElementById('menu');
         menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function toggleFriendRequest(btn){
+        const targetId = btn.getAttribute("data-target");
+        const isRequesting = btn.textContent.trim() === "친구 요청";
+
+        const url = isRequesting
+            ? '${pageContext.request.contextPath}/friends/request'
+            : '${pageContext.request.contextPath}/friends/cancel';
+
+        const payload = { responseUserId: targetId };
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '${_csrf.token}'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(res => {
+            if(res.ok){
+                btn.textContent = isRequesting ? "친구 요청 취소" : "친구 요청";
+            } else {
+                alert("요청 처리 실패");
+            }
+        })
+        .catch(err => console.error(err));
     }
 </script>
 </body>

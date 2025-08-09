@@ -204,7 +204,9 @@ public class GroupController {
 
 
     @GetMapping("/groupScheduleDetail")
-    public String groupScheduleDetail(@RequestParam("id") int groupScheduleId, Model model, HttpSession session){
+    public String groupScheduleDetail(@RequestParam("id") int groupScheduleId,
+                                      Model model,
+                                      HttpSession session){
         GroupScheduleDTO groupScheduleDTO = groupService.getGroupScheduleDetail(groupScheduleId);
         List<UserScheduleDTO> scheduleList = groupService.getScheduleGroupByGroup(groupScheduleId);
         List<ScheduleDTO> scheduleDTOList = new ArrayList<>();
@@ -226,6 +228,10 @@ public class GroupController {
 
         UserDTO user = userService.getUserById(groupScheduleDTO.getScheduleLeader());
         int userId = (int)session.getAttribute("userId");
+
+        // 현재 시간이 종료시간 이후인지 체크
+        boolean isDone = groupScheduleDTO.getEndTime().isBefore(LocalDateTime.now());
+        model.addAttribute("isDone", isDone);
 
         UserScheduleDTO userScheduleDTO = new UserScheduleDTO();
         userScheduleDTO.setGroupScheduleId(groupScheduleId);

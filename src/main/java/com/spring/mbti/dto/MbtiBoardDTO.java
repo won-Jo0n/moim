@@ -15,11 +15,12 @@ public class MbtiBoardDTO {
     private String nickName;
     private String title;
     private String content;
-    private int fileId;
+    private Integer fileId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private int status;
     private String authorInfo;
+    private Integer hits;
 
     public Date getCreatedAtAsDate() {
         return Timestamp.valueOf(createdAt);
