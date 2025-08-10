@@ -16,18 +16,13 @@ body {
     display: flex;
     width: 850px;
     height: 600px;
-    background-color: white;
-    border: 1px solid #dbdbdb;
-    box-shadow: 0 0 10px rgba(0,0,0,0.05);
 }
 
 .image-section {
     flex: 1;
-    background-color: #fafafa;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-right: 1px solid #dbdbdb;
 }
 
 .image-section img {
@@ -41,6 +36,9 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    border-radius:50px;
 }
 
 form {
@@ -59,7 +57,7 @@ input[type="password"] {
 
 button {
     padding: 12px;
-    background-color: #0095f6;
+    background-color: #7e57c2;
     color: white;
     font-weight: bold;
     border: none;
@@ -80,12 +78,12 @@ button {
 }
 
 .signup-link {
-    margin-top: 20px;
+    margin:20px 0px;
     text-align: center;
 }
 
 .signup-link a {
-    color: #0095f6;
+    color: #7e57c2;
     text-decoration: none;
     font-weight: bold;
 }

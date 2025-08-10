@@ -43,4 +43,12 @@ public class ChatService {
     public boolean declineChat(int userId, int chatUserId) {
         return chatRepository.declineChat(userId, chatUserId);
     }
+
+    public ChatUserDTO getChatFriendById(int userId, int chatUserId){
+        return chatRepository.getChatFriendById(userId, chatUserId);
+    }
+
+    public List<ChatUserDTO> searchUserList(ChatUserDTO chatUserDTO) {
+        return chatRepository.searchUserList(chatUserDTO);
+    }
 }
