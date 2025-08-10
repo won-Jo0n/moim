@@ -26,7 +26,7 @@
                 <span class="role">신고자</span>
                 <p>${reportUser.nickName}</p>
             </div>
-            <div style="color: #dbdbdb; font-size: 24px;">➡️</div>
+            <div style="color: #333333; font-size: 24px;">➡</div>
             <div class="user-info">
                 <span class="role">피신고자</span>
                 <p>${reportedUser.nickName}</p>

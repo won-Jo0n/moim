@@ -67,10 +67,10 @@
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th class="first-th">ID</th>
                             <th>제목</th>
                             <th>신고일자</th>
-                            <th>상태</th>
+                            <th class="last-th">상태</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -127,18 +127,18 @@
                             y: {
                                 beginAtZero: true,
                                 grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
+                                    color: 'rgba(0, 0, 0, 0.1)'
                                 },
                                 ticks: {
-                                    color: 'rgba(255, 255, 255, 0.8)'
+                                    color: 'rgba(0, 0, 0, 0.8)'
                                 }
                             },
                             x: {
                                 grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
+                                    color: 'rgba(0, 0, 0, 0.1)'
                                 },
                                 ticks: {
-                                    color: 'rgba(255, 255, 255, 0.8)'
+                                    color: 'rgba(0, 0, 0, 0.8)'
                                 }
                             }
                         },
@@ -149,7 +149,7 @@
                             title: {
                                 display: true,
                                 text: mbtiStats.title,
-                                color: 'rgba(255, 255, 255, 0.8)',
+                                color: 'rgba(0, 0, 0, 0.8)',
                                 font: {
                                     size: 16
                                 }

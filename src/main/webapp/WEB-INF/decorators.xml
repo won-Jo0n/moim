@@ -7,5 +7,7 @@
     </decorator>
     <excludes>
         <pattern>/admin/*</pattern>
+        <pattern>/report/*</pattern>
+        <pattern>/user/join</pattern>
     </excludes>
 </decorators>
