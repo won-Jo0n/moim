@@ -48,7 +48,7 @@ input[type="text"] {
 }
 
 input[type="submit"] {
-    background-color: #3b82f6;
+    background-color: #333333;
     color: white;
     padding: 0.8rem 1.5rem;
     border: none;
@@ -59,7 +59,7 @@ input[type="submit"] {
 }
 
 input[type="submit"]:hover {
-    background-color: #2563eb;
+    background-color: #494848;
 }
 
 select {
@@ -213,13 +213,35 @@ button:hover {
     border: 1px solid #d1d5db;
     border-radius: 0.5rem;
     text-decoration: none;
-    color: #4b5563;
+    color: #333333;
     transition: background-color 0.2s, color 0.2s;
 }
 
 .pagination a:hover,
 .pagination a.active {
-    background-color: #3b82f6;
+    background-color: #333333;
     color: white;
-    border-color: #3b82f6;
+    border-color: #333333;
+}
+
+.top-button-container {
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 2rem;
+    text-align: left; /* 버튼을 왼쪽으로 정렬 */
+}
+
+.back-to-home-button {
+    background-color: #333333; /* 검정색 버튼 */
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.back-to-home-button:hover {
+    background-color: #494848; /* 호버 시 색상 변경 */
 }
