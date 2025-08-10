@@ -62,6 +62,8 @@ public class WebSocketController {
                 friendsDTO.setRequestUserId(Integer.parseInt(opponentId));
                 friendsDTO.setResponseUserId(Integer.parseInt(userId));
                 friendsService.addFriend(friendsDTO);
+                friendsDTO.setStatus(2);
+                friendsService.updateFriend(friendsDTO);
                 System.out.println(userId + "와 " + opponentId + "의 매칭 생성");
             }else{
                 matchingQueue.add(userId);

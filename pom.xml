@@ -28,6 +28,12 @@
       <version>${org.slf4j-version}</version> <scope>runtime</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.apache.tiles</groupId>
+      <artifactId>tiles-jsp</artifactId>
+      <version>3.0.8</version>
+    </dependency>
+
     <!-- Web Socket Start -->
     <dependency>
       <groupId>org.springframework</groupId>
