@@ -58,4 +58,14 @@ public class ChatController {
         return chatService.declineChat(userId, chatUserId);
     }
 
+    @GetMapping("/searchUserList")
+    @ResponseBody
+    public List<ChatUserDTO> searchUserList(@RequestParam("search") String search, HttpSession session){
+        int userId = (int)session.getAttribute("userId");
+        ChatUserDTO chatUserDTO = new ChatUserDTO();
+        chatUserDTO.setId(userId);
+        chatUserDTO.setNickName(search);
+        return chatService.searchUserList(chatUserDTO);
+    }
+
 }

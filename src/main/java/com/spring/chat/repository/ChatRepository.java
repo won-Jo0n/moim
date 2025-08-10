@@ -3,13 +3,9 @@ package com.spring.chat.repository;
 import com.spring.chat.dto.ChatMessageDTO;
 import com.spring.chat.dto.ChatUserDTO;
 import lombok.RequiredArgsConstructor;
-import org.apache.ibatis.annotations.Param;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
-
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor
@@ -69,5 +65,16 @@ public class ChatRepository {
         chatMessageDTO.setRequestUserId(userId);
         chatMessageDTO.setResponseUserId(chatUserId);
         return sql.update("Chat.declineChat", chatMessageDTO) > 0;
+    }
+
+    public List<ChatUserDTO> searchUserList(ChatUserDTO chatUserDTO) {
+        return sql.selectList("Chat.searchUserList", chatUserDTO);
+    }
+
+    public ChatUserDTO getChatFriendById(int userId, int chatUserId) {
+        ChatMessageDTO chatMessageDTO = new ChatMessageDTO();
+        chatMessageDTO.setRequestUserId(userId);
+        chatMessageDTO.setResponseUserId(chatUserId);
+        return sql.selectOne("Chat.getChatFriendById", chatMessageDTO);
     }
 }

@@ -1,22 +1,18 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
-<!DOCTYPE html>
-<html lang="en">
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<html>
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>홈</title>
-    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="/resources/css/home.css" />
+    <script src="/resources/js/home.js"></script>
 </head>
 <body>
-    <p>home</p>
-    <img src = "/file/preview?fileId=${loginUser.fileId}" style = "width: 300px; height: 300px;"/>
-    <a href="/user/modify">수정하기</a>
-    <a href="/user/logout">로그아웃</a>
-    <a href="/group/create">그룹생성</a>
-    <a href="/mbti/test/">mbti 테스트</a>
-    <a href="${pageContext.request.contextPath}/profile">마이페이지</a>
-    <a href="/user/delete?id=${sessionScope.userId}">탈퇴하기</a>
-    <a href="/mbti/board">게시판</a>
+    <main id="feed-container"></main>
+    <div id="loading-indicator">
+      <div class="loading-spinner"></div>
+    </div>
 </body>
 </html>
