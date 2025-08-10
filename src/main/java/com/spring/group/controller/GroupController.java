@@ -13,6 +13,7 @@ import com.spring.user.dto.UserScheduleDTO;
 import com.spring.user.service.UserService;
 import com.spring.userjoingroup.dto.UserJoinGroupDTO;
 import com.spring.userjoingroup.repository.UserJoinGroupRepository;
+import com.spring.userjoingroup.service.UserJoinGroupService;
 import com.spring.utils.FileUtil;
 import lombok.RequiredArgsConstructor;
 
@@ -39,6 +40,7 @@ public class GroupController {
     private final FileUtil fileUtil;
     private final UserService userService;
     private final MbtiService mbtiService;
+    private final UserJoinGroupService userJoinGroupService;
 
     // 그룹 생성 작성폼
     @GetMapping("/create")
@@ -55,9 +57,8 @@ public class GroupController {
                               @RequestParam("country") String country,
                               @RequestParam("maxUserNum") int maxUserNum,
                               @RequestParam(value = "groupFile", required = false) MultipartFile file,
-                              HttpSession session) throws IOException {
-
-
+                              HttpSession session,
+                              Model model) throws IOException {
 
         int loginUserId = (int) session.getAttribute("userId");
         String location = city + " " + country;
@@ -76,9 +77,16 @@ public class GroupController {
             groupDTO.setFileId(1);
         }
 
+        try {
+            groupService.save(groupDTO, loginUserId);
+            return "redirect:/group/list";
+        } catch (IllegalStateException e) {
+            // 안내문 노출 + 사용자가 입력한 값 유지
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("group", groupDTO);
+            return "group/create";
+        }
 
-        groupService.save(groupDTO, loginUserId);
-        return "redirect:/group/list";
     }
 
     // 그룹 목록 보기
@@ -94,35 +102,33 @@ public class GroupController {
     public String detail(@RequestParam("groupId") int groupId,
                          HttpSession session,
                          Model model) {
-
         GroupDTO group = groupService.findById(groupId); // 모임 정보 가져오기
         model.addAttribute("group", group);
-
         int loginUserId = (int) session.getAttribute("userId");
-
         //중복 신청 여부 확인
         UserJoinGroupDTO dto = new UserJoinGroupDTO();
         dto.setUserId(loginUserId);
         dto.setGroupId(groupId);
-
-
         UserJoinGroupDTO existing = userJoinGroupRepository.findOne(dto); // 참여 상태 조회
         boolean isAppliedMember = (existing != null && "pending".equals(existing.getStatus()));
         boolean isApprovedMember = (existing != null && "approved".equals(existing.getStatus()));
         boolean isLeader = (loginUserId == group.getLeader());
+        boolean isManager = userJoinGroupRepository.isManager(loginUserId, groupId);
+        boolean canCreateSchedule = (isLeader || isManager);
 
         if (isLeader || isApprovedMember) {
             List<GroupBoardDTO> boardList = groupBoardService.findByGroupId(groupId); // 게시글 조회
             model.addAttribute("boardList", boardList);
         }
-
         List<GroupScheduleDTO> groupScheduleList = groupService.getGroupScheduleByGroupId(groupId);
-
-
+        List<UserJoinGroupDTO> approvedMembers = userJoinGroupRepository.findApprovedMembersByGroupId(groupId);
+        model.addAttribute("approvedMembers", approvedMembers);
         model.addAttribute("isAppliedMember", isAppliedMember);
         model.addAttribute("isApprovedMember", isApprovedMember);
         model.addAttribute("isLeader", isLeader);
         model.addAttribute("groupScheduleList", groupScheduleList);
+        model.addAttribute("isManager", isManager);
+        model.addAttribute("canCreateSchedule", canCreateSchedule);
 
         Map<Integer, String> groupScheduleLeader = new HashMap<>();
         for(GroupScheduleDTO g : groupScheduleList){
@@ -134,8 +140,6 @@ public class GroupController {
             }
         }
         model.addAttribute("groupScheduleLeaderNickName", groupScheduleLeader);
-
-
         return "group/detail";
     }
 
@@ -187,16 +191,67 @@ public class GroupController {
 
     // 그룹 일정 생성
     @GetMapping("/createSchedule")
-    public String createScheduleForm(@RequestParam("scheduleLeader") int scheduleLeader,
-                                     @RequestParam("groupId") int groupId,
+    public String createScheduleForm(@RequestParam("groupId") int groupId,
+                                     HttpSession session,
                                      Model model){
-        model.addAttribute("scheduleLeader" , scheduleLeader);
+        int loginUserId = (int) session.getAttribute("userId");
+        GroupDTO group = groupService.findById(groupId);
+
+        boolean isLeader = (group.getLeader() == loginUserId);
+        boolean isManager = userJoinGroupRepository.isManager(loginUserId, groupId);
+
+        if (!(isLeader || isManager)) {
+            model.addAttribute("error", "일정 생성 권한이 없습니다. (리더/매니저만 가능)");
+            return "error/unauthorized"; // 프로젝트에 맞게 에러 페이지 지정
+        }
+
+        // 세션 사용자를 스케줄 리더로 고정
+        model.addAttribute("scheduleLeader" , loginUserId);
         model.addAttribute("groupId" , groupId);
+
+        int groupMax = group.getMaxUserNum();
+        model.addAttribute("groupMaxUserNum", groupMax);
+
         return "/group/createSchedule";
     }
 
     @PostMapping("/createSchedule")
-    public String createSchedule(@ModelAttribute GroupScheduleDTO groupScheduleDTO){
+    public String createSchedule(@ModelAttribute GroupScheduleDTO groupScheduleDTO,
+                                 HttpSession session,
+                                 Model model) {
+
+        int loginUserId = (int) session.getAttribute("userId");
+        GroupDTO group = groupService.findById(groupScheduleDTO.getGroupId());
+
+        boolean isLeader = (group.getLeader() == loginUserId);
+        boolean isManager = userJoinGroupRepository.isManager(loginUserId, group.getId());
+
+        if (!(isLeader || isManager)) {
+            model.addAttribute("error", "일정 생성 권한이 없습니다. (리더/매니저만 가능)");
+            return "/group/createSchedule";
+        }
+        groupScheduleDTO.setScheduleLeader(loginUserId);
+
+        // 1. 시작시간은 현재 이후로만 설정 가능
+        if (groupScheduleDTO.getStartTime().isBefore(LocalDateTime.now())) {
+            model.addAttribute("error", "시작 시간은 현재 시각 이후로만 설정 가능합니다.");
+            return "/group/createSchedule";
+        }
+
+        // 2. 종료시간 - 시작시간 >= 1시간
+        if (java.time.Duration.between(groupScheduleDTO.getStartTime(), groupScheduleDTO.getEndTime()).toMinutes() < 60) {
+            model.addAttribute("error", "모임일정은 1시간 이상으로 설정 가능합니다");
+            return "/group/createSchedule";
+        }
+
+        // 3. 최대인원은 해당 모임의 최대인원 이하만 가능
+        int groupMaxUserNum = groupService.findById(groupScheduleDTO.getGroupId()).getMaxUserNum();
+        if (groupScheduleDTO.getMaxUserNum() > groupMaxUserNum) {
+            model.addAttribute("error", "일정 최대 인원은 모임 최대 인원(" + groupMaxUserNum + "명) 이하로 설정해야 합니다.");
+            return "/group/createSchedule";
+        }
+
+        // 4. 일정 생성 처리
         groupService.createGroupSchedule(groupScheduleDTO);
 
         return "redirect:/group/detail?groupId=" + groupScheduleDTO.getGroupId();
@@ -279,6 +334,25 @@ public class GroupController {
         groupService.endRecruit(id);
 
         return "redirect:/group/groupScheduleDetail?id="+id;
+    }
+
+    @PostMapping("/manager/assign")
+    public String assignManager(@RequestParam int groupId,
+                                @RequestParam int userId,
+                                HttpSession session) {
+        int leaderId = (int) session.getAttribute("userId");
+        // 리더만 가능 + 대상은 approved 멤버 체크
+        userJoinGroupService.grantManager(leaderId, groupId, userId);
+        return "redirect:/group/detail?groupId=" + groupId;
+    }
+
+    @PostMapping("/manager/revoke")
+    public String revokeManager(@RequestParam int groupId,
+                                @RequestParam int userId,
+                                HttpSession session) {
+        int leaderId = (int) session.getAttribute("userId");
+        userJoinGroupService.revokeManager(leaderId, groupId, userId);
+        return "redirect:/group/detail?groupId=" + groupId;
     }
 
 
