@@ -8,8 +8,14 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+<%@ include file="adminSidebar.jsp" %>
 <div class="chart-dashboard">
-    <h1 class="dashboard-title">📊 사용자 통계</h1>
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">사용자 통계</h1>
+        <div class="top-button-container">
+            <button onclick="window.history.back()" class="back-to-home-button">돌아가기</button>
+        </div>
+    </div>
 
     <div class="chart-grid">
         <c:forEach var="chart" items="${statsList}" varStatus="status">

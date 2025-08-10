@@ -9,7 +9,9 @@ import org.apache.ibatis.annotations.Param;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor
@@ -46,6 +48,25 @@ public class GroupRepository {
         return sql.delete("Group.delete",id);
     }
 
+    public Integer findInactiveGroupIdByLeader(int leader) {
+        return sql.selectOne("Group.findInactiveGroupIdByLeader", leader);
+    }
+
+    public int reactivateGroup(int id, String title, String description,
+                               String location, int maxUserNum, Integer fileId) {
+        Map<String,Object> p = new HashMap<>();
+        p.put("id", id);
+        p.put("title", title);
+        p.put("description", description);
+        p.put("location", location);
+        p.put("maxUserNum", maxUserNum);
+        p.put("fileId", fileId);
+        return sql.update("Group.reactivateGroup", p);
+    }
+
+    public int countActiveByLeader(int leader) {
+        return sql.selectOne("Group.countActiveByLeader", leader);
+    }
 
     public void createGroupSchedule(GroupScheduleDTO groupScheduleDTO) {
         sql.insert("Group.createGroupSchedule", groupScheduleDTO);

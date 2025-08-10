@@ -1,0 +1,89 @@
+/*
+  🎨 컬러 팔레트
+  메인: #7E57C2 (세련된 중간톤 퍼플)
+  서브: #B18FCF (부드러운 라벤더)
+  포인트: #4527A0 (깊은 퍼플)
+  배경: #F8F9FA (아주 연한 회색, 따뜻한 느낌)
+  텍스트: #495057 (짙은 회색)
+*/
+
+/* 📋 기본 스타일 */
+body {
+    background-color: #F8F9FA; /* 부드럽고 따뜻한 배경색으로 변경 */
+    font-family: 'Pretendard', 'Noto Sans KR', sans-serif; /* 폰트 변경 적용 */
+    color: #495057; /* 텍스트 색상 */
+}
+
+.container-form {
+    max-width: 600px;
+}
+
+/* 🖼️ 카드 스타일 */
+.card {
+    border: none; /* 보더 제거 */
+    border-radius: 1.5rem; /* 더 부드러운 모서리 */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); /* 그림자 강화 */
+    padding: 3rem; /* 내부 여백 증가 */
+}
+
+.card-title {
+    color: #4527A0; /* 포인트 컬러로 제목 강조 */
+    font-weight: 700;
+    margin-bottom: 2rem;
+}
+
+/* 📝 폼 요소 스타일 */
+.form-label {
+    font-weight: 600;
+    color: #7E57C2; /* 메인 컬러로 라벨 강조 */
+    margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+    border: 1px solid #E0E0E0; /* 연한 회색 보더 */
+    border-radius: 0.75rem; /* 둥근 모서리 */
+    padding: 0.75rem 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #B18FCF; /* 서브 컬러로 포커스 시 강조 */
+    box-shadow: 0 0 0 0.25rem rgba(177, 143, 207, 0.25);
+}
+
+.invalid-feedback {
+    font-size: 0.875rem;
+    color: #dc3545;
+}
+
+/* 💻 버튼 스타일 */
+.btn-primary {
+    background-color: #7E57C2; /* 메인 컬러로 버튼 배경색 설정 */
+    border-color: #7E57C2;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #6748A5; /* 호버 시 약간 어둡게 */
+    border-color: #6748A5;
+    transform: translateY(-3px); /* 약간 위로 올라가는 효과 */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary:active {
+    background-color: #4527A0; /* 클릭 시 포인트 컬러 */
+    border-color: #4527A0;
+    transform: translateY(0);
+}
+
+/* ⚠️ 경고창 스타일 */
+.alert-warning {
+    background-color: #FFF3CD;
+    color: #664D03;
+    border-color: #FFECB5;
+    border-radius: 0.75rem;
+    font-weight: 500;
+}

@@ -1,0 +1,93 @@
+/*
+  🎨 컬러 팔레트
+  메인: #7E57C2 (세련된 중간톤 퍼플)
+  서브: #B18FCF (부드러운 라벤더)
+  포인트: #4527A0 (깊은 퍼플)
+  배경: #F8F9FA (아주 연한 회색, 따뜻한 느낌)
+  텍스트: #495057 (짙은 회색)
+  경계선: #E0E0E0
+*/
+
+/* 📋 기본 스타일 */
+body {
+    background-color: #F8F9FA;
+    font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+    color: #495057;
+    padding: 2rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+h2 {
+    color: #4527A0;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+/* 📥 요청자 목록 */
+.request-item {
+    background-color: #FFFFFF;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.request-item p {
+    margin: 0;
+    font-weight: 500;
+}
+
+.request-item strong {
+    color: #4527A0;
+    font-weight: 600;
+}
+
+/* 💻 버튼 스타일 */
+form {
+    display: inline-block;
+}
+
+button {
+    border: none;
+    border-radius: 0.75rem;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+
+.btn-approve {
+    background-color: #7E57C2;
+    color: #FFFFFF;
+    margin-right: 0.5rem;
+}
+
+.btn-approve:hover {
+    background-color: #6748A5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-reject {
+    background-color: #E0E0E0;
+    color: #495057;
+}
+
+.btn-reject:hover {
+    background-color: #CCCCCC;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 🤷‍♀️ 요청 없음 메시지 */
+.no-requests {
+    text-align: center;
+    color: #888;
+    margin-top: 3rem;
+    font-size: 1.1rem;
+}

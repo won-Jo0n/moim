@@ -1,0 +1,281 @@
+/* ============================
+   groupBoardDetail.css
+   (글 상세/댓글 – 퍼플 톤)
+   ============================ */
+
+:root{
+  --color-main:#7E57C2;
+  --color-sub:#B18FCF;
+  --color-accent:#4527A0;
+  --color-bg:#F7F6FB;
+  --color-card:#FFFFFF;
+  --color-text:#2F2A3B;
+  --color-muted:#7A718D;
+  --radius-xl:20px;
+  --radius-lg:14px;
+  --radius-md:10px;
+  --shadow-md:0 10px 24px rgba(69,39,160,0.12);
+  --shadow-sm:0 4px 12px rgba(69,39,160,0.08);
+  --border:#E8E3F3;
+  --focus:0 0 0 3px rgba(126,87,194,0.3);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  color:var(--color-text);
+  background:linear-gradient(180deg, var(--color-bg), #FFF);
+}
+
+/* Page */
+.page{max-width:980px; margin:40px auto 80px; padding:0 20px}
+.page__header{display:flex; align-items:center; justify-content:space-between; gap:12px}
+.page__title{
+  margin:0; font-size:28px; font-weight:800; letter-spacing:-0.2px; color:var(--color-accent);
+  background:var(--color-card); border:1px solid var(--border);
+  border-radius:var(--radius-xl); padding:16px 20px; box-shadow:var(--shadow-md);
+}
+.link-back{
+  text-decoration:none; color:var(--color-main);
+  padding:10px 14px; border-radius:var(--radius-md);
+  background:rgba(126,87,194,0.08);
+}
+.link-back:hover{background:rgba(126,87,194,0.14)}
+.link-back:focus-visible{outline:none; box-shadow:var(--focus)}
+
+/* Card */
+.card{
+  background:var(--color-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius-xl);
+  box-shadow:var(--shadow-md);
+  padding:22px; margin-top:18px;
+}
+.card__title{margin:0 0 8px; font-size:20px; font-weight:700; color:var(--color-accent)}
+
+/* Post */
+.post__header{display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap}
+.post__title{margin:0; font-size:24px; font-weight:800}
+.post__meta{display:flex; align-items:center; gap:10px}
+.badge{display:inline-block; padding:6px 10px; font-size:12px; border-radius:999px; border:1px solid var(--border); background:#fff}
+.muted{color:var(--color-muted); font-size:13px}
+.post__media{margin:14px 0 8px}
+.post__media img{display:block; max-width:100%; height:auto; border-radius:14px; border:1px solid var(--border); box-shadow:var(--shadow-sm)}
+.post__content{line-height:1.75; white-space:pre-wrap; margin-top:6px}
+
+/* Actions & Buttons */
+.actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:flex-end; margin-top:12px}
+.actions--compact{justify-content:flex-start; margin-top:8px}
+.inline-form{display:inline}
+.btn{
+  appearance:none; border:none; padding:10px 14px; border-radius:12px; font-weight:800; cursor:pointer;
+  background:#EEE; box-shadow:0 4px 10px rgba(0,0,0,0.04);
+  transition:transform .06s ease, box-shadow .2s ease, background .2s ease, color .2s ease;
+}
+.btn:active{transform:translateY(1px)}
+.btn:focus-visible{outline:none; box-shadow:var(--focus)}
+.btn--primary{background:linear-gradient(180deg, var(--color-main), var(--color-accent)); color:#fff}
+.btn--primary:hover{filter:brightness(1.05)}
+.btn--ghost{background:#fff; color:var(--color-accent); border:1px solid var(--color-sub)}
+.btn--ghost:hover{background:#FBF8FF}
+.btn--danger{background:#FCE4EC; color:#AD1457; border:1px solid #F8BBD0}
+
+/* Comments */
+.comment-section{display:grid; gap:16px}
+.comment{
+  border:1px solid var(--border); border-radius:14px; padding:14px; background:#fff; box-shadow:var(--shadow-sm);
+}
+.comment__meta{display:flex; align-items:center; gap:10px; margin-bottom:6px}
+.comment__content{line-height:1.65; white-space:pre-wrap}
+
+/* Reply (indent) */
+.reply{
+  margin-top:12px; margin-left:22px; padding-left:12px;
+  border-left:3px solid rgba(126,87,194,0.18);
+}
+.reply .comment__content{margin-top:4px}
+
+/* Forms (edit/reply/new) */
+.textarea{
+  width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:12px; background:#fff;
+  font-size:14px; line-height:1.6; resize:vertical; min-height:100px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.02) inset;
+}
+.textarea:focus{outline:none; border-color:var(--color-sub); box-shadow:var(--focus)}
+.edit-form, .reply-form, .comment-form{margin-top:10px}
+
+/* Responsive */
+@media (max-width:720px){
+  .page__title{font-size:24px; padding:14px 16px}
+  .post__title{font-size:20px}
+  .reply{margin-left:14px}
+}
+
+/* === 이미지 1/6 크기, 중앙 정렬 === */
+.post__media{display:flex; justify-content:center}
+.post__media img{
+  max-width:40%;
+  height:auto;
+}
+
+/* 모바일에서는 꽉 차게 */
+@media (max-width:720px){
+  .post__media img{max-width:100%}
+}
+
+/* === 상단 액션 버튼(수정/삭제/신고) 통일 & 간격 === */
+.actions{
+  gap:12px;
+  justify-content:flex-end;
+}
+.actions .btn,
+.actions input[type="submit"].btn{
+  min-width:112px;
+  padding:12px 16px;
+  border-radius:12px;
+}
+
+/* === 댓글/대댓글 버튼 크기 통일 (작은 사이즈) === */
+.actions--compact .btn,
+.actions--compact input[type="submit"].btn{
+  min-width:86px;
+  padding:10px 14px;
+  border-radius:12px;
+}
+
+/* === 댓글 타이포/여백 조정 === */
+.comment{padding:16px}
+.comment__meta{gap:8px; margin-bottom:8px}
+.comment__content{margin-top:4px}
+
+/* === 대댓글 들여쓰기 & 가이드라인 정리 === */
+.reply{
+  margin-top:12px;
+  margin-left:18px;
+  padding-left:14px;
+  border-left:3px solid rgba(126,87,194,0.2);
+}
+
+/* === 버튼 스타일 보강(폼 submit도 동일하게 보이게) === */
+input[type="submit"].btn{appearance:none; border:none}
+.btn--primary{background:linear-gradient(180deg, var(--color-main), var(--color-accent)); color:#fff}
+.btn--ghost{background:#fff; color:var(--color-accent); border:1px solid var(--color-sub)}
+.btn--danger{background:#FCE4EC; color:#AD1457; border:1px solid #F8BBD0}
+.btn--primary:hover,
+.actions .btn:hover{filter:brightness(1.05)}
+
+/* ===== 상단 액션 버튼: 행 정렬/간격/높이 통일 ===== */
+.actions{
+  display:flex;
+  align-items:center;            /* 버튼 높이 맞춤 */
+  justify-content:flex-end;      /* 우측 정렬 */
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+
+/* 폼도 버튼처럼 한 줄 배치 */
+.actions form,
+.inline-form{
+  display:inline-flex;           /* form 자체를 인라인-플렉스로 */
+  align-items:center;
+  margin:0;                      /* 폼 기본 마진 제거 */
+}
+
+/* 버튼 크기 통일 (a, button, input 모두) */
+.actions .btn,
+.actions a.btn,
+.actions button.btn,
+.actions input[type="submit"].btn{
+  min-width:112px;
+  padding:12px 16px;
+  border-radius:12px;
+  line-height:1;
+}
+
+/* 삭제/신고 등 submit이 .btn 없을 때도 모양 맞춤 (세이프가드) */
+.actions input[type="submit"]{
+  appearance:none;
+  border:none;
+  padding:12px 16px;
+  border-radius:12px;
+  background:#FCE4EC;
+  color:#AD1457;
+  border:1px solid #F8BBD0;
+  font-weight:800;
+  cursor:pointer;
+}
+
+/* ===== 본문 이미지 1/6, 가운데 정렬 ===== */
+.post__media{display:flex; justify-content:center}
+.post__media img{
+  max-width:16.666%;
+  height:auto;
+  border-radius:14px;
+  border:1px solid var(--border);
+  box-shadow:var(--shadow-sm);
+}
+@media (max-width:720px){
+  .post__media img{max-width:100%}
+}
+
+/* ===== 댓글 영역 레이아웃 안정화 ===== */
+
+/* 댓글 카드 기본 여백/타이포 */
+.comment{
+  padding:16px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:#fff;
+  box-shadow:var(--shadow-sm);
+}
+.comment__meta{display:flex; align-items:center; gap:10px; margin-bottom:8px}
+.comment__content{line-height:1.65; white-space:pre-wrap; margin:4px 0 0}
+
+/* 댓글 액션: 항상 오른쪽 정렬 + 촘촘한 버튼 */
+.actions--compact{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;      /* ✅ 우측 정렬 고정 */
+  gap:8px;
+  margin-top:10px;
+}
+.actions--compact .btn,
+.actions--compact input[type="submit"].btn{
+  min-width:86px;
+  padding:10px 14px;
+}
+
+/* 대댓글 들여쓰기 & 라인 얇게 (여백 과다 방지) */
+.reply{
+  margin-top:14px;
+  margin-left:18px;
+  padding-left:12px;
+  border-left:2px solid rgba(126,87,194,0.18);  /* 얇게 */
+}
+
+/* 대댓글 내부 액션도 오른쪽 정렬 */
+.reply .actions--compact{
+  justify-content:flex-end;
+}
+
+/* 배지, 회색 글씨 재사용 */
+.badge{display:inline-block; padding:6px 10px; font-size:12px; border-radius:999px; border:1px solid var(--border); background:#fff}
+.muted{color:var(--color-muted); font-size:13px}
+
+/* 텍스트 영역 통일 (수정/대댓글 폼) */
+.textarea{
+  width:100%;
+  padding:12px 14px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:#fff;
+  font-size:14px;
+  line-height:1.6;
+  resize:vertical;
+  min-height:100px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.02) inset;
+}
+.textarea:focus{outline:none; border-color:var(--color-sub); box-shadow:var(--focus)}

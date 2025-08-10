@@ -1,3 +1,5 @@
+/* chart.css */
+
 body {
     margin: 0;
     padding: 0;
@@ -15,12 +17,20 @@ body {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
 }
 
+.dashboard-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px; /* 제목과 버튼 사이 간격 */
+    margin-bottom: 40px;
+}
+
 .dashboard-title {
-    text-align: center;
+    /* text-align: center; (Flexbox 사용으로 더 이상 필요 없음) */
     font-size: 2.5rem;
     font-weight: 600;
-    color: #e1306c;
-    margin-bottom: 40px;
+    color: #333333;
+    margin: 0;
 }
 
 .chart-grid {
@@ -58,8 +68,28 @@ body {
     height: 250px !important;
 }
 
+.top-button-container {
+    margin: 0;
+    padding: 0;
+}
+
+.back-to-home-button {
+    background-color: #333333;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.back-to-home-button:hover {
+    background-color: #494848;
+}
+
 @media screen and (max-width: 768px) {
     .chart-grid {
-        grid-template-columns: 1fr; /* 모바일: 1열 */
+        grid-template-columns: 1fr;
     }
 }

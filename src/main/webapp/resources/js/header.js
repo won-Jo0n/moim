@@ -1,4 +1,5 @@
 const header = {
+    notificationUnread : 0,
     chatUnread : 0,
     chatUser : null
 };
@@ -6,14 +7,15 @@ const stompClient = new StompJs.Client({
   webSocketFactory: () => new SockJS("/ws-stomp"),
 });
 stompClient.onWebSocketError = (error) => {
-  console.error("Error with websocket", error);
+  console.error("WEBSOCKET ERROR", error);
 };
 stompClient.onStompError = (frame) => {
-  console.error("Broker reported error: " + frame.headers["message"]);
-  console.error("Additional details: " + frame.body);
+    console.error("STOMP ERROR", frame);
+  //console.error("Broker reported error: " + frame.headers["message"]);
+  //console.error("Additional details: " + frame.body);
 };
 stompClient.onDisconnect = (frame) => {
-  console.error("Server Disconnect");
+   console.error("DISCONNECT", frame);
 };
 stompClient.onConnect = (frame) => {
   stompClient.subscribe("/user/queue/main", (msg) => {
@@ -27,16 +29,16 @@ stompClient.onConnect = (frame) => {
         $(`div[data-user-id="${data.sender}"] .online-indicator`).removeClass("online");
         break;
       case "SEND_MESSAGE":
-      case "RECEIVE_MESSAGE":
-        const isSender = msg.headers.type == "SEND_MESSAGE";
-        messageItem = $(`div[data-user-id="${isSender ? data.responseUserId : data.requestUserId}"]`);
-        messageItem.find(".main-text > p").text(data.content);
-        messageItem.find(".message-info > span").text(formatLastChatTime(data.sendAt)); //"어제"가 잘 안나오니 그쪽로직 확인
-        messageItem.parent().find(".empty-message-box").after(messageItem);
-        if(header.chatUser && (header.chatUser.id == data.responseUserId || header.chatUser.id == data.requestUserId)){
+        refreshMessageItem($(`div[data-user-id="${data.responseUserId}"]`), data);
+        if(header.chatUser && header.chatUser.id == data.responseUserId){
             createChatItem(data);
         }
+        break;
+      case "RECEIVE_MESSAGE":
+        messageItem = $(`div[data-user-id="${data.requestUserId}"]`);
+        refreshMessageItem(messageItem, data);
         if(header.chatUser && header.chatUser.id == data.requestUserId){
+            createChatItem(data);
             stompClient.publish({
               destination: "/app/chat",
               headers: { type: "READ_MESSAGE" },
@@ -45,36 +47,72 @@ stompClient.onConnect = (frame) => {
                 chatId: header.chatUser.lastChatId,
               }),
             });
-        }else if(!isSender && (!header.chatUser || header.chatUser.id != data.requestUserId)){
+        }else if(!header.chatUser || header.chatUser.id != data.requestUserId){
             const unreadDiv = messageItem.find(".message-info > div");
             unreadDiv.text(parseInt(unreadDiv.text() || "0") + 1);
             header.chatUnread++;
         }
         break;
-      case "READ_MESSAGE":
-      case "READ_RECEIPT":
-        const isReader = msg.headers.type == "READ_MESSAGE";
-        messageItem = $(`div[data-user-id="${isReader ? data.sender : data.reader}"]`);
-
+      case "READ_MESSAGE_SELF":
+        //console.log("내가 " + data.sender + "의 글을 " + data.readCount + "개 읽음");
+        messageItem = $(`div[data-user-id="${data.sender}"]`);
         const unreadDiv = messageItem.find(".message-info > div");
-        unreadDiv.text(parseInt(unreadDiv.text() || "0"));
-
-        if(isReader) console.log("내가 " + data.sender + "의 글을 " + data.readCount + "개 읽음");
-        else console.log(data.reader + "가 나의 글을 " + data.readCount + "개 읽음");
-        //isReader면 내가 읽고나서 다른 클라이언트 한테 뿌리는 사람
-
-        //다른 사용자가 이것을 읽었음을 확인헀음.
+        const afterCount = parseInt(unreadDiv.text() || "0") - data.readCount;
+        unreadDiv.text(afterCount > 0 ? afterCount : "");
+        header.chatUnread -= data.readCount;
+        if(header.chatUser && header.chatUser.id == data.sender){
+            $(".chat-message-wrapper.received").slice(-data.readCount).addClass("read");
+        }
+        break;
+      case "READ_MESSAGE_OTHER":
+        //console.log(data.reader + "가 나의 글을 " + data.readCount + "개 읽음" + ", " + data.chatId);
+        if(header.chatUser && header.chatUser.id == data.reader){
+            $(".chat-message-wrapper.sent").slice(-data.readCount).addClass("read");
+        }
+        break;
+      case "SEND_REQUEST":
+        $(`div[data-user-id="${data.id}"]`).remove();
+        break;
+      case "RECEIVE_REQUEST":
+        $(`div[data-user-id="${data.id}"]`).remove();
+        header.chatUnread++;
+        createMessageItem(data);
+        break;
+      case "SEND_REQUEST_RESPONSE":
+        $(`div[data-user-id="${data.id}"]`).remove();
+        header.chatUnread--;
+        break;
+      case "FRIEND_NEW":
+        createMessageItem(data);
         break;
       case "MATCH_JOIN":
         console.log("MATCH JOIN");
         break;
       case "MATCH_FOUND":
-        console.log("MATCH FOUND : " + data.nickName);
+        openChat(createMessageItem(data));
         break;
     }
   });
 };
+
+function refreshMessageItem(element, data){
+    element.find(".main-text > p").text(data.content);
+    element.find(".message-info > span").text(formatLastChatTime(data.sendAt)); //"어제"가 잘 안나오니 그쪽로직 확인
+    element.parent().find(".empty-message-box").after(element);
+}
+
+
 $(function () {
+    const navLinks = $(".sidebar-nav li > a");
+    const currentPath = window.location.pathname;
+    navLinks.each((index, element) => {
+        if ($(element).attr("href") == currentPath) {
+            $(element).addClass('active');
+        }else{
+            $(element).removeClass('active');
+        }
+    });
+
     //stompClient.heartbeat.outgoing = 20000; // 20초마다 서버로 하트비트 신호 전송
     //stompClient.heartbeat.incoming = 20000;
     stompClient.activate();
@@ -100,6 +138,80 @@ $(function () {
         console.error("채팅 기록을 가져오는 중 오류 발생:", error);
       },
     });
+    $('#chat-input').keypress(function(event) {
+      if (event.which === 13) {
+        sendMessage();
+      }
+    });
+
+
+// 목업 데이터
+    const mockNotifications = [
+      {
+        id: 1,
+        userId: 101,
+        requestUserId: 201,
+        type: 'FRIEND_REQUEST',
+        relatedId: 201,
+        content: '권택준',
+        createdAt: '2025-08-10T10:00:00Z',
+        readAt: null,
+        path: null,
+        status: 1
+      },
+      {
+        id: 2,
+        userId: 101,
+        type: 'NEW_SCHEDULE',
+        relatedId: 301,
+        content: '스터디 모임',
+        createdAt: '2025-08-10T11:30:00Z',
+        readAt: '2025-08-10T12:00:00Z',
+        path: '/groups/301/schedule',
+        status: 1
+      },
+      {
+        id: 3,
+        userId: 101,
+        requestUserId: 401,
+        type: 'NEW_COMMENT',
+        relatedId: 501,
+        content: '권택준',
+        createdAt: '2025-08-10T14:20:00Z',
+        readAt: null,
+        path: '/feed/501',
+        status: 1
+      },
+      {
+        id: 4,
+        userId: 101,
+        type: 'REPORT_COMPLETED',
+        relatedId: 601,
+        content: '회원님께서 신고하신 건에 대한 처리가 완료되었습니다.',
+        createdAt: '2025-08-10T09:00:00Z',
+        readAt: '2025-08-10T09:10:00Z',
+        path: '/report/601',
+        status: 1
+      },
+      {
+        id: 5,
+        userId: 101,
+        type: 'FRIEND_REQUEST',
+        relatedId: 202,
+        content: '홍길동',
+        createdAt: '2025-08-10T16:00:00Z',
+        readAt: null,
+        path: null,
+        status: 1
+      }
+    ];
+    const notificationList = $("#notification-sidebar .notification-list");
+    console.log(notificationList);
+    mockNotifications.forEach((notification) => {
+        notificationList.append(createNotificationItem(notification));
+    });
+
+
   });
 
 function togglePopup(popupId, show) {
@@ -118,43 +230,43 @@ function openTab(tabName) {
 }
 function createMessageItem(user) {
     const messageList= $("#tab-" + ((Math.min(2, Math.max(0, user.status)) + 2) % 3) + " .message-list");
-    messageList.append(
-      $(`<div class="message-item"
-            data-user-id='${user.id}'
-            ${user.status <= 2 ? " onclick='openChat(this)'" : ""}
-          >
-            <div class="avatar">
-              <img src="/file/preview/?id=${user.fileId}" />
-              ${user.status == 1 ? "<div class='online-indicator'></div>" : ""}
-            </div>
-            <div class="user-info">
-              <h3>${user.nickName}</h3>
-              <p>${user.mbti}</p>
-            </div>
-            <div class="main-text">
-              <p>${user.lastChatContent}</p>
-            </div>
-            ${
-              user.status <= 1
-                ? "<div class='message-info'><span>" +
-                  formatLastChatTime(user.lastChatTime) +
-                  "</span><div>" +
-                  (user.unreadCount > 0 ? user.unreadCount : "") +
-                  "</div></div>"
-                : ""
-            }
-            ${
-              user.status == 3
-                ? "<button class='accept-btn' onclick='handleFriendRequest('accept', this)'><i class='fas fa-check'></i></button><button class='decline-btn' onclick='handleFriendRequest('decline', this)'><i class='fas fa-xmark'></i></button>"
-                : ""
-            }
-            ${
-              user.status <= 0
-                ? "<button class='request-btn' onclick='handleFriendRequest('request', this)'>채팅</button>"
-                : ""
-            }
-      </div>`)
-    );
+    const messageItem = $(`<div class="message-item"
+           data-user-id='${user.id}'
+           ${user.status == 1 || user.status == 2 ? " onclick='openChat(this)'" : ""}
+         >
+           <div class="avatar">
+             <img src="/file/preview/?id=${user.fileId}" />
+             ${user.status == 1 ? "<div class='online-indicator'></div>" : ""}
+           </div>
+           <div class="user-info">
+             <h3>${user.nickName}</h3>
+             <p>${user.mbti}</p>
+           </div>
+           <div class="main-text">
+             <p>${(user.status == 1 || user.status == 2) && user.lastChatContent ? user.lastChatContent : "" }</p>
+           </div>
+           ${
+             user.status == 1 || user.status == 2
+               ? "<div class='message-info'><span>" +
+                 (user.lastChatTime ? formatLastChatTime(user.lastChatTime) : "") +
+                 "</span><div>" +
+                 (user.unreadCount > 0 ? user.unreadCount : "") +
+                 "</div></div>"
+               : ""
+           }
+           ${
+             user.status == 3
+               ? "<button class='accept-btn' onclick='handleFriendRequest(\"accept\", this.parentElement)'><i class='fas fa-check'></i></button><button class='decline-btn' onclick='handleFriendRequest(\"decline\", this.parentElement)'><i class='fas fa-xmark'></i></button>"
+               : ""
+           }
+           ${
+             user.status <= 0
+               ? "<button class='request-btn' onclick='handleFriendRequest(\"request\", this.parentElement)'>채팅</button>"
+               : ""
+           }
+     </div>`)
+    messageList.append(messageItem);
+    return messageItem;
 }
 function openChat(element) {
   const elem = $(element);
@@ -185,9 +297,10 @@ function openChat(element) {
           headers: { type : "READ_MESSAGE" },
           body: JSON.stringify({
               chatUserId : header.chatUser.id,
-              chatId : header.chatUser.lastChatId,
+              chatId : header.chatUser.lastChatId ?? -1,
           })
       });
+      $("#chat-input").focus();
     },
     error: function (xhr, status, error) {
       console.error("채팅 기록을 가져오는 중 오류 발생:", error);
@@ -196,26 +309,10 @@ function openChat(element) {
 }
 
 function toggleNotificationSidebar(show) {
-        const sidebar = document.getElementById("notificationSidebar");
         if (show) {
-            $("#notificationSidebar .notification-list").empty();
-          $.ajax({
-              url: "/friends/pending",
-              type: "GET",
-              contentType: "application/json",
-              success: function (data) {
-                const list = $("#notificationSidebar .notification-list");
-                data.forEach((notification) => {
-                    list.append(createNotificationItem(notification));
-                });
-              },
-              error: function (xhr, status, error) {
-                console.error("알림 가져오는 중 오류 발생:", error);
-              }
-          });
-          sidebar.classList.add("show");
+          $("#notification-sidebar").addClass("show");
         } else {
-          sidebar.classList.remove("show");
+          $("#notification-sidebar").removeClass("show");
         }
 }
 
@@ -237,12 +334,88 @@ function update(reqId, status, element){
       });
 }
 
-function createNotificationItem(notification){
-    return $(`<div>${notification.nickName}
-                    <button onclick="update(${notification.id}, 1, this)">수락</button>
-                    <button onclick="update(${notification.id}, -1, this)">거절</button>
-                </div>`);
+function createNotificationItem(notification) {
+  const typeClass = notification.type == "FRIEND_REQUEST" ? "" : "notification-btn";
+  let iconClass = "";
+  let notificationText = "";
+  let actionsHtml = "";
+  switch (notification.type) {
+    case "FRIEND_REQUEST":
+      iconClass = "fas fa-user-plus";
+      notificationText = `<strong>${notification.content}</strong>님이 친구를 요청했습니다.`;
+      actionsHtml = `
+        <div class="notification-actions">
+          <button class="accept-btn" onclick="acceptFriendRequest(${notification.requestUserId})">
+            수락
+          </button>
+          <button class="decline-btn" onclick="declineFriendRequest(${notification.requestUserId})">
+            거절
+          </button>
+        </div>
+      `;
+      break;
+    case "NEW_SCHEDULE":
+      iconClass = "fas fa-calendar-alt";
+      notificationText = `<strong>${notification.content}</strong> 모임에 새로운 일정이 등록되었습니다.`;
+      break;
+    case "NEW_COMMENT":
+      iconClass = 'fas fa-comment';
+      notificationText = `<strong>${notification.content}</strong>님이 내 피드에 댓글을 남겼습니다.`;
+      break;
+    case "REPORT_COMPLETED":
+      iconClass = 'fas fa-check-circle';
+      notificationText = notification.content;
+      break;
+    default:
+      iconClass = "fas fa-bell";
+      notificationText = '새로운 알림이 도착했습니다.';
+      break;
+  }
+  const notificationItem =
+  $(`
+     <div class="notification-item ${typeClass}">
+       <div class="notification-content">
+         <i class="${iconClass} notification-icon"></i>
+         <span class="notification-text">
+           ${notificationText}
+         </span>
+       </div>
+       ${actionsHtml}
+     </div>
+   `);
+  if (notification.type != "FRIEND_REQUEST") {
+    notificationItem.on("click", () => {
+      // 읽음 처리 API 호출 등의 추가 로직
+      markAsRead(notification.id);
+      // 페이지 이동
+      window.location.href = notification.path;
+    });
+  }
+  return notificationItem;
 }
+
+function searchUserList(search){
+    if(search){
+        $.ajax({
+              url: "/chat/searchUserList",
+              type: "GET",
+              contentType: "application/json",
+              data: {
+                search : search
+              },
+              success: function (data) {
+                $("#tab-2 .message-list").children().not(".empty-message-box").remove();
+                data.forEach((user)=>{
+                    createMessageItem(user);
+                });
+              },
+              error: function (xhr, status, error) {
+                console.log("유저 검색 실패");
+              }
+          });
+      }
+}
+
 
 function closeChat() {
     header.chatUser = null;
@@ -327,7 +500,8 @@ function createChatItem(chat) {
         header.chatUser.lastChatId = chat.id;
         const chatDate = chatDateTime.date;
         if(chatDate != header.chatUser.lastChatDate){
-            //chatDate 날짜 div 새로 생성해야되므로 chatItem에 붙일 문자열 생성
+            //날짜 div 새로 생성해야됨. chatItem에 붙일 문자열 생성
+            //예를들어, 2025년 8월 9일에 채팅하다가 10일로 넘어갔을 때 2025. 8. 10 표시
             header.chatUser.lastChatDate = chatDate;
         }
         const chatItem = `
@@ -344,37 +518,23 @@ function createChatItem(chat) {
       }
 
 function handleFriendRequest(action, element) {
-    /*
-  const messageItem = buttonElement.closest(".message-item");
-  const userName = messageItem.querySelector("h3").textContent;
-  */
-    /*
-    $.ajax({
-        url: `/chat/${action}/1`,
-        // 1을 buttonElement의 부모에 있는 data-user-id로 보내줘야한다.
-        type: "GET",
-        contentType: "application/json",
-        success: function (data) {
-        },
-        error: function (xhr, status, error) {
-          console.error("채팅 기록을 가져오는 중 오류 발생:", error);
-        },
-      });
-      */
-
-    /*
-  if (action === "accept") {
-    console.log(`${userName}님의 친구 요청을 수락했습니다.`);
-    // 여기에 친구 수락 로직 (예: 서버 API 호출) 추가
-    alert(`${userName}님을 친구로 추가했습니다!`);
-  } else if (action === "decline") {
-    console.log(`${userName}님의 친구 요청을 거절했습니다.`);
-    // 여기에 친구 거절 로직 (예: 서버 API 호출) 추가
-    alert(`${userName}님의 요청을 거절했습니다.`);
-  } else if (action === "request") {
-    alert("chat");
-  }
-
-  messageItem.style.display = "none"; //요청 처리 후 삭제? 일단 accept나 decline은 삭제해야됨
-  */
+    const userId = $(element).attr("data-user-id");
+    if(action == "request"){
+        stompClient.publish({
+          destination: "/app/chat",
+          headers: { type: "SEND_REQUEST" },
+          body: JSON.stringify({
+            chatUserId: userId
+          }),
+        });
+    }else{
+        stompClient.publish({
+          destination: "/app/chat",
+          headers: { type: "SEND_REQUEST_RESPONSE" },
+          body: JSON.stringify({
+            chatUserId: userId,
+            action : action
+          }),
+        });
+    }
 }

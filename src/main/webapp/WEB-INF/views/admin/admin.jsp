@@ -11,18 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
- <aside class="sidebar">
-        <div class="logo">
-            <h2>Admin</h2>
-        </div>
-        <nav class="main-nav">
-            <a href="/admin" class="active"><i class="fa-solid fa-house"></i> 대시보드</a>
-            <a href="/admin/report"><i class="fa-solid fa-flag"></i> 신고 관리</a>
-            <a href="/admin/chart"><i class="fa-solid fa-chart-line"></i> 통계 분석</a>
-            <a href="/admin/penalties"><i class="fa-solid fa-users"></i> 사용자 관리</a>
-        </nav>
-    </aside>
-
+ <%@ include file="adminSidebar.jsp" %>
     <div class="main-content">
         <header class="topbar">
             <h1>관리자 대시보드</h1>
@@ -67,10 +56,10 @@
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th class="first-th">ID</th>
                             <th>제목</th>
                             <th>신고일자</th>
-                            <th>상태</th>
+                            <th class="last-th">상태</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -127,18 +116,18 @@
                             y: {
                                 beginAtZero: true,
                                 grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
+                                    color: 'rgba(0, 0, 0, 0.1)'
                                 },
                                 ticks: {
-                                    color: 'rgba(255, 255, 255, 0.8)'
+                                    color: 'rgba(0, 0, 0, 0.8)'
                                 }
                             },
                             x: {
                                 grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
+                                    color: 'rgba(0, 0, 0, 0.1)'
                                 },
                                 ticks: {
-                                    color: 'rgba(255, 255, 255, 0.8)'
+                                    color: 'rgba(0, 0, 0, 0.8)'
                                 }
                             }
                         },
@@ -149,7 +138,7 @@
                             title: {
                                 display: true,
                                 text: mbtiStats.title,
-                                color: 'rgba(255, 255, 255, 0.8)',
+                                color: 'rgba(0, 0, 0, 0.8)',
                                 font: {
                                     size: 16
                                 }
