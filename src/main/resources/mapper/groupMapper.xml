@@ -49,6 +49,38 @@
         WHERE id = #{id};
     </update>
 
+    <!-- 리더의 비활성(삭제됨) 그룹 1건 찾기 (status = -1) -->
+    <select id="findInactiveGroupIdByLeader" parameterType="int" resultType="int">
+        SELECT id
+        FROM `group`
+        WHERE leader = #{leader}
+        AND status = -1
+        ORDER BY id DESC
+        LIMIT 1
+    </select>
+
+    <!-- 삭제되었던 그룹을 '새로 만든 것처럼' 재활성화 -->
+    <update id="reactivateGroup" parameterType="map">
+        UPDATE `group`
+        SET title      = #{title},
+        description= #{description},
+        location   = #{location},
+        maxUserNum = #{maxUserNum},
+        fileId     = #{fileId},
+        status     = 1,
+        createdAt  = CURRENT_TIMESTAMP
+        WHERE id = #{id};
+    </update>
+
+    <!-- 리더의 활성(=status=1) 모임 개수 -->
+    <select id="countActiveByLeader" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM `group`
+        WHERE leader = #{leader}
+        AND status = 1
+    </select>
+
+    <!-- 모임 일정 관련 -->
     <insert id="createGroupSchedule" parameterType="groupSchedule">
         INSERT INTO groupSchedule(scheduleLeader, groupId, title, description,startTime,endTime,maxUserNum)
         VALUES(#{scheduleLeader},#{groupId},#{title},#{description},#{startTime},#{endTime},#{maxUserNum});

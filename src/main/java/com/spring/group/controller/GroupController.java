@@ -57,9 +57,8 @@ public class GroupController {
                               @RequestParam("country") String country,
                               @RequestParam("maxUserNum") int maxUserNum,
                               @RequestParam(value = "groupFile", required = false) MultipartFile file,
-                              HttpSession session) throws IOException {
-
-
+                              HttpSession session,
+                              Model model) throws IOException {
 
         int loginUserId = (int) session.getAttribute("userId");
         String location = city + " " + country;
@@ -78,9 +77,16 @@ public class GroupController {
             groupDTO.setFileId(1);
         }
 
+        try {
+            groupService.save(groupDTO, loginUserId);
+            return "redirect:/group/list";
+        } catch (IllegalStateException e) {
+            // 안내문 노출 + 사용자가 입력한 값 유지
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("group", groupDTO);
+            return "group/create";
+        }
 
-        groupService.save(groupDTO, loginUserId);
-        return "redirect:/group/list";
     }
 
     // 그룹 목록 보기

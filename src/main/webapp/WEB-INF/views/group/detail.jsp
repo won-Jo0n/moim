@@ -5,129 +5,157 @@
 <html>
 <head>
     <title>모임 상세 페이지</title>
+    <link rel="stylesheet" href="../resources/css/groupDetail.css" >
 </head>
 <body>
-    <h2>모임 상세 페이지</h2>
-    <p><strong>모임명:</strong> ${group.title}</p>
-    <img src="/file/preview?fileId=${group.fileId}" width="150" height="150"></img>
-    <p><strong>모임 소개:</strong> ${group.description}</p>
-    <p><strong>모임 지역:</strong> ${group.location}</p>
-    <p><strong>최대 인원:</strong> ${group.maxUserNum}</p>
-    <p><strong>생성일:</strong>
-        <fmt:formatDate value="${group.createdAt}" pattern="yyyy-MM-dd" />
-    </p>
+    <div class="group-info-container">
+        <!-- 그룹 헤더 레이아웃 (이미지 좌측, 정보 테이블 우측) -->
+        <div class="group-hero">
+          <div class="group-hero__media">
+            <img class="group-hero__img"
+                 src="/file/preview?fileId=${group.fileId}"
+                 alt="${group.title} 대표 이미지">
+          </div>
 
-    <!-- 로그인한 사용자가 모임장일 때만 수정/삭제 버튼 표시 -->
-    <c:if test="${sessionScope.userId == group.leader}">
-        <form action="/group/update" method="get">
-            <input type="hidden" name="id" value="${group.id}"/>
-            <button type="submit">수정</button>
-        </form>
+          <div class="group-hero__body">
+            <h2 class="group-hero__title">${group.title}</h2>
 
-        <form action="/group/delete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
-            <input type="hidden" name="id" value="${group.id}" />
-            <button type="submit">삭제</button>
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-        </form>
-    </c:if>
+            <table class="info-table">
+              <tbody>
+                <tr>
+                  <th>모임 소개</th>
+                  <td>${group.description}</td>
+                </tr>
+                <tr>
+                  <th>모임 지역</th>
+                  <td>${group.location}</td>
+                </tr>
+                <tr>
+                  <th>최대 인원</th>
+                  <td>${group.maxUserNum}</td>
+                </tr>
+                <tr>
+                  <th>생성일</th>
+                  <td><fmt:formatDate value="${group.createdAt}" pattern="yyyy-MM-dd" /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-    <!-- 로그인한 사용자가 모임장이 아니고, 승인된 사용자가 아닐떄 참여 버튼 표시 -->
-    <c:if test="${sessionScope.userId != group.leader and not isApprovedMember}">
-      <c:choose>
-        <c:when test="${isAppliedMember}">
-          <form action="/groupjoin/cancel" method="post">
-            <input type="hidden" name="groupId" value="${group.id}" />
-            <button type="submit">참여 신청 취소</button>
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-          </form>
-        </c:when>
-        <c:otherwise>
-          <form action="/groupjoin/apply" method="post">
-            <input type="hidden" name="userId" value="${sessionScope.userId}"/>
-            <input type="hidden" name="groupId" value="${group.id}" />
-            <input type="submit" value="모임 참여 신청">
-          </form>
-        </c:otherwise>
-      </c:choose>
-    </c:if>
+        <div style="margin-top: 1.5rem;">
+            <c:if test="${sessionScope.userId == group.leader}">
+                <form action="/group/update" method="get">
+                    <input type="hidden" name="id" value="${group.id}"/>
+                    <button type="submit" class="btn-primary">수정</button>
+                </form>
+                <form action="/group/delete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                    <input type="hidden" name="id" value="${group.id}" />
+                    <button type="submit" class="btn-danger">삭제</button>
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                </form>
+            </c:if>
 
-    <!-- 승인된 사람에게만 모임 탈퇴 버튼 표시 -->
-    <c:if test="${isApprovedMember}">
-        <form action="/groupjoin/leave" method="post" onsubmit="return confirm('정말 모임을 탈퇴하시겠습니까?');">
-            <input type="hidden" name="groupId" value="${group.id}"/>
-            <button type="submit">모임 탈퇴</button>
-             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-        </form>
-    </c:if>
-
-    <!-- 로그인한 사용자가 모임장일 경우에만 신청 목록 보기 버튼 표시 -->
-    <c:if test="${sessionScope.userId eq group.leader}">
-        <form action="/groupjoin/requests" method="get">
-            <input type="hidden" name="groupId" value="${group.id}"/>
-            <button type="submit">참여 신청 목록 보기</button>
-        </form>
-    </c:if>
-
-    <!-- 모임장일 경우에만 매니저 지정/해제 보기 버튼 표시 -->
-    <c:if test="${sessionScope.userId eq group.leader}">
-      <h3>매니저 관리</h3>
-      <c:choose>
-        <c:when test="${empty approvedMembers}">
-          승인된 멤버가 없습니다.
-        </c:when>
-        <c:otherwise>
-          <c:forEach var="m" items="${approvedMembers}">
-            <div style="margin-bottom:8px;">
-              <strong>${m.userName}</strong>
+            <c:if test="${sessionScope.userId != group.leader and not isApprovedMember}">
               <c:choose>
-                <c:when test="${m.role eq 'manager'}">
-                  <span style="margin-left:8px; color:#666;">[매니저]</span>
-                  <form action="/group/manager/revoke" method="post" style="display:inline;">
+                <c:when test="${isAppliedMember}">
+                  <form action="/groupjoin/cancel" method="post">
                     <input type="hidden" name="groupId" value="${group.id}" />
-                    <input type="hidden" name="userId" value="${m.userId}" />
-                    <button type="submit">매니저 해제</button>
+                    <button type="submit" class="btn-secondary">참여 신청 취소</button>
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                   </form>
                 </c:when>
                 <c:otherwise>
-                  <form action="/group/manager/assign" method="post" style="display:inline;">
+                  <form action="/groupjoin/apply" method="post">
+                    <input type="hidden" name="userId" value="${sessionScope.userId}"/>
                     <input type="hidden" name="groupId" value="${group.id}" />
-                    <input type="hidden" name="userId" value="${m.userId}" />
-                    <button type="submit">매니저 지정</button>
-                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                    <button type="submit" class="btn-primary">모임 참여 신청</button>
                   </form>
                 </c:otherwise>
               </c:choose>
+            </c:if>
+
+            <c:if test="${isApprovedMember}">
+                <form action="/groupjoin/leave" method="post" onsubmit="return confirm('정말 모임을 탈퇴하시겠습니까?');">
+                    <input type="hidden" name="groupId" value="${group.id}"/>
+                    <button type="submit" class="btn-secondary">모임 탈퇴</button>
+                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                </form>
+            </c:if>
+
+            <c:if test="${sessionScope.userId eq group.leader}">
+                <form action="/groupjoin/requests" method="get">
+                    <input type="hidden" name="groupId" value="${group.id}"/>
+                    <button type="submit" class="btn-secondary">참여 신청 목록 보기</button>
+                </form>
+            </c:if>
+
+            <c:if test="${isApprovedMember or isLeader}">
+                <form action="/groupboard/create" method="get">
+                    <input type="hidden" name="groupId" value="${group.id}" />
+                    <button type="submit">글 작성</button>
+                </form>
+            </c:if>
+
+            <c:if test="${canCreateSchedule}">
+                <a href="/group/createSchedule?scheduleLeader=${sessionScope.userId}&groupId=${group.id}" class="btn-link">그룹 일정 생성</a>
+            </c:if>
+        </div>
+    </div>
+
+    <c:if test="${sessionScope.userId eq group.leader}">
+      <h3>매니저 관리</h3>
+      <c:choose>
+        <c:when test="${empty approvedMembers}">
+          <p>승인된 멤버가 없습니다.</p>
+        </c:when>
+        <c:otherwise>
+          <c:forEach var="m" items="${approvedMembers}">
+            <div class="manager-item">
+              <strong>${m.userName}</strong>
+              <div>
+                  <c:choose>
+                    <c:when test="${m.role eq 'manager'}">
+                      <span class="manager-status">[매니저]</span>
+                      <form action="/group/manager/revoke" method="post" style="display:inline;">
+                        <input type="hidden" name="groupId" value="${group.id}" />
+                        <input type="hidden" name="userId" value="${m.userId}" />
+                        <button type="submit" class="btn-secondary">매니저 해제</button>
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                      </form>
+                    </c:when>
+                    <c:otherwise>
+                      <form action="/group/manager/assign" method="post" style="display:inline;">
+                        <input type="hidden" name="groupId" value="${group.id}" />
+                        <input type="hidden" name="userId" value="${m.userId}" />
+                        <button type="submit" class="btn-primary">매니저 지정</button>
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                      </form>
+                    </c:otherwise>
+                  </c:choose>
+              </div>
             </div>
           </c:forEach>
         </c:otherwise>
       </c:choose>
     </c:if>
 
-    <!-- 승인된 사람이거나 모임장일때만 모임게시판 글 작성 버튼 표시-->
-    <c:if test="${isApprovedMember or isLeader}">
-        <form action="/groupboard/create" method="get">
-            <input type="hidden" name="groupId" value="${group.id}" />
-            <button type="submit">글 작성</button>
-        </form>
-    </c:if>
-
-    <c:if test="${canCreateSchedule}">
-        <a href="/group/createSchedule?scheduleLeader=${sessionScope.userId}&groupId=${group.id}">그룹일정 생성</a>
-    </c:if>
 
     <c:if test="${isLeader || isApprovedMember}">
-        <h3> 게시판</h3>
+        <h3>게시판</h3>
         <c:forEach var="board" items="${boardList}">
              <div class="post-card" onclick="location.href='/groupboard/detail?id=${board.id}'">
-                <img src="/file/preview?fileId=${board.fileId}"  width="80" height="80"/>
-                <h4>${board.title}</h4>
-                <p>${board.content}</p>
-                <small>작성자: ${board.authorNickName}  작성일: ${board.createdAt}</small>
+                <img src="/file/preview?fileId=${board.fileId}" alt="게시글 이미지"/>
+                <div>
+                    <h4>${board.title}</h4>
+                    <p>${board.content}</p>
+                    <small>작성자: ${board.authorNickName}  작성일: ${board.createdAt}</small>
+                </div>
             </div>
         </c:forEach>
     </c:if>
 
+    <h3 style="margin-top: 3rem;">그룹 스케줄</h3>
     <c:choose>
         <c:when test="${not empty groupScheduleList}">
             <table>
@@ -170,7 +198,8 @@
             <p class="no-schedules">등록된 그룹 스케줄이 없습니다.</p>
         </c:otherwise>
     </c:choose>
-    <a href="/group/list">목록으로 돌아가기</a>
+    <a href="/group/list" class="back-link">목록으로 돌아가기</a>
+
     <script>
         const clickGroupScheduleDetail = (id)=>{
             location.href="/group/groupScheduleDetail?id=" + id;

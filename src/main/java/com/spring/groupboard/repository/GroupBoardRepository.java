@@ -2,7 +2,7 @@ package com.spring.groupboard.repository;
 
 import com.spring.groupboard.dto.GroupBoardDTO;
 import lombok.RequiredArgsConstructor;
-import org.apache.ibatis.session.SqlSession;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GroupBoardRepository {
 
-    private final SqlSession sql;
+    private final SqlSessionTemplate sql;
 
     // 게시글 목록
     public List<GroupBoardDTO> findByGroupId(int groupId) {
@@ -36,6 +36,10 @@ public class GroupBoardRepository {
     // 게시글 삭제
     public void delete(int id) {
         sql.delete( "GroupBoard.delete", id);
+    }
 
+    // 조회수 증가
+    public void increaseHits(int id) {
+        sql.update("GroupBoard.increaseHits", id);
     }
 }

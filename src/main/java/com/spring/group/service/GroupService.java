@@ -24,13 +24,66 @@ public class GroupService {
     // userJoinGroup 같이 처리 (모임장 함께 등록)
     @Transactional
     public void save(GroupDTO groupDTO, int loginUserId) {
-        groupRepository.save(groupDTO);  // 그룹 insert
-        // 그룹 생성 후, userJoinGroup에 leader 등록
+        // 안전장치: leader 세팅
+        groupDTO.setLeader(loginUserId);
+
+        // 1) 사전 검증: 활성 모임이 이미 있으면 차단 (500 대신 안내)
+        if (groupRepository.countActiveByLeader(loginUserId) > 0) {
+            throw new IllegalStateException("이미 생성한 활성 모임이 있어요. 한 사람당 모임은 1개만 생성할 수 있습니다.");
+        }
+
+        // 2) 재활성화 경로: 삭제(status=-1) 이력 있으면 그 행을 '신규처럼' 살린다
+        Integer inactiveId = groupRepository.findInactiveGroupIdByLeader(loginUserId);
+        if (inactiveId != null) {
+            groupRepository.reactivateGroup(
+                    inactiveId,
+                    groupDTO.getTitle(),
+                    groupDTO.getDescription(),
+                    groupDTO.getLocation(),
+                    groupDTO.getMaxUserNum(),
+                    groupDTO.getFileId()
+            );
+
+            // userjoingroup 보정
+            UserJoinGroupDTO existing = userJoinGroupRepository
+                    .findOneByGroupIdAndUserId(inactiveId, loginUserId);
+
+            if (existing == null) {
+                UserJoinGroupDTO join = new UserJoinGroupDTO();
+                join.setUserId(loginUserId);
+                join.setGroupId(inactiveId);
+                join.setRole("leader");
+                join.setStatus("approved");
+                join.setJoinedAt(new java.sql.Timestamp(System.currentTimeMillis()));
+                userJoinGroupRepository.insert(join);
+            } else {
+                if (!"leader".equals(existing.getRole())) {
+                    userJoinGroupRepository.updateRole(inactiveId, loginUserId, "leader");
+                }
+                if (!"approved".equals(existing.getStatus())) {
+                    UserJoinGroupDTO fix = new UserJoinGroupDTO();
+                    fix.setUserId(loginUserId);
+                    fix.setGroupId(inactiveId);
+                    fix.setStatus("approved");
+                    fix.setJoinedAt(new java.sql.Timestamp(System.currentTimeMillis()));
+                    userJoinGroupRepository.updateStatus(fix);
+                }
+            }
+
+            groupDTO.setId(inactiveId); // 필요시 컨트롤러 리다이렉트용
+            return;
+        }
+
+        // 3) 신규 INSERT (여기서 단 한 번만)
+        groupRepository.save(groupDTO);
+
+        // 4) 리더 조인 insert
         UserJoinGroupDTO join = new UserJoinGroupDTO();
         join.setUserId(loginUserId);
-        join.setGroupId(groupDTO.getId());  // auto_increment 된 ID
+        join.setGroupId(groupDTO.getId());
         join.setRole("leader");
-
+        join.setStatus("approved");
+        join.setJoinedAt(new java.sql.Timestamp(System.currentTimeMillis()));
         userJoinGroupRepository.insert(join);
     }
 
@@ -61,6 +114,8 @@ public class GroupService {
         userJoinGroupRepository.deleteByGroupId(id); // 연관 테이블 먼저 정리
         groupRepository.delete(id); // 이후 삭제
     }
+
+
 
     public void createGroupSchedule(GroupScheduleDTO groupScheduleDTO) {
         groupRepository.createGroupSchedule(groupScheduleDTO);

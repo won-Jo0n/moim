@@ -1,0 +1,115 @@
+/*
+  🎨 컬러 팔레트
+  메인: #7E57C2 (세련된 중간톤 퍼플)
+  서브: #B18FCF (부드러운 라벤더)
+  포인트: #4527A0 (깊은 퍼플)
+  배경: #F8F9FA (아주 연한 회색, 따뜻한 느낌)
+  텍스트: #495057 (짙은 회색)
+  에러: #DC3545 (경고, 빨간색)
+*/
+
+/* 📋 기본 스타일 */
+body {
+    background-color: #F8F9FA;
+    font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+    color: #495057;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+h2 {
+    color: #4527A0; /* 포인트 컬러로 제목 강조 */
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+#scheduleForm {
+    background-color: #FFFFFF;
+    padding: 3rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+}
+
+/* 📝 폼 요소 스타일 */
+label {
+    display: block;
+    font-weight: 600;
+    color: #7E57C2; /* 메인 컬러로 라벨 강조 */
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+input[type="text"],
+input[type="datetime-local"],
+input[type="number"],
+textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #E0E0E0;
+    border-radius: 0.75rem;
+    box-sizing: border-box; /* 패딩이 너비에 포함되도록 */
+    transition: border-color 0.3s, box-shadow 0.3s;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+input:focus,
+textarea:focus {
+    border-color: #B18FCF;
+    box-shadow: 0 0 0 0.25rem rgba(177, 143, 207, 0.25);
+    outline: none;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.hint {
+    font-size: 0.875rem;
+    color: #888;
+    margin-top: 0.25rem;
+}
+
+/* ❌ 에러 메시지 스타일 */
+.error {
+    color: #DC3545;
+    background-color: #F8D7DA;
+    border: 1px solid #F5C6CB;
+    padding: 1rem;
+    margin-top: 1.5rem;
+    border-radius: 0.75rem;
+    display: none;
+    text-align: center;
+}
+
+/* 💻 버튼 스타일 */
+input[type="submit"] {
+    width: 100%;
+    background-color: #7E57C2;
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    margin-top: 2rem;
+    font-size: 1rem;
+}
+
+input[type="submit"]:hover {
+    background-color: #6748A5;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+input[type="submit"]:active {
+    background-color: #4527A0;
+    transform: translateY(0);
+}

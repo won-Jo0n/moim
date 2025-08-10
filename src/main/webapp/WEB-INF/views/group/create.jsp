@@ -1,8 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,38 +12,20 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- jQuery CDN -->
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
-    <style>
-        body {
-            background-color: #f0f2f5; /* 차분한 배경색 */
-            font-family: 'Arial', sans-serif;
-        }
-        .container-form {
-            max-width: 600px;
-        }
-        .card {
-            border-radius: 1rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        .form-label {
-            font-weight: 600;
-            color: #495057;
-        }
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-            transition: background-color 0.3s, transform 0.3s;
-        }
-        .btn-primary:hover {
-            background-color: #0056b3;
-            border-color: #004085;
-            transform: translateY(-2px);
-        }
-    </style>
+    <link rel="stylesheet" href="../resources/css/groupCreate.css" >
 </head>
 <body>
     <div class="container container-form my-5">
+
+    <c:if test="${not empty error}">
+        <div class="alert alert-warning" role="alert" style="margin-bottom:16px;">
+          ${fn:escapeXml(error)}
+        </div>
+      </c:if>
+
         <div class="card p-4">
             <h2 class="card-title text-center mb-4">새로운 모임 만들기</h2>
+
             <form action="/group/create" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
                 <!-- 제목 -->
                 <div class="mb-3">
@@ -51,10 +34,12 @@
                     <div class="invalid-feedback">모임 이름을 입력해주세요.</div>
                 </div>
 
+
+
                 <!-- 모임 대표사진 -->
                 <div class="mb-3">
                     <label for="groupFile" class="form-label">모임 대표 사진</label>
-                    <input type="file" class="form-control" id="groupFile" name="groupFile">
+                    <input type="file" class="form-control" id="groupFile" name="groupFile" required>
                 </div>
 
                 <!-- 모임 소개 -->

@@ -1,31 +1,23 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>모임 목록</title>
-    <style>
-        .clickable-row {
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-
-        .clickable-row:hover {
-            background-color: #f0f0f0;
-        }
-    </style>
+    <link rel="stylesheet" href="../resources/css/groupList.css" >
 </head>
 <body>
     <h2>모임 목록</h2>
 
-    <form action="/group/list" method="get">
+    <form action="/group/list" method="get" class="search-form">
         <input type="text" name="keyword" placeholder="검색어를 입력하세요" value="${param.keyword}"/>
         <button type="submit">검색</button>
     </form>
 
-    <table border="1" cellpadding="8" cellspacing="0">
+    <table>
         <thead>
             <tr>
                 <th>모임명</th>
@@ -42,15 +34,16 @@
                 <tr class="clickable-row" data-id="${group.id}">
                     <td>${group.title}</td>
                     <td>
-                        <img src="/file/preview?fileId=${group.fileId}" width="80" height="80" />
+                        <img src="/file/preview?fileId=${group.fileId}" alt="Group image" required/>
                     </td>
                     <td>${group.location}</td>
                     <td>${group.description}</td>
                     <td>${group.maxUserNum}</td>
-                    <td>${group.createdAt}</td>
+                     <td>
+                        <fmt:formatDate value="${group.createdAt}" pattern="yyyy-MM-dd" />
+                    </td>
                     <td>
                         <c:choose>
-                            <%--1 = 활성, 0 = 비활성, -1 = 삭제됨--%>
                             <c:when test="${group.status == 1}">활성</c:when>
                             <c:when test="${group.status == 0}">비활성</c:when>
                             <c:otherwise>삭제됨</c:otherwise>

@@ -6,9 +6,10 @@
     <meta charset="UTF-8">
     <title>모임 일정 만들기</title>
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <link rel="stylesheet" href="../resources/css/groupCreateSchedule.css" >
 </head>
 <body>
-<h2>모임 일정 만들기</h2>
+
 
 <form id="scheduleForm" action="/group/createSchedule" method="post" novalidate>
     <input type="hidden" name="scheduleLeader" value="${scheduleLeader}"/>

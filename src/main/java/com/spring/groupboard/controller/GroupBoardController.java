@@ -29,6 +29,9 @@ public class GroupBoardController {
     public String detail(@RequestParam("id") int id,
                          HttpSession session,
                          Model model){
+        // 조회수 증가
+        groupBoardService.increaseHits(id);
+
         GroupBoardDTO boardDTO = groupBoardService.findById(id);
         int loginUserId = (int) session.getAttribute("userId");
         List<GroupBoardCommentDTO> commentList = groupBoardCommentService.findByBoardId(id);
