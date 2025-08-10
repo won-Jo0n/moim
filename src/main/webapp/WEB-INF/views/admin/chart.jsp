@@ -8,6 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+<%@ include file="adminSidebar.jsp" %>
 <div class="chart-dashboard">
     <div class="dashboard-header">
         <h1 class="dashboard-title">사용자 통계</h1>

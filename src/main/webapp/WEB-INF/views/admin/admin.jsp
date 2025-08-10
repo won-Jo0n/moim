@@ -11,18 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
- <aside class="sidebar">
-        <div class="logo">
-            <h2>Admin</h2>
-        </div>
-        <nav class="main-nav">
-            <a href="/admin" class="active"><i class="fa-solid fa-house"></i> 대시보드</a>
-            <a href="/admin/report"><i class="fa-solid fa-flag"></i> 신고 관리</a>
-            <a href="/admin/chart"><i class="fa-solid fa-chart-line"></i> 통계 분석</a>
-            <a href="/admin/penalties"><i class="fa-solid fa-users"></i> 사용자 관리</a>
-        </nav>
-    </aside>
-
+ <%@ include file="adminSidebar.jsp" %>
     <div class="main-content">
         <header class="topbar">
             <h1>관리자 대시보드</h1>

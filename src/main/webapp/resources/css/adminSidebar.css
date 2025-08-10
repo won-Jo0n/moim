@@ -1,0 +1,37 @@
+.sidebar {
+    width: 250px;
+    background-color: var(--sidebar-color);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 30px;
+}
+.logo h2 {
+    color: var(--primary-color);
+    margin: 0;
+    font-size: 28px;
+}
+
+.main-nav a {
+    display: block;
+    color: var(--text-color);
+    text-decoration: none;
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    transition: background-color 0.3s, color 0.3s;
+    font-size: 16px;
+}
+.main-nav a i {
+    margin-right: 15px;
+    width: 20px;
+}
+.main-nav a:hover, .main-nav a.active {
+    background-color: rgba(233, 69, 96, 0.1);
+    color: var(--primary-color);
+}

@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="/resources/css/report.css"
 </head>
 <body>
-
+<jsp:include page="adminSidebar.jsp" />
 <div class="container">
     <div class="header-container">
         <h2>신고 내역 관리</h2>

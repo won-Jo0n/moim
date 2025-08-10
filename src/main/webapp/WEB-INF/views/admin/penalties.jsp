@@ -10,6 +10,7 @@
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 </head>
 <body>
+    <%@ include file="adminSidebar.jsp" %>
     <div class="top-button-container">
         <button onclick="window.history.back()" class="back-to-home-button">돌아가기</button>
     </div>
