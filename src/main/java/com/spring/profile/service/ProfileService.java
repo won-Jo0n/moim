@@ -45,4 +45,6 @@ public class ProfileService {
     public List<GroupDTO> getGroupList(Long userId) {
         return profileRepository.findGroupsByUserId(userId);
     }
+
+
 }

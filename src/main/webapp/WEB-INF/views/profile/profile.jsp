@@ -4,278 +4,60 @@
 
 <html>
 <head>
+<c:set var="fid" value="${friendPhotoMap[friend.id]}" />
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
     <title>${profile.nickname}님의 마이페이지</title>
     <style>
-        :root {
-            --paper: #ffffff;
-            --bg: #f5f6fa;
-            --brand: #7E57C2;   /* Purple */
-            --text: #333;
+        :root { --paper:#fff; --bg:#f5f6fa; --brand:#7E57C2; --text:#333; --grad-1:#7E57C2; --grad-2:#5E35B1; --grad-3:#4527A0; }
+        @keyframes gradientShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+        body{ margin:0; font-family:'Noto Sans KR',sans-serif;
+              background:linear-gradient(180deg, rgba(203,170,203,.08), rgba(177,143,207,.08)), var(--bg); }
+        .container{ max-width:1000px; margin:40px auto; background:var(--paper); border-radius:14px; box-shadow:0 8px 22px rgba(0,0,0,.08); padding:20px; position:relative; }
+        .top-bar{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
+        .top-bar > a{ display:inline-flex; align-items:center; gap:6px; color:#fff; text-decoration:none; font-weight:800; padding:10px 14px; border-radius:999px; border:none;
+                      background-image:linear-gradient(90deg,var(--grad-1),var(--grad-2),var(--grad-3)); background-size:200% 200%; animation:gradientShift 8s linear infinite;
+                      box-shadow:0 8px 22px rgba(94,53,177,.18); transition:transform .12s, box-shadow .18s, filter .18s; }
+        .top-bar > a:hover{ transform:translateY(-1px); filter:brightness(1.02); box-shadow:0 12px 28px rgba(94,53,177,.22); }
+        .menu-btn{ font-size:22px; cursor:pointer; border:none; color:#fff; border-radius:12px; padding:10px 12px;
+                   background-image:linear-gradient(90deg,var(--grad-1),var(--grad-2),var(--grad-3)); background-size:200% 200%; animation:gradientShift 8s linear infinite;
+                   box-shadow:0 8px 22px rgba(94,53,177,.18); transition:transform .12s, box-shadow .18s, filter .18s; }
+        .dropdown{ position:fixed; display:none; background:var(--paper); box-shadow:0 12px 30px rgba(15,23,42,.12); padding:8px; border-radius:10px; z-index:1000; min-width:180px; }
+        .dropdown a{ display:block; padding:10px 12px; text-decoration:none; color:var(--text); font-weight:700; border-radius:8px; }
+        .profile-section{ text-align:center; margin-top:30px; }
+        .profile-section img{ width:100px; height:100px; border-radius:50%; object-fit:cover; background:#eee; }
+        .profile-section h2{ margin:10px 0 5px; }
+        .badge{ display:inline-block; padding:4px 10px; border-radius:20px; background:#B18FCF; color:#fff; font-size:13px; font-weight:700; }
+        .rating{ color:#f5c518; font-size:18px; margin-top:5px; letter-spacing:2px; }
 
-            /* Animated gradient tokens (Purple line) */
-            --grad-1:#7E57C2;   /* Purple */
-            --grad-2:#5E35B1;   /* Royal Purple */
-            --grad-3:#4527A0;   /* Deep Purple */
-        }
+        .tabs{ display:flex; margin-top:30px; gap:6px; }
+        .tab{ flex:1; text-align:center; padding:12px; cursor:pointer; font-weight:800; color:#666; border-bottom:3px solid transparent; position:relative; }
+        .tab.active{ color:#1c2f6b; background:#fff; box-shadow:0 8px 18px rgba(15,23,42,.06); }
+        .tab.active::after{ content:""; position:absolute; left:16px; right:16px; bottom:0; height:4px; border-radius:4px;
+                             background-image:linear-gradient(90deg,var(--grad-1),var(--grad-2),var(--grad-3)); background-size:200% 200%; animation:gradientShift 8s linear infinite; }
 
-        @keyframes gradientShift {
-            0%   { background-position: 0% 50%; }
-            50%  { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+        .section{ display:none; padding:20px 0; }
+        .section.active{ display:block; }
 
-        body {
-            margin: 0;
-            font-family: 'Noto Sans KR', sans-serif;
-            /* 라벤더/라일락 살짝 얹은 은은한 배경 */
-            background:
-              linear-gradient(180deg, rgba(203,170,203,.08), rgba(177,143,207,.08)),
-              var(--bg);
-        }
-        .container {
-            max-width: 1000px;
-            margin: 40px auto;
-            background: var(--paper);
-            border-radius: 14px;
-            box-shadow: 0 8px 22px rgba(0,0,0,0.08);
-            padding: 20px;
-            position: relative;
-        }
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-            gap: 10px;
-        }
+        .post-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:20px; }
+        .post{ background:var(--paper); border-radius:14px; box-shadow:0 10px 26px rgba(0,0,0,0.06); overflow:hidden; cursor:pointer; display:flex; flex-direction:column; border:none; transition:transform .18s, box-shadow .18s; }
+        .post:hover{ transform:translateY(-3px); box-shadow:0 16px 38px rgba(94,53,177,.14); }
+        .post img{ width:100%; height:180px; object-fit:cover; background:#f0f0f0; }
+        .post-content{ padding:15px; }
+        .post-content h4{ margin:0; font-size:16px; font-weight:800; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-        /* 돌아가기 링크를 버튼처럼 */
-        .top-bar > a {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            color: #fff;
-            text-decoration: none;
-            font-weight: 800;
-            padding: 10px 14px;
-            border-radius: 999px;
-            border: none;
-            background-image: linear-gradient(90deg, var(--grad-1), var(--grad-2), var(--grad-3));
-            background-size: 200% 200%;
-            animation: gradientShift 8s linear infinite;
-            box-shadow: 0 8px 22px rgba(94,53,177,.18); /* 퍼플 톤 */
-            transition: transform .12s ease, box-shadow .18s ease, filter .18s ease, background-position .3s linear;
-        }
-        .top-bar > a:hover {
-            transform: translateY(-1px);
-            filter: brightness(1.02);
-            box-shadow: 0 12px 28px rgba(94,53,177,.22); /* 퍼플 톤 */
-        }
+        .card-list{ display:grid; grid-template-columns:repeat(auto-fill,minmax(160px, 1fr)); gap:15px; }
+        .tile{ border-radius:14px; background:#fff; box-shadow:0 10px 26px rgba(0,0,0,0.06); padding:16px 12px; text-align:center; cursor:pointer; border:none; transition:transform .18s, box-shadow .18s; }
+        .tile:hover{ transform:translateY(-2px); box-shadow:0 16px 36px rgba(94,53,177,.14); }
+        .tile .icon{ font-size:30px; margin-bottom:8px; }
 
-        .menu-btn {
-            font-size: 22px;
-            cursor: pointer;
-            border: none;
-            color:#fff;
-            border-radius: 12px;
-            padding: 10px 12px;
-            background-image: linear-gradient(90deg, var(--grad-1), var(--grad-2), var(--grad-3));
-            background-size: 200% 200%;
-            animation: gradientShift 8s linear infinite;
-            box-shadow: 0 8px 22px rgba(94,53,177,.18); /* 퍼플 톤 */
-            transition: transform .12s ease, box-shadow .18s ease, filter .18s ease, background-position .3s linear;
-        }
-        .menu-btn:hover { transform: translateY(-1px); filter: brightness(1.02); }
+        .empty-msg{ text-align:center; color:#999; margin-top:30px; font-size:15px; }
 
-        /* 드롭다운: 위치는 JS로 햄버거 바로 아래에 고정 */
-        .dropdown {
-            position: fixed; /* JS에서 top/left 지정 */
-            display: none;
-            background: var(--paper);
-            box-shadow: 0 12px 30px rgba(15,23,42,.12);
-            padding: 8px;
-            border-radius: 10px;
-            z-index: 1000;
-            min-width: 180px;
-            backdrop-filter: saturate(140%) blur(2px);
-        }
-        .dropdown a {
-            display: block;
-            padding: 10px 12px;
-            text-decoration: none;
-            color: var(--text);
-            font-weight: 700;
-            border-radius: 8px;
-            transition: background .15s ease, transform .12s ease;
-        }
-        .dropdown a:hover { background: rgba(0,0,0,.04); transform: translateY(-1px); }
+        #friendBtn{ appearance:none; margin-top:12px; color:#fff; font-weight:800; padding:10px 14px; border-radius:999px; border:none;
+            background-image:linear-gradient(90deg,var(--grad-1),var(--grad-2),var(--grad-3)); background-size:200% 200%; animation:gradientShift 8s linear infinite;
+            box-shadow:0 8px 22px rgba(94,53,177,.18); transition:transform .12s, box-shadow .18s, filter .18s; cursor:pointer; }
+        #friendBtn:hover{ transform:translateY(-1px); filter:brightness(1.02); }
 
-        .profile-section {
-            text-align: center;
-            margin-top: 30px;
-        }
-        .profile-section img {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            background: #eee;
-        }
-        .profile-section h2 {
-            margin: 10px 0 5px;
-        }
-        .badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 20px;
-            background: #B18FCF; /* Lavender */
-            color: #fff;
-            font-size: 13px;
-            font-weight: 700;
-        }
-        .rating {
-            color: #f5c518;
-            font-size: 18px;
-            margin-top: 5px;
-            letter-spacing: 2px;
-        }
-
-        .tabs {
-            display: flex;
-            margin-top: 30px;
-            border-bottom: none;
-            background: transparent;
-            gap: 6px;
-        }
-        .tab {
-            flex: 1;
-            text-align: center;
-            padding: 12px;
-            cursor: pointer;
-            font-weight: 800;
-            color: #666;
-            border-bottom: 3px solid transparent;
-            transition: color .2s ease;
-            position: relative;
-        }
-        .tab:hover { color: #222; }
-        .tab.active {
-            color: #1c2f6b;
-            background: #fff;
-            box-shadow: 0 8px 18px rgba(15,23,42,.06);
-        }
-        .tab.active::after{
-            content:"";
-            position:absolute; left:16px; right:16px; bottom:0; height:4px; border-radius:4px;
-            background-image: linear-gradient(90deg, var(--grad-1), var(--grad-2), var(--grad-3));
-            background-size: 200% 200%;
-            animation: gradientShift 8s linear infinite;
-        }
-
-        .section {
-            display: none;
-            padding: 20px 0;
-        }
-        .section.active { display: block; }
-
-        /* 작성 글 - 인스타 피드 스타일 (보더리스) */
-        .post-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
-        .post {
-            background: var(--paper);
-            border-radius: 14px;
-            box-shadow: 0 10px 26px rgba(0,0,0,0.06);
-            overflow: hidden;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            transition: transform .18s ease, box-shadow .18s ease;
-            border: none;
-        }
-        .post:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 16px 38px rgba(94,53,177,.14); /* 퍼플 톤 */
-        }
-        .post img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            background: #f0f0f0;
-        }
-        .post-content { padding: 15px; }
-        .post-content h4 {
-            margin: 0;
-            font-size: 16px;
-            font-weight: 800;
-            color: var(--text);
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        .post-content p {
-            margin: 8px 0;
-            color: #555;
-            font-size: 14px;
-            display:none; /* 블록형 피드라 텍스트 최소화 */
-        }
-        .post-content .meta {
-            font-size: 12px;
-            color: #999;
-            display:none;
-        }
-
-        /* 친구/그룹 공통 스타일 (보더리스 + 호버) */
-        .card-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 15px;
-        }
-        .tile {
-            border-radius: 14px;
-            background: var(--paper);
-            box-shadow: 0 10px 26px rgba(0,0,0,0.06);
-            padding: 16px 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: transform .18s ease, box-shadow .18s ease;
-            border: none;
-        }
-        .tile:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 16px 36px rgba(94,53,177,.14); /* 퍼플 톤 */
-        }
-        .tile .icon {
-            font-size: 30px;
-            margin-bottom: 8px;
-        }
-        .empty-msg {
-            text-align: center;
-            color: #999;
-            margin-top: 30px;
-            font-size: 15px;
-        }
-
-        /* 친구 요청 버튼(애니메이션 그라데이션) */
-        #friendBtn{
-            appearance:none;
-            margin-top: 12px;
-            color:#fff; font-weight:800;
-            padding:10px 14px; border-radius:999px; border:none;
-            background-image: linear-gradient(90deg, var(--grad-1), var(--grad-2), var(--grad-3));
-            background-size: 200% 200%;
-            animation: gradientShift 8s linear infinite;
-            box-shadow: 0 8px 22px rgba(94,53,177,.18); /* 퍼플 톤 */
-            transition: transform .12s ease, box-shadow .18s ease, filter .18s ease, background-position .3s linear;
-            cursor: pointer;
-        }
-        #friendBtn:hover{ transform: translateY(-1px); filter: brightness(1.02); }
-
-        /* 반응형 */
-        @media (max-width: 600px) {
-            .post img { height: 140px; }
-        }
+        @media (max-width:600px){ .post img{ height:140px; } }
     </style>
 </head>
 <body>
@@ -289,21 +71,18 @@
             <a href="${pageContext.request.contextPath}/profile/profile/update">수정</a>
             <a href="${ctx}/mbti/test">MBTI 테스트</a>
             <a href="user/logout">로그아웃</a>
-
         </div>
     </div>
 
     <div class="profile-section">
        <c:choose>
          <c:when test="${profile.fileId != null && profile.fileId > 0}">
-           <img src="${ctx}/file/preview?fileId=${profile.fileId}"
-                alt="프로필 이미지"
+           <img src="${ctx}/file/preview?fileId=${profile.fileId}" alt="프로필 이미지"
                 style="width:100px;height:100px;border-radius:50%;object-fit:cover;background:#eee;"
                 onerror="this.onerror=null; this.src='${ctx}/resources/images/default-profile.jpg'">
          </c:when>
          <c:otherwise>
-           <img src="${ctx}/resources/images/default-profile.jpg"
-                alt="기본 프로필 이미지"
+           <img src="${ctx}/resources/images/default-profile.jpg" alt="기본 프로필 이미지"
                 style="width:100px;height:100px;border-radius:50%;object-fit:cover;background:#eee;">
          </c:otherwise>
        </c:choose>
@@ -318,11 +97,44 @@
                 </c:choose>
             </c:forEach>
         </div>
-        <c:if test="${sessionScope.userId ne profile.userId}">
-            <button id="friendBtn" data-target="${profile.userId}" onclick="toggleFriendRequest(this)">
-                친구 요청
-            </button>
+
+        <!-- ✅ 친구 상태 버튼 영역 (이 블록으로 교체) -->
+        <!-- 상태 정규화: null/빈값 -> NONE, trim + upper-case -->
+        <c:set var="rawStatus" value="${friendshipStatus}" />
+        <c:if test="${empty rawStatus}">
+            <c:set var="rawStatus" value="NONE" />
         </c:if>
+        <c:set var="status" value="${fn:toUpperCase(fn:trim(rawStatus))}" />
+
+        <c:if test="${sessionScope.userId ne profile.userId}">
+            <c:choose>
+                <c:when test="${status eq 'ACCEPTED'}">
+                    <button id="friendBtn"
+                            data-target="${profile.userId}"
+                            data-status="ACCEPTED"
+                            onclick="toggleFriendRequest(this)">
+                        친구 삭제
+                    </button>
+                </c:when>
+                <c:when test="${status eq 'PENDING'}">
+                    <button id="friendBtn"
+                            data-target="${profile.userId}"
+                            data-status="PENDING"
+                            onclick="toggleFriendRequest(this)">
+                        친구 요청 취소
+                    </button>
+                </c:when>
+                <c:otherwise>
+                    <button id="friendBtn"
+                            data-target="${profile.userId}"
+                            data-status="NONE"
+                            onclick="toggleFriendRequest(this)">
+                        친구 요청
+                    </button>
+                </c:otherwise>
+            </c:choose>
+        </c:if>
+        <!-- ✅ 교체 끝 -->
     </div>
 
     <div class="tabs">
@@ -350,16 +162,7 @@
                     </c:choose>
                     <div class="post-content">
                         <h4>${board.title}</h4>
-
-                        <!-- 🔹 간략 정보 -->
-                        <div class="meta-info">
-                            <span class="date">${board.formattedCreatedAt}</span>
-                        </div>
-                        <div class="preview">
-                            ${fn:substring(board.content, 0, 30)}...
-                        </div>
-
-
+                        <div class="meta-info"><span class="date">${board.formattedCreatedAt}</span></div>
                         <p>${fn:substring(board.content, 0, 50)}...</p>
                     </div>
                 </div>
@@ -369,18 +172,33 @@
 
     <!-- 친구 목록 -->
     <div class="section" id="friends">
-        <c:if test="${empty friendList}">
-            <div class="empty-msg">친구가 없어요 😢<br>친구를 추가해보세요!</div>
-        </c:if>
-        <div class="card-list">
-            <c:forEach var="friend" items="${friendList}">
-                <div class="tile" onclick="location.href='/profile/view/${friend.id}'">
-                    <div class="icon">👤</div>
-                    <div>${friend.nickName}</div>
-                    <div>${friendMbtiMap[friend.id]}</div>
-                </div>
-            </c:forEach>
-        </div>
+      <c:if test="${empty friendList}">
+        <div class="empty-msg">친구가 없어요 😢<br>친구를 추가해보세요!</div>
+      </c:if>
+
+      <div class="card-list">
+        <c:forEach var="friend" items="${friendList}">
+          <div class="tile" onclick="location.href='${ctx}/profile/view/${friend.id}'">
+            <c:set var="fid" value="${friendPhotoMap[friend.id]}" />
+            <c:choose>
+              <c:when test="${fid != null && fid > 0}">
+                <img src="${ctx}/file/preview?fileId=${fid}" alt="${friend.nickName}"
+                     style="width:84px;height:84px;border-radius:50%;object-fit:cover;border:1px solid #ececec;display:block;margin:0 auto 8px;"
+                     onerror="this.onerror=null; this.src='${ctx}/resources/images/default-profile.jpg'">
+              </c:when>
+              <c:otherwise>
+                <img src="${ctx}/resources/images/default-profile.jpg" alt="${friend.nickName}"
+                     style="width:84px;height:84px;border-radius:50%;object-fit:cover;border:1px solid #ececec;display:block;margin:0 auto 8px;">
+              </c:otherwise>
+            </c:choose>
+
+            <div style="font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+              ${friend.nickName}
+            </div>
+            <div>${friendMbtiMap[friend.id]}</div>
+          </div>
+        </c:forEach>
+      </div>
     </div>
 
     <!-- 그룹 목록 -->
@@ -403,13 +221,10 @@
                                  style="width:100%;height:100px;object-fit:cover;border-radius:10px;margin-bottom:8px;">
                         </c:otherwise>
                     </c:choose>
-
                     <div style="font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                         ${group.title}
                     </div>
-                    <div style="color:#666;">
-                        ${group.location}
-                    </div>
+                    <div style="color:#666;">${group.location}</div>
                 </div>
             </c:forEach>
         </div>
@@ -422,40 +237,33 @@
     document.addEventListener("DOMContentLoaded", function () {
         const tabs = document.querySelectorAll('.tab');
         const sections = document.querySelectorAll('.section');
-
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 tabs.forEach(t => t.classList.remove('active'));
                 sections.forEach(s => s.classList.remove('active'));
                 tab.classList.add('active');
-                const targetId = tab.getAttribute('data-target');
-                document.getElementById(targetId).classList.add('active');
+                document.getElementById(tab.getAttribute('data-target')).classList.add('active');
             });
         });
     });
 
-    // 햄버거 바로 아래 드롭다운 표시
+    // 메뉴 토글
     function toggleMenu(){
         const menu = document.getElementById('menu');
         const btn  = document.querySelector('.menu-btn');
         if(!menu || !btn) return;
-
         const isOpen = menu.dataset.open === 'true';
         if(!isOpen){
             const r = btn.getBoundingClientRect();
             const menuWidth = Math.max(180, menu.offsetWidth || 180);
-
             menu.style.position = 'fixed';
             menu.style.top  = (r.bottom + 8) + 'px';
             const left = Math.max(12, Math.min(window.innerWidth - menuWidth - 12, r.right - menuWidth));
             menu.style.left = left + 'px';
-
             menu.style.display = 'block';
             menu.dataset.open = 'true';
             btn.setAttribute('aria-expanded','true');
-
-            const first = menu.querySelector('a');
-            if(first) setTimeout(()=> first.focus(), 0);
+            const first = menu.querySelector('a'); if(first) setTimeout(()=> first.focus(), 0);
         }else{
             menu.style.display = 'none';
             menu.dataset.open = 'false';
@@ -463,7 +271,7 @@
         }
     }
 
-    // 외부 클릭 & ESC 닫기
+    // 외부 클릭/ESC 닫기
     document.addEventListener('click', (e)=>{
         const menu = document.getElementById('menu');
         const btn  = document.querySelector('.menu-btn');
@@ -479,31 +287,48 @@
         }
     });
 
-    // 친구 요청/취소 (기존 경로/토큰 유지)
+    // ✅ 여기만 교체: 친구 요청/취소/삭제
     function toggleFriendRequest(btn){
         const targetId = btn.getAttribute("data-target");
-        const isRequesting = btn.textContent.trim() === "친구 요청";
-        const url = isRequesting
-            ? '${pageContext.request.contextPath}/friends/request'
-            : '${pageContext.request.contextPath}/friends/cancel';
+        const status   = btn.getAttribute("data-status"); // NONE | PENDING | ACCEPTED
+
+        let url, payload = {}, nextText, nextStatus;
+
+        if (status === "NONE") {
+            url = '${ctx}/friends/request';
+            payload = { responseUserId: targetId };
+            nextText = "친구 요청 취소";
+            nextStatus = "PENDING";
+        } else if (status === "PENDING") {
+            url = '${ctx}/friends/cancel';
+            payload = { responseUserId: targetId };
+            nextText = "친구 요청";
+            nextStatus = "NONE";
+        } else if (status === "ACCEPTED") {
+            url = '${ctx}/profile/friends/delete';
+            payload = { friendId: targetId, responseUserId: targetId };
+            nextText = "친구 요청";
+            nextStatus = "NONE";
+        } else {
+            return;
+        }
 
         fetch(url, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '${_csrf.token}'
-            },
-            body: JSON.stringify({ responseUserId: targetId })
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '${_csrf.token}' },
+            body: JSON.stringify(payload)
         })
         .then(res => {
             if(res.ok){
-                btn.textContent = isRequesting ? "친구 요청 취소" : "친구 요청";
+                btn.textContent = nextText;
+                btn.setAttribute('data-status', nextStatus);
             } else {
                 alert("요청 처리 실패");
             }
         })
         .catch(err => console.error(err));
     }
+    // ✅ 교체 끝
 </script>
 </body>
 </html>

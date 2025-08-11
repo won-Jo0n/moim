@@ -52,31 +52,44 @@ public class ProfileController {
         List<GroupDTO> groupList = profileService.getGroupList(userId);
         model.addAttribute("groupList", groupList);
 
-        // 프로필 조회 (fileId 포함)
+        // 내 프로필
         ProfileDTO profile = profileService.getProfile(userId);
         if (profile == null) profile = new ProfileDTO();
         profile.setUserId(userId);
-
-        // 화면 표시용 기본 이미지(id=0) 적용
         Integer fileId = profile.getFileId();
         if (fileId == null) fileId = 0;
         profile.setFileId(fileId);
 
         List<MbtiBoardDTO> boardList = mbtiBoardService.findByAuthor(userId);
+
+        // 친구 목록
         List<UserDTO> friendList = friendsService.getFriends(userId.intValue());
 
+        // MBTI 맵
         Map<Integer, String> friendMbtiMap = new HashMap<>();
-
-        for(UserDTO user : friendList){
-            MbtiDTO mbti = mbtiService.getMbti(user.getMbtiId());
-            friendMbtiMap.put(user.getId(), mbti.getMbti());
+        for (UserDTO u : friendList) {
+            MbtiDTO mbti = mbtiService.getMbti(u.getMbtiId());
+            if (mbti != null) friendMbtiMap.put(u.getId(), mbti.getMbti());
         }
+
+        // ✅ 친구 사진 맵: friend.id -> fileId (각 친구의 프로필을 직접 조회)
+        Map<Integer, Integer> friendPhotoMap = new HashMap<>();
+        for (UserDTO f : friendList) {
+            Integer fid = f.getId();
+            if (fid == null) continue;
+            ProfileDTO fp = profileService.findByUserId(fid.longValue());
+            friendPhotoMap.put(fid, fp != null ? fp.getFileId() : null);
+        }
+        model.addAttribute("friendPhotoMap", friendPhotoMap); // JSP에서 사용
 
         model.addAttribute("profile", profile);
         model.addAttribute("boardList", boardList);
         model.addAttribute("friendList", friendList);
         model.addAttribute("friendMbtiMap", friendMbtiMap);
         model.addAttribute("isOwner", true);
+
+        // ✅ 내 페이지에서는 버튼 안 보이지만 JSP에서 사용하는 값 기본 세팅
+        model.addAttribute("friendshipStatus", "NONE");
 
         return "profile/profile";
     }
@@ -105,7 +118,6 @@ public class ProfileController {
         if (profile == null) profile = new ProfileDTO();
         profile.setUserId(userId);
 
-        // 화면 표시용 기본 이미지(id=0) 적용
         Integer fileId = profile.getFileId();
         if (fileId == null) fileId = 0;
         profile.setFileId(fileId);
@@ -138,7 +150,6 @@ public class ProfileController {
         if (profile == null) profile = new ProfileDTO();
         profile.setUserId(userId);
 
-        // 화면 표시용 기본 이미지(id=0) 적용
         Integer fileId = profile.getFileId();
         if (fileId == null) fileId = 0;
         profile.setFileId(fileId);
@@ -146,12 +157,29 @@ public class ProfileController {
         List<MbtiBoardDTO> boardList = mbtiBoardService.findByAuthor(userId);
         List<UserDTO> friendList = friendsService.getFriends(userId.intValue());
 
-        // isOwner 계산
+        // ✅ 다른 사람 페이지에서도 사진 맵 제공 (동일 로직)
+        Map<Integer, Integer> friendPhotoMap = new HashMap<>();
+        for (UserDTO f : friendList) {
+            Integer fid = f.getId();
+            if (fid == null) continue;
+            ProfileDTO fp = profileService.findByUserId(fid.longValue());
+            friendPhotoMap.put(fid, fp != null ? fp.getFileId() : null);
+        }
+        model.addAttribute("friendPhotoMap", friendPhotoMap);
+
         Object sid = session.getAttribute("userId");
         Long sessionUserId = null;
         if (sid instanceof Integer) sessionUserId = ((Integer) sid).longValue();
         else if (sid instanceof Long) sessionUserId = (Long) sid;
         boolean isOwner = (sessionUserId != null && sessionUserId.equals(userId));
+
+        // ✅ 친구 상태 조회해서 JSP로 전달 (NONE | PENDING | ACCEPTED)
+        String friendshipStatus = "NONE";
+        if (sessionUserId != null && !isOwner) {
+            String status = friendsService.getFriendshipStatus(sessionUserId, userId);
+            friendshipStatus = (status != null) ? status : "NONE";
+        }
+        model.addAttribute("friendshipStatus", friendshipStatus);
 
         model.addAttribute("profile", profile);
         model.addAttribute("boardList", boardList);
@@ -160,10 +188,11 @@ public class ProfileController {
         return "profile/profile";
     }
 
-    // 프로필 사진 업로드/교체 (profile 테이블만 갱신)
     @PostMapping("/photo")
     public String updateProfilePhoto(HttpSession session,
-                                     @RequestParam(value = "profileFile", required = false) MultipartFile profileFile) throws IOException {
+                                     @RequestParam(value = "profileFile", required = false) MultipartFile profileFile,
+                                     @RequestParam(value = "deletePhoto", required = false, defaultValue = "false") boolean deletePhoto
+    ) throws IOException {
         Object uid = session.getAttribute("userId");
         if (uid == null) return "redirect:/login";
         Long userId = (uid instanceof Integer) ? ((Integer) uid).longValue() : (Long) uid;
@@ -171,22 +200,25 @@ public class ProfileController {
         if (profileFile != null && !profileFile.isEmpty()) {
             int newFileId = fileUtil.fileSave(profileFile);
             profileService.updateFileId(userId, newFileId);
+            return "redirect:/profile";
+        }
+
+        if (deletePhoto) {
+            profileService.updateFileId(userId, null);
         }
         return "redirect:/profile";
     }
 
-    // 프로필 사진 제거 (NULL 저장 → 조회 시 기본 0으로 표시)
     @PostMapping("/photo/delete")
     public String deleteProfilePhoto(HttpSession session) {
         Object uid = session.getAttribute("userId");
         if (uid == null) return "redirect:/login";
         Long userId = (uid instanceof Integer) ? ((Integer) uid).longValue() : (Long) uid;
 
-        profileService.updateFileId(userId, null); // profile.fileId = NULL
+        profileService.updateFileId(userId, null);
         return "redirect:/profile/profile/update";
     }
 
-    // 회원 탈퇴 (비밀번호 확인 후 status = -1 로 소프트 삭제)
     @PostMapping("/withdraw")
     public String withdraw(HttpSession session,
                            @RequestParam("password") String password,
@@ -197,12 +229,30 @@ public class ProfileController {
 
         String encoded = profileService.getPasswordHash(userId);
         if (encoded == null || !passwordEncoder.matches(password, encoded)) {
-            ra.addFlashAttribute("error", "비밀번호가 일치하지 않습니다.");
+            ra.addFlashAttribute("withdrawError", "비밀번호를 잘못 입력하셨습니다.");
             return "redirect:/profile/profile/update";
         }
 
-        profileService.withdraw(userId);   // status = -1 로 업데이트
+        profileService.withdraw(userId);
         session.invalidate();
         return "redirect:/";
+    }
+
+    @PostMapping("/friends/delete")
+    public String deleteFriend(@RequestParam("friendId") Long friendId,
+                               HttpSession session,
+                               org.springframework.web.servlet.mvc.support.RedirectAttributes ra) {
+        Object userIdObj = session.getAttribute("userId");
+        Long userId = null;
+        if (userIdObj instanceof Integer) userId = ((Integer) userIdObj).longValue();
+        else if (userIdObj instanceof Long) userId = (Long) userIdObj;
+
+        if (userId == null) return "redirect:/login";
+
+        int affected = friendsService.deleteFriendship(userId, friendId);
+        if (affected > 0) ra.addFlashAttribute("msg", "친구를 삭제했어요.");
+        else ra.addFlashAttribute("msg", "삭제할 친구 관계가 없어요.");
+
+        return "redirect:/profile/friends";
     }
 }

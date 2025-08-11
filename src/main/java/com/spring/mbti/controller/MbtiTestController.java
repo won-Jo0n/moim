@@ -26,6 +26,24 @@ public class MbtiTestController {
         return "MbtiFormViews/mbtiTest";
     }
 
+    @GetMapping("/test/{number}")
+    public String mbtiTestStep(@PathVariable int number, Model model) {
+        List<MbtiTestDTO> questionList = mbtiTestService.findAllQuestions();
+        int total = questionList.size();
+
+        // 잘못된 번호 처리
+        if (number < 1 || number > total) {
+            return "redirect:/mbti/test/1";
+        }
+
+        MbtiTestDTO currentQuestion = questionList.get(number - 1);
+        model.addAttribute("question", currentQuestion);
+        model.addAttribute("currentNumber", number);
+        model.addAttribute("totalNumber", total);
+
+        return "MbtiFormViews/mbtiTestStep"; // 한 문항씩 보여줄 JSP
+    }
+
     @PostMapping("/submit")
     public String mbtiTestSubmit(@RequestParam Map<String, String> map,
                                  HttpSession session, Model model) {
