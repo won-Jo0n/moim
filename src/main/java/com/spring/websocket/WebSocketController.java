@@ -35,7 +35,6 @@ public class WebSocketController {
     private final NotificationService notificationService;
     private final FriendsService friendsService;
     private final ChatService chatService;
-    private final FriendsService friendsService;
     private final UserService userService;
     private final Map<String, String> sessionToUser = new ConcurrentHashMap<>();
     private final Map<String, Integer> sessionCount = new ConcurrentHashMap<>();
