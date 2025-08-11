@@ -176,8 +176,8 @@
                             <td>${groupScheduleLeaderNickName[schedule.id]}</td>
                             <td>${schedule.title}</td>
                             <td>${schedule.description}</td>
-                            <td>${schedule.startTime}</td>
-                            <td>${schedule.endTime}</td>
+                            <td>${groupScheduleStartTime[schedule.id]}</td>
+                            <td>${groupScheduleEndTime[schedule.id]}</td>
                             <td>${schedule.maxUserNum}</td>
                             <td>
                                 <c:choose>

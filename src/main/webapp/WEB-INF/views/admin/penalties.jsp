@@ -38,7 +38,7 @@
                                 <button onclick="clearPenalti(${resultUser.id})">정지 해제</button>
                             </c:if>
                             <div>
-                                <a href="#" class="action-link">사용자 페이지 가기</a>
+                                <a href="/profile/view/${resultUser.id}" class="action-link">사용자 페이지 가기</a>
                             </div>
                         </div>
 

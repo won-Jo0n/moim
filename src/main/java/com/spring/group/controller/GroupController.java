@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -121,12 +122,22 @@ public class GroupController {
             model.addAttribute("boardList", boardList);
         }
         List<GroupScheduleDTO> groupScheduleList = groupService.getGroupScheduleByGroupId(groupId);
+        Map<Integer, String> groupScheduleStartTime = new HashMap<>();
+        Map<Integer, String> groupScheduleEndTime = new HashMap<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm");
+
         List<UserJoinGroupDTO> approvedMembers = userJoinGroupRepository.findApprovedMembersByGroupId(groupId);
         model.addAttribute("approvedMembers", approvedMembers);
         model.addAttribute("isAppliedMember", isAppliedMember);
         model.addAttribute("isApprovedMember", isApprovedMember);
         model.addAttribute("isLeader", isLeader);
         model.addAttribute("groupScheduleList", groupScheduleList);
+        for(GroupScheduleDTO s : groupScheduleList){
+            groupScheduleStartTime.put(s.getId(), s.getStartTime().format(formatter));
+            groupScheduleEndTime.put(s.getId(), s.getEndTime().format(formatter));
+        }
+        model.addAttribute("groupScheduleStartTime", groupScheduleStartTime);
+        model.addAttribute("groupScheduleEndTime", groupScheduleEndTime);
         model.addAttribute("isManager", isManager);
         model.addAttribute("canCreateSchedule", canCreateSchedule);
 
