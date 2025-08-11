@@ -8,8 +8,22 @@
     <link rel="stylesheet" href="../resources/css/groupDetail.css" >
 </head>
 <body>
+
+
+
     <div class="group-info-container">
         <!-- 그룹 헤더 레이아웃 (이미지 좌측, 정보 테이블 우측) -->
+
+        <c:if test="${canCreateSchedule}">
+            <div class="page-actions page-actions--in">
+              <button type="button"
+                      class="btn btn-secondary"
+                      onclick="location.href='/group/createSchedule?scheduleLeader=${sessionScope.userId}&groupId=${group.id}'">
+                그룹 일정 생성
+              </button>
+            </div>
+          </c:if>
+
         <div class="group-hero">
           <div class="group-hero__media">
             <img class="group-hero__img"
@@ -46,15 +60,11 @@
         <div style="margin-top: 1.5rem;">
             <c:if test="${sessionScope.userId == group.leader}">
                 <form action="/group/update" method="get">
-                    <input type="hidden" name="id" value="${group.id}"/>
-                    <<button type="button"
-                                 class="btn btn-primary"
-                                 onclick="location.href='/group/update?groupId=${group.id}'">
-                             수정
-                         </button>
+                  <input type="hidden" name="id" value="${group.id}"/>
+                  <button type="submit" class="btn btn-primary">수정</button>
                 </form>
                 <form action="/group/delete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
-                    <input type="hidden" name="groupId" value="${group.id}" />
+                    <input type="hidden" name="id" value="${group.id}" />
                     <button type="submit" class="btn-danger">삭제</button>
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                 </form>
@@ -100,14 +110,6 @@
                     <button type="submit">글 작성</button>
                 </form>
             </c:if>
-
-            <c:if test="${canCreateSchedule}">
-                <button type="button"
-                        class="btn btn-secondary"
-                        onclick="location.href='/group/createSchedule?scheduleLeader=${sessionScope.userId}&groupId=${group.id}'">
-                    그룹 일정 생성
-                </button>
-            </c:if>
         </div>
     </div>
 
@@ -115,7 +117,7 @@
       <h3>매니저 관리</h3>
       <c:choose>
         <c:when test="${empty approvedMembers}">
-          <p>승인된 멤버가 없습니다.</p>
+          <p class="manager-empty">승인된 멤버가 없습니다.</p>
         </c:when>
         <c:otherwise>
           <c:forEach var="m" items="${approvedMembers}">
