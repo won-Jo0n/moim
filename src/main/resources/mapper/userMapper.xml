@@ -42,4 +42,8 @@
         SELECT COUNT(*) FROM user WHERE loginId = #{loginId};
     </select>
 
+    <update id="updateLastLogin" parameterType="user">
+        UPDATE user SET lastLogin = now() WHERE id= #{id};
+    </update>
+
 </mapper>

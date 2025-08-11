@@ -87,7 +87,13 @@
     </insert>
 
     <select id="getGroupScheduleByGroupId" parameterType="int" resultType="groupSchedule">
-        SELECT * FROM groupSchedule WHERE groupId = #{groupId};
+        <![CDATA[
+        SELECT *
+        FROM groupSchedule
+        WHERE groupId = #{groupId}
+        ORDER BY (startTime > NOW()) ASC,
+        startTime DESC;
+        ]]>
     </select>
 
     <select id="getGroupScheduleDetail" parameterType="int" resultType="groupSchedule">
@@ -113,6 +119,19 @@
         SELECT groupId
         FROM groupSchedule
         WHERE id = #{groupScheduleId}
+    </select>
+
+    <select id="getPaginationGroups" resultType="group">
+        SELECT * FROM `group`
+        ORDER BY createdAt DESC
+        LIMIT #{limit} OFFSET #{offset};
+    </select>
+    <select id="searchByPaginationGroups" resultType="group">
+        SELECT * FROM `group`
+        WHERE (title LIKE CONCAT('%', #{keyword}, '%')
+        OR location LIKE CONCAT('%', #{keyword}, '%'))
+        ORDER BY createdAt DESC
+        LIMIT #{limit} OFFSET #{offset};
     </select>
 
 </mapper>

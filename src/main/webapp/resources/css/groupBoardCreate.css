@@ -43,6 +43,8 @@ body{
   background:var(--color-card); border:1px solid var(--border);
   border-radius:var(--radius-xl); padding:16px 20px; box-shadow:var(--shadow-md);
 }
+
+/* 뒤로가기 스타일 */
 .link-back{
   text-decoration:none; color:var(--color-main);
   padding:10px 14px; border-radius:var(--radius-md);
@@ -70,7 +72,6 @@ body{
 /* Form */
 .form{display:grid; gap:16px}
 .form__row{display:grid; gap:8px}
-
 .label{font-size:14px; font-weight:700; color:var(--color-text)}
 
 .input, .textarea{
@@ -98,4 +99,33 @@ body{
   padding:12px 16px; border-radius:12px; border:1px solid var(--color-sub);
   background:#fff; color:var(--color-accent);
   transition:transform .06s ease, background .2s ease, box-shadow .2s ease;
-  b
+}
+.filebox__button:hover{background:rgba(126,87,194,0.06)}
+.filebox__button:active{transform:translateY(1px)}
+.filebox__button:focus-visible{outline:none; box-shadow:var(--focus)}
+.filebox__name{font-size:14px; color:var(--color-muted)}
+
+/* Actions 영역 */
+.actions{
+  display:flex; gap:10px; justify-content:flex-start; align-items:center; margin-top:8px;
+}
+
+/* 뒤로가기와 동일 룩의 알약형 버튼 */
+button.pill-btn{
+  appearance:none; border:none; background:transparent;
+  cursor:pointer; font:inherit; color:var(--color-main);
+  padding:10px 14px; border-radius:var(--radius-md);
+  background:rgba(126,87,194,0.08);
+  transition:transform .06s ease, background .2s ease;
+}
+button.pill-btn:hover{background:rgba(126,87,194,0.14)}
+button.pill-btn:active{transform:translateY(1px)}
+button.pill-btn:focus-visible{outline:none; box-shadow:var(--focus)}
+
+/* 필요시 강조 버전 */
+button.pill-btn--accent{
+  color:#fff; background:var(--color-main);
+}
+button.pill-btn--accent:hover{
+  background:var(--color-accent);
+}

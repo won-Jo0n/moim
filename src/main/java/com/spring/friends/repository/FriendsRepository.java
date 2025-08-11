@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor
@@ -30,6 +31,14 @@ public class FriendsRepository {
 
     public int cancelFriend(FriendsDTO dto){
         return sql.update("Friends.cancelFriend", dto);
+    }
+
+    public int deleteFriendship(java.util.Map<String,Object> param) {
+        return sql.delete("Friends.deleteFriendship", param);
+    }
+
+    public Object getFriendshipStatus(java.util.Map<String,Object> param) {
+        return sql.selectOne("Friends.getFriendshipStatus", param);
     }
 
 }
