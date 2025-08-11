@@ -47,10 +47,14 @@
             <c:if test="${sessionScope.userId == group.leader}">
                 <form action="/group/update" method="get">
                     <input type="hidden" name="id" value="${group.id}"/>
-                    <button type="submit" class="btn-primary">수정</button>
+                    <<button type="button"
+                                 class="btn btn-primary"
+                                 onclick="location.href='/group/update?groupId=${group.id}'">
+                             수정
+                         </button>
                 </form>
                 <form action="/group/delete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
-                    <input type="hidden" name="id" value="${group.id}" />
+                    <input type="hidden" name="groupId" value="${group.id}" />
                     <button type="submit" class="btn-danger">삭제</button>
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                 </form>
@@ -98,7 +102,11 @@
             </c:if>
 
             <c:if test="${canCreateSchedule}">
-                <a href="/group/createSchedule?scheduleLeader=${sessionScope.userId}&groupId=${group.id}" class="btn-link">그룹 일정 생성</a>
+                <button type="button"
+                        class="btn btn-secondary"
+                        onclick="location.href='/group/createSchedule?scheduleLeader=${sessionScope.userId}&groupId=${group.id}'">
+                    그룹 일정 생성
+                </button>
             </c:if>
         </div>
     </div>

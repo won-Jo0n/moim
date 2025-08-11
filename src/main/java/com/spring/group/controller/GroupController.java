@@ -104,6 +104,7 @@ public class GroupController {
                          Model model) {
         GroupDTO group = groupService.findById(groupId); // 모임 정보 가져오기
         model.addAttribute("group", group);
+
         int loginUserId = (int) session.getAttribute("userId");
         //중복 신청 여부 확인
         UserJoinGroupDTO dto = new UserJoinGroupDTO();

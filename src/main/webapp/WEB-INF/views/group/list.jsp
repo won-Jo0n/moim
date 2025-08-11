@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="../resources/css/groupList.css" >
 </head>
 <body>
+    <div class="group-list-wrap">
     <h2>모임 목록</h2>
 
     <form action="/group/list" method="get" class="search-form">
@@ -53,7 +54,7 @@
             </c:forEach>
         </tbody>
     </table>
-
+  </div>
     <script>
         document.querySelectorAll(".clickable-row").forEach(function(row) {
             row.addEventListener("click", function () {

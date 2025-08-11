@@ -6,9 +6,10 @@
 <head>
     <meta charset="UTF-8">
     <title>review</title>
+    <link rel="stylesheet" href="../resources/css/groupReview.css" >
 </head>
 <body>
-
+<div class="review-wrap">
     <c:choose>
       <c:when test="${empty joinUser}">
         <p>리뷰 가능한 대상이 없습니다.</p>
@@ -45,6 +46,6 @@
         <!-- 기존 form 끝 -->
       </c:otherwise>
     </c:choose>
-
+</div>
 </body>
 </html>

@@ -1,21 +1,26 @@
 /*
   🎨 컬러 팔레트
-  메인: #7E57C2 (세련된 중간톤 퍼플)
-  서브: #B18FCF (부드러운 라벤더)
-  포인트: #4527A0 (깊은 퍼플)
-  배경: #F8F9FA (아주 연한 회색, 따뜻한 느낌)
-  텍스트: #495057 (짙은 회색)
-  경계선: #E0E0E0
+  메인: #7E57C2; 서브: #B18FCF; 포인트: #4527A0;
+  배경: #F8F9FA; 텍스트: #495057; 경계선: #E0E0E0
 */
 
-/* 📋 기본 스타일 및 레이아웃 */
+
+*{ box-sizing: border-box; }
+
+
 body {
-    background-color: #F8F9FA;
-    font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
-    color: #495057;
-    padding: 2rem;
-    max-width: 1100px;
-    margin: 0 auto;
+  background-color: #F8F9FA;
+  font-family: 'Pretendard','Noto Sans KR',sans-serif;
+  color: #495057;
+  padding: 2rem;
+  margin: 0;
+}
+
+/* 중앙정렬 래퍼: 안의 검색폼/표의 오른쪽 끝이 서로 딱 맞음 */
+.group-list-wrap{
+  width: 100%;
+  max-width: 1000px;          /* 필요시 960~1100px로 조절 */
+  margin: 0 auto;             /* 중앙정렬 핵심 */
 }
 
 h2 {
@@ -25,97 +30,71 @@ h2 {
     margin-bottom: 2rem;
 }
 
-/* 🔍 검색 폼 */
-.search-form {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 2rem;
+/* 검색 폼: 래퍼 안에서 오른쪽 정렬 유지 */
+.search-form{
+  display: flex;
+  justify-content: flex-end;  /* 오른쪽 정렬 */
+  width: 100%;                /* 래퍼 폭 꽉 채움 */
+  margin: 0 0 2rem 0;         /* 좌우 여백은 래퍼가 담당 */
 }
 
 .search-form input[type="text"] {
     width: 300px;
-    padding: 0.75rem 1.5rem; /* 좌우 패딩을 넓혀서 텍스트 입력 공간 확보 */
-    border: 1px solid #B18FCF; /* 서브 컬러로 테두리 변경 */
-    border-radius: 2rem; /* 훨씬 둥글게 변경 */
+    padding: 0.75rem 1.5rem;
+    border: 1px solid #B18FCF;
+    border-radius: 2rem;
     font-size: 1rem;
     outline: none;
-    transition: all 0.3s ease; /* 모든 효과에 부드러운 전환 적용 */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* 은은한 그림자 추가 */
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
-
 .search-form input[type="text"]:focus {
-    border-color: #7E57C2; /* 포커스 시 메인 컬러로 변경 */
+    border-color: #7E57C2;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
-
 .search-form button {
     background-color: #7E57C2;
     color: #FFFFFF;
     border: none;
-    border-radius: 2rem; /* input과 동일하게 둥글게 변경 */
+    border-radius: 2rem;
     padding: 0.75rem 1.5rem;
     font-weight: 600;
     cursor: pointer;
-    margin-left: 0.5rem; /* 버튼과 인풋 사이 간격 추가 */
+    margin-left: 0.5rem;
     transition: background-color 0.3s, transform 0.3s;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* 버튼에도 그림자 추가 */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+.search-form button:hover{ background:#6748A5; transform:translateY(-2px); }
+
+table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  background:#fff;
+  border-radius:1rem;
+  overflow:hidden;
+  box-shadow:0 8px 25px rgba(0,0,0,.08);
+  margin:0;                   /* 좌우는 래퍼가 관리 */
 }
 
-.search-form button:hover {
-    background-color: #6748A5;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+
+thead th{
+  background:#7E57C2; color:#fff; font-weight:600; padding:1rem; text-align:center;
+}
+tbody tr{ transition:background-color .2s ease; }
+tbody tr:hover{ background:#F0F2F5; cursor:pointer; }
+tbody td{
+  padding:1rem; border-top:1px solid #E0E0E0; text-align:center; vertical-align:middle;
+}
+table, th, td{ border:none !important; }
+tbody tr:first-child td{ border-top:none; }
+
+tbody img{
+  width:80px; height:80px; border-radius:50%; object-fit:cover;
+  box-shadow:0 2px 5px rgba(0,0,0,.1);
 }
 
-/* 🖼️ 테이블 스타일 */
-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    background-color: #FFFFFF;
-    border-radius: 1rem;
-    overflow: hidden;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-}
-
-thead th {
-    background-color: #7E57C2;
-    color: #FFFFFF;
-    font-weight: 600;
-    padding: 1rem;
-    text-align: center;
-}
-
-tbody tr {
-    transition: background-color 0.2s ease;
-}
-
-tbody tr:hover {
-    background-color: #F0F2F5;
-    cursor: pointer;
-}
-
-tbody td {
-    padding: 1rem;
-    border-top: 1px solid #E0E0E0;
-    text-align: center;
-    vertical-align: middle;
-}
-
-/* ⚠️ 표 테두리 제거 */
-table, th, td {
-    border: none !important;
-}
-
-tbody tr:first-child td {
-    border-top: none;
-}
-
-/* 🖼️ 대표 사진 스타일 */
-tbody img {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%; /* 원형으로 변경 */
-    object-fit: cover; /* 이미지가 꽉 차게 표시 */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+/* 좁은 화면 대응 */
+@media (max-width:1024px){
+  .group-list-wrap{ max-width: 100%; padding: 0 1rem; }
 }
