@@ -10,8 +10,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../resources/css/reportDetail.css">
+    <link rel="stylesheet" href="../resources/css/admin.css">
 </head>
 <body>
+    <%@ include file="../admin/adminSidebar.jsp" %>
     <div class="report-container">
         <div class="section">
             <div style="display: flex; justify-content: space-between; align-items: center;">

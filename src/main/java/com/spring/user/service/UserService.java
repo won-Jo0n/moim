@@ -63,4 +63,7 @@ public class UserService {
     }
 
 
+    public void updateLastLogin(UserDTO loginUser) {
+        userRepository.updateLastLogin(loginUser);
+    }
 }
