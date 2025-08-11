@@ -1,6 +1,7 @@
 package com.spring.userjoingroup.service;
 
 
+import com.spring.group.dto.GroupDTO;
 import com.spring.group.service.GroupService;
 import com.spring.userjoingroup.dto.UserJoinGroupDTO;
 import com.spring.userjoingroup.repository.UserJoinGroupRepository;
@@ -77,7 +78,8 @@ public class UserJoinGroupService {
     }
 
     public boolean isLeader(int userId, int groupId) {
-        return groupService.findById(groupId).getLeader() == userId;
+        GroupDTO group = userJoinGroupRepository.findById(groupId);
+        return group != null && group.getLeader() == userId;
     }
 
     public boolean isManager(int userId, int groupId) {

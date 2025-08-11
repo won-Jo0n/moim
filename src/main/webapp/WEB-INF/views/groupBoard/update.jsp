@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <title>게시글 수정</title>
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <link rel="stylesheet" href="../resources/css/groupBoardUpdate.css" >
 </head>
 <body>
     <h2>게시글 수정</h2>

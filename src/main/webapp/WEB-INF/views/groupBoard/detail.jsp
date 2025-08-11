@@ -76,16 +76,20 @@
 
             <div class="actions actions--compact">
               <c:if test="${sessionScope.userId == comment.author}">
-                <button class="btn btn--ghost" onclick="toggleEdit(${comment.id})">수정</button>
-                <form action="/groupboardcomment/delete" method="post" class="inline-form">
+                <!-- 수정 -->
+                <button type="button" class="btn btn--ghost" onclick="toggleEdit(${comment.id})">수정</button>
+                <!-- 삭제 -->
+                <form action="/groupboardcomment/delete" method="post" class="inline-form" onsubmit="return confirm('삭제하시겠습니까?');">
                   <input type="hidden" name="id" value="${comment.id}" />
                   <input type="hidden" name="boardId" value="${board.id}" />
                   <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-                  <input type="submit" class="btn btn--danger" value="삭제" />
+                  <button type="submit" class="btn btn--danger">삭제</button>
                 </form>
               </c:if>
-              <button class="btn btn--primary" onclick="toggleReplyForm(${comment.id})">↪ 대댓글</button>
+              <!-- 대댓글 -->
+              <button type="button" class="btn btn--primary" onclick="toggleReplyForm(${comment.id})">대댓글</button>
             </div>
+
 
             <!-- 댓글 수정 폼 -->
             <form id="edit-form-${comment.id}" action="/groupboardcomment/update" method="post" class="edit-form" style="display:none;">
@@ -94,7 +98,7 @@
               <textarea name="content" class="textarea">${comment.content}</textarea>
               <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
               <div class="actions actions--compact">
-                <input type="submit" class="btn btn--primary" value="수정 완료" />
+                <button type="submit" class="btn btn--primary">수정 완료</button>
               </div>
             </form>
 
@@ -126,12 +130,14 @@
 
                   <div class="actions actions--compact">
                     <c:if test="${sessionScope.userId == reply.author}">
-                      <button class="btn btn--ghost" onclick="toggleEdit(${reply.id})">수정</button>
-                      <form action="/groupboardcomment/delete" method="post" class="inline-form">
+                      <!-- 수정 -->
+                      <button type="button" class="btn btn--ghost" onclick="toggleEdit(${reply.id})">수정</button>
+                      <!-- 삭제 -->
+                      <form action="/groupboardcomment/delete" method="post" class="inline-form" onsubmit="return confirm('삭제하시겠습니까?');">
                         <input type="hidden" name="id" value="${reply.id}" />
                         <input type="hidden" name="boardId" value="${board.id}" />
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-                        <input type="submit" class="btn btn--danger" value="삭제" />
+                        <button type="submit" class="btn btn--danger">삭제</button>
                       </form>
                     </c:if>
                   </div>
@@ -143,7 +149,7 @@
                     <textarea name="content" class="textarea">${reply.content}</textarea>
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                     <div class="actions actions--compact">
-                      <input type="submit" class="btn btn--primary" value="수정 완료" />
+                      <button type="submit" class="btn btn--primary">수정 완료</button>
                     </div>
                   </form>
                 </div>
@@ -163,7 +169,7 @@
       <textarea name="content" class="textarea" placeholder="댓글을 입력하세요" required></textarea>
       <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
       <div class="actions">
-        <input type="submit" class="btn btn--primary" value="댓글 작성" />
+        <button type="submit" class="btn btn--primary">댓글 작성</button>
       </div>
     </form>
   </section>

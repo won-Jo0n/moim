@@ -9,11 +9,11 @@
     <meta charset="UTF-8">
     <title>모임 일정 상세보기</title>
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
-    <link rel="stylesheet" href="../resources/css/groupScheduleDetail.css" >
+    <link rel="stylesheet" href="../resources/css/groupScheduleDetail.css">
 </head>
 <body>
 
-<%-- 시간 문자열 사전 계산 (LocalDateTime 대비 try→fallback) --%>
+<%-- 시작/종료 시간 문자열 처리 --%>
 <c:set var="startStr" value=""/>
 <c:catch>
   <fmt:formatDate value="${groupScheduleDTO.startTime}" pattern="yyyy.MM.dd HH:mm" var="startStr"/>
@@ -30,6 +30,12 @@
   <c:set var="endStr" value="${fn:replace(groupScheduleDTO.endTime, 'T', ' ')}"/>
 </c:if>
 
+<%-- 상태 클래스 안전 적용 --%>
+<c:set var="statusClass" value=""/>
+<c:if test="${groupScheduleDTO.status == 1}">
+  <c:set var="statusClass" value="closed"/>
+</c:if>
+
 <div class="page">
   <header class="page__header">
     <h2 class="page__title">모임 일정 상세보기</h2>
@@ -43,7 +49,6 @@
       <p class="card__subtitle">일정의 주정보와 상태</p>
     </div>
 
-    <!-- table-like grid -->
     <div class="info-table">
       <div class="info-row">
         <div class="info-th">리더</div>
@@ -77,27 +82,42 @@
     </div>
 
     <!-- 상태/참여 영역 -->
-    <div class="info-status <c:if test='${groupScheduleDTO.status eq 1}'>closed</c:if>">
+    <div class="info-status ${statusClass}">
       <div class="status-left">
         <c:choose>
-          <c:when test="${groupScheduleDTO.status eq 0}">
+          <c:when test="${groupScheduleDTO.status == 0}">
             <div class="c-status c-status--open"><span class="c-status__dot"></span> 모집중</div>
           </c:when>
-          <c:when test="${groupScheduleDTO.status eq 1}">
+          <c:when test="${groupScheduleDTO.status == 1}">
             <div class="c-status c-status--closed"><span class="c-status__dot"></span> 모집 완료</div>
           </c:when>
         </c:choose>
       </div>
 
       <div class="status-right actions">
-        <c:if test="${sessionScope.userId ne groupScheduleDTO.scheduleLeader && groupScheduleDTO.status eq 0}">
-          <button class="btn btn--ghost"
-                  onclick="clickJoinSchedule(${sessionScope.userId}, ${groupScheduleDTO.id})">
-            참여 신청
-          </button>
+        <c:if test="${sessionScope.userId ne groupScheduleDTO.scheduleLeader && groupScheduleDTO.status == 0}">
+          <c:choose>
+            <c:when test="${empty myScheduleStatus or myScheduleStatus == -1}">
+              <form action="/group/scheduleJoin" method="post" style="display:inline;">
+                <input type="hidden" name="joinUserId" value="${sessionScope.userId}">
+                <input type="hidden" name="scheduleId" value="${groupScheduleDTO.id}">
+                <button type="submit" class="btn btn--ghost">참여 신청</button>
+              </form>
+            </c:when>
+            <c:when test="${myScheduleStatus == 0}">
+              <form action="/group/scheduleCancel" method="post" style="display:inline;">
+                <input type="hidden" name="joinUserId" value="${sessionScope.userId}">
+                <input type="hidden" name="scheduleId" value="${groupScheduleDTO.id}">
+                <button type="submit" class="btn btn--ghost">신청 취소</button>
+              </form>
+            </c:when>
+            <c:when test="${myScheduleStatus == 1}">
+              <button class="btn btn--primary" disabled>참가 중</button>
+            </c:when>
+          </c:choose>
         </c:if>
 
-        <c:if test="${sessionScope.userId eq groupScheduleDTO.scheduleLeader && groupScheduleDTO.status eq 0}">
+        <c:if test="${sessionScope.userId eq groupScheduleDTO.scheduleLeader && groupScheduleDTO.status == 0}">
           <button class="btn btn--danger" onclick="endRecruit(${groupScheduleDTO.id})">모집 종료</button>
         </c:if>
       </div>
@@ -133,7 +153,7 @@
             </div>
             <div class="applicant-td">
               <c:choose>
-                <c:when test="${schedule.status eq 0}">
+                <c:when test="${schedule.status == 0}">
                   <div class="actions">
                     <button class="btn btn--primary"
                             onclick="acceptHandler(${schedule.userId}, ${schedule.groupScheduleId})">
@@ -145,7 +165,7 @@
                     </button>
                   </div>
                 </c:when>
-                <c:when test="${schedule.status eq 1}">
+                <c:when test="${schedule.status == 1}">
                   <div class="c-tag c-tag--approved">수락됨</div>
                 </c:when>
               </c:choose>
@@ -164,7 +184,7 @@
         <p class="card__subtitle">일정 종료 후 참가자 평가를 남겨주세요</p>
       </div>
       <form action="/review/review" method="get" class="review-form">
-        <input type="hidden" name="groupScheduleId" value="${groupScheduleDTO.id}" />
+        <input type="hidden" name="groupScheduleId" value="${groupScheduleDTO.id}">
         <button type="submit" class="btn btn--primary">리뷰하러 가기</button>
       </form>
     </section>
@@ -172,12 +192,7 @@
 </div>
 
 <script>
-  const clickJoinSchedule = (joinUser, scheduleId) => {
-    if (confirm("참여 신청하시겠습니까?")) {
-      location.href = "/group/scheduleJoin?joinUserId=" + joinUser + "&scheduleId=" + scheduleId;
-    }
-  };
-
+  // 리더 수락/거절/모집 종료 (기존 GET 로직 유지)
   const acceptHandler = (userId, groupScheduleId) => {
     if (confirm("수락 하시겠습니까?")) {
       location.href = "/group/accept?userId=" + userId + "&groupScheduleId=" + groupScheduleId;

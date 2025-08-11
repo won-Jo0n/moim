@@ -88,6 +88,10 @@ public class GroupRepository {
         sql.update("Group.acceptSchedule", scheduleDTO);
     }
 
+    public int refuseSchedule(ScheduleDTO dto) {
+        return sql.update("Group.refuseSchedule", dto);
+    }
+
     public void endRecruit(int id) {
         sql.update("Group.endRecruit", id);
     }

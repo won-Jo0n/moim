@@ -137,6 +137,8 @@ public class GroupService {
         groupRepository.acceptSchedule(scheduleDTO);
     }
 
+    public void refuseSchedule(ScheduleDTO scheduleDTO) {groupRepository.refuseSchedule(scheduleDTO);}
+
     public void endRecruit(int id) {
         groupRepository.endRecruit(id);
     }

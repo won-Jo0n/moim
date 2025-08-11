@@ -28,16 +28,55 @@
     <select id="nickNameCheck" parameterType="String" resultType="int">
         SELECT COUNT(*) FROM user WHERE nickName = #{nickName};
     </select>
+
+    <!-- 신청 존재 여부: 대기/수락 상태만 중복으로 간주 -->
+    <select id="existsUserSchedule" parameterType="userSchedule" resultType="int">
+        SELECT COUNT(*)
+        FROM userschedule
+        WHERE userId = #{userId}
+        AND groupScheduleId = #{groupScheduleId}
+        AND status IN (0, 1)
+    </select>
+
+    <!-- 취소됐다가 재신청할 때 -1 -> 0으로 복구 -->
+    <update id="reapplyUserSchedule" parameterType="userSchedule">
+        UPDATE userschedule
+        SET status = 0, updatedAt = NOW()
+        WHERE userId = #{userId}
+        AND groupScheduleId = #{groupScheduleId}
+        AND status = -1
+    </update>
+
+    <!-- 신규 신청 -->
     <insert id="createUserSchedule" parameterType="userSchedule">
-        INSERT INTO userschedule(userId,groupScheduleId)
-        VALUES(#{userId},#{groupScheduleId});
+        INSERT INTO userschedule (userId, groupScheduleId, status)
+        VALUES (#{userId}, #{groupScheduleId}, 0)
     </insert>
+
+    <!-- 내 현재 상태 조회 -->
+    <select id="getMyScheduleStatus" parameterType="userSchedule" resultType="int">
+        SELECT status
+        FROM userschedule
+        WHERE userId = #{userId}
+        AND groupScheduleId = #{groupScheduleId}
+        LIMIT 1
+    </select>
+
+    <!-- 신청 취소 -->
+    <update id="cancelUserSchedule" parameterType="userSchedule">
+        UPDATE userschedule
+        SET status = -1, updatedAt = NOW()
+        WHERE userId = #{userId}
+        AND groupScheduleId = #{groupScheduleId}
+        AND status IN (0, 1)
+    </update>
+
     <select id="isJoin" parameterType="userSchedule" resultType="userSchedule">
         SELECT * FROM userschedule WHERE userId = #{userId} AND groupScheduleId = #{groupScheduleId};
     </select>
-    <update id="cancleUserSchedule" parameterType="userSchedule">
-        UPDATE userSchedule SET status = -1 WHERE userId = #{userId}, groupScheduleId = #{groupScheduleId};
-    </update>
+
+
+
     <select id="loginIdCheck" parameterType="String" resultType="int">
         SELECT COUNT(*) FROM user WHERE loginId = #{loginId};
     </select>

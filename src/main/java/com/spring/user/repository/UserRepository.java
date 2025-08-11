@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class UserRepository {
     private final SqlSessionTemplate sql;
+
     public int join(UserDTO userDTO) {
         return sql.insert("User.join",userDTO);
     }
@@ -42,16 +43,24 @@ public class UserRepository {
         return sql.selectOne("User.nickNameCheck", nickName);
     }
 
-    public void createUserSchedule(UserScheduleDTO userScheduleDTO) {
-        sql.insert("User.createUserSchedule",userScheduleDTO);
+    public int createUserSchedule(UserScheduleDTO userScheduleDTO) {
+        return sql.insert("User.createUserSchedule",userScheduleDTO);
+    }
+
+    public int reapplyUserSchedule(UserScheduleDTO userScheduleDTO) {
+        return sql.update("User.reapplyUserSchedule", userScheduleDTO);
     }
 
     public UserScheduleDTO isJoin(UserScheduleDTO userScheduleDTO) {
         return sql.selectOne("User.isJoin", userScheduleDTO);
     }
 
-    public void cancleUserSchedule(UserScheduleDTO result) {
-        sql.update("User.cancleUserSchedule", result);
+    public int cancelUserSchedule(UserScheduleDTO result) {
+        return sql.update("User.cancelUserSchedule", result);
+    }
+
+    public Integer getMyScheduleStatus(UserScheduleDTO userScheduleDTO) {
+        return sql.selectOne("User.getMyScheduleStatus", userScheduleDTO);
     }
 
     public int loginIdCheck(String loginId) {

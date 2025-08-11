@@ -1,8 +1,3 @@
-/* ============================
-   groupBoardCreate.css
-   (글 작성 – 퍼플 톤 / 일관 테마)
-   ============================ */
-
 :root{
   --color-main:#7E57C2;
   --color-sub:#B18FCF;
@@ -105,12 +100,11 @@ body{
 .filebox__button:focus-visible{outline:none; box-shadow:var(--focus)}
 .filebox__name{font-size:14px; color:var(--color-muted)}
 
-/* Actions 영역 */
 .actions{
   display:flex; gap:10px; justify-content:flex-start; align-items:center; margin-top:8px;
 }
 
-/* 뒤로가기와 동일 룩의 알약형 버튼 */
+/* 알약버튼 */
 button.pill-btn{
   appearance:none; border:none; background:transparent;
   cursor:pointer; font:inherit; color:var(--color-main);
@@ -122,10 +116,36 @@ button.pill-btn:hover{background:rgba(126,87,194,0.14)}
 button.pill-btn:active{transform:translateY(1px)}
 button.pill-btn:focus-visible{outline:none; box-shadow:var(--focus)}
 
-/* 필요시 강조 버전 */
 button.pill-btn--accent{
   color:#fff; background:var(--color-main);
 }
 button.pill-btn--accent:hover{
   background:var(--color-accent);
 }
+
+/* 상태 색상 */
+:root{
+  --color-danger:#D32F2F;   /* 경고색 */
+  --color-ok:#6A9A20;       /* 정상 강조 */
+}
+
+/* 헬프/카운터 줄 정렬 */
+.form__meta{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:10px; margin-top:4px;
+}
+.count{
+  font-size:12px; color:var(--color-muted);
+  min-width:84px; text-align:right;
+}
+.count--over{ color:var(--color-danger); }
+
+/* 입력 경고 */
+.input.is-invalid, .textarea.is-invalid{
+  border-color:var(--color-danger);
+  box-shadow:0 0 0 3px rgba(211,47,47,0.15);
+}
+.error-text{
+  display:none; font-size:12px; color:var(--color-danger); margin-top:2px;
+}
+.error-text.show{ display:block; }

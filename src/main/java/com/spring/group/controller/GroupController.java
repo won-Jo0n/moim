@@ -154,6 +154,7 @@ public class GroupController {
         model.addAttribute("isAppliedMember", isAppliedMember);
         model.addAttribute("isApprovedMember", isApprovedMember);
         model.addAttribute("isLeader", isLeader);
+        model.addAttribute("isMember", isLeader || isApprovedMember);
         model.addAttribute("groupScheduleList", groupScheduleList);
         for(GroupScheduleDTO s : groupScheduleList){
             groupScheduleStartTime.put(s.getId(), s.getStartTime().format(formatter));
@@ -305,6 +306,7 @@ public class GroupController {
                                       HttpSession session){
         GroupScheduleDTO groupScheduleDTO = groupService.getGroupScheduleDetail(groupScheduleId);
         List<UserScheduleDTO> scheduleList = groupService.getScheduleGroupByGroup(groupScheduleId);
+
         List<ScheduleDTO> scheduleDTOList = new ArrayList<>();
 
         for(UserScheduleDTO user: scheduleList){
@@ -323,30 +325,39 @@ public class GroupController {
         }
 
         UserDTO user = userService.getUserById(groupScheduleDTO.getScheduleLeader());
-        int userId = (int)session.getAttribute("userId");
-
-        // 현재 시간이 종료시간 이후인지 체크
-        boolean isDone = groupScheduleDTO.getEndTime().isBefore(LocalDateTime.now());
-        model.addAttribute("isDone", isDone);
-
-        UserScheduleDTO userScheduleDTO = new UserScheduleDTO();
-        userScheduleDTO.setGroupScheduleId(groupScheduleId);
-        userScheduleDTO.setUserId(userId);
-
-        if(groupScheduleDTO.getEndTime().isBefore(LocalDateTime.now())){
-            model.addAttribute("isDone", true);
-        }else{
-            model.addAttribute("isDone", false);
-        }
-
         model.addAttribute("groupScheduleDTO", groupScheduleDTO);
         model.addAttribute("leaderNickName", user.getNickName());
         model.addAttribute("scheduleList", scheduleDTOList);
 
+        //int userId = (int)session.getAttribute("userId");
+
+        // 현재 시간이 종료시간 이후인지 체크
+        boolean isDone = groupScheduleDTO.getEndTime() != null
+                && groupScheduleDTO.getEndTime().isBefore(LocalDateTime.now());
+        model.addAttribute("isDone", isDone);
+
+//        UserScheduleDTO userScheduleDTO = new UserScheduleDTO();
+//        userScheduleDTO.setGroupScheduleId(groupScheduleId);
+//        userScheduleDTO.setUserId(userId);
+//
+//        if(groupScheduleDTO.getEndTime().isBefore(LocalDateTime.now())){
+//            model.addAttribute("isDone", true);
+//        }else{
+//            model.addAttribute("isDone", false);
+//        }
+        // 내 상태 주입 (null 안전)
+        Integer loginUserId = (Integer) session.getAttribute("userId");
+        Integer myStatus = null;
+        if (loginUserId != null) {
+            myStatus = userService.getMyScheduleStatus(loginUserId, groupScheduleId); // null,-1,0,1
+        }
+        model.addAttribute("myScheduleStatus", myStatus);
+
+
         return "/group/groupScheduleDetail";
     }
 
-    @GetMapping("/scheduleJoin")
+    @PostMapping("/scheduleJoin")
     public String groupScheduleJoin(@RequestParam("joinUserId") int joinUser,
                                     @RequestParam("scheduleId") int scheduleId){
 
@@ -354,9 +365,21 @@ public class GroupController {
         userScheduleDTO.setUserId(joinUser);
         userScheduleDTO.setGroupScheduleId(scheduleId);
 
-        userService.createUserSchedule(userScheduleDTO);
+        //userService.createUserSchedule(userScheduleDTO);
+        userService.applySchedule(userScheduleDTO);
 
-        return "redirect:/group/groupScheduleDetail?id=" +  userScheduleDTO.getGroupScheduleId();
+        return "redirect:/group/groupScheduleDetail?id=" +  scheduleId;
+    }
+
+    @PostMapping("/scheduleCancel")
+    public String cancelSchedule(@RequestParam("joinUserId") int joinUser,
+                                 @RequestParam("scheduleId") int scheduleId) {
+        UserScheduleDTO userScheduleDTO = new UserScheduleDTO();
+        userScheduleDTO.setUserId(joinUser);
+        userScheduleDTO.setGroupScheduleId(scheduleId);
+
+        userService.cancelSchedule(userScheduleDTO);
+        return "redirect:/group/groupScheduleDetail?id=" + scheduleId;
     }
 
     @GetMapping("/accept")
@@ -368,6 +391,12 @@ public class GroupController {
 
         return "redirect:/group/groupScheduleDetail?id="+scheduleDTO.getGroupScheduleId();
 
+    }
+
+    @GetMapping("/refuse")
+    public String refuse(@ModelAttribute ScheduleDTO scheduleDTO) {
+        groupService.refuseSchedule(scheduleDTO);
+        return "redirect:/group/groupScheduleDetail?id=" + scheduleDTO.getGroupScheduleId();
     }
 
     @GetMapping("/endRecruit")
