@@ -70,7 +70,6 @@ public class GroupService {
                     userJoinGroupRepository.updateStatus(fix);
                 }
             }
-
             groupDTO.setId(inactiveId); // 필요시 컨트롤러 리다이렉트용
             return;
         }
