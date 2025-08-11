@@ -1,6 +1,8 @@
 package com.spring.profile.controller;
 
 import com.spring.friends.service.FriendsService;
+import com.spring.mbti.dto.MbtiDTO;
+import com.spring.mbti.service.MbtiService;
 import com.spring.profile.dto.ProfileDTO;
 import com.spring.profile.service.ProfileService;
 import com.spring.mbti.dto.MbtiBoardDTO;
@@ -15,7 +17,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import com.spring.group.dto.GroupDTO;
 
 @Controller
@@ -27,6 +32,7 @@ public class ProfileController {
     private final FriendsService friendsService;
     private final ProfileService profileService;
     private final MbtiBoardService mbtiBoardService;
+    private final MbtiService mbtiService;
 
     // 파일 저장만 사용 (User 모듈 미수정)
     private final FileUtil fileUtil;
@@ -59,9 +65,17 @@ public class ProfileController {
         List<MbtiBoardDTO> boardList = mbtiBoardService.findByAuthor(userId);
         List<UserDTO> friendList = friendsService.getFriends(userId.intValue());
 
+        Map<Integer, String> friendMbtiMap = new HashMap<>();
+
+        for(UserDTO user : friendList){
+            MbtiDTO mbti = mbtiService.getMbti(user.getMbtiId());
+            friendMbtiMap.put(user.getId(), mbti.getMbti());
+        }
+
         model.addAttribute("profile", profile);
         model.addAttribute("boardList", boardList);
         model.addAttribute("friendList", friendList);
+        model.addAttribute("friendMbtiMap", friendMbtiMap);
         model.addAttribute("isOwner", true);
 
         return "profile/profile";

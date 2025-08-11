@@ -374,10 +374,10 @@
         </c:if>
         <div class="card-list">
             <c:forEach var="friend" items="${friendList}">
-                <div class="tile" onclick="location.href='/profile/view/${friend.userId}'">
+                <div class="tile" onclick="location.href='/profile/view/${friend.id}'">
                     <div class="icon">👤</div>
-                    <div>${friend.nickname}</div>
-                    <div>${friend.mbti}</div>
+                    <div>${friend.nickName}</div>
+                    <div>${friendMbtiMap[friend.id]}</div>
                 </div>
             </c:forEach>
         </div>
