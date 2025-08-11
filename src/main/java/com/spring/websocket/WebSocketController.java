@@ -5,6 +5,9 @@ import com.spring.chat.dto.ChatUserDTO;
 import com.spring.chat.service.ChatService;
 import com.spring.friends.dto.FriendsDTO;
 import com.spring.friends.service.FriendsService;
+import com.spring.notification.service.NotificationService;
+import com.spring.friends.dto.FriendsDTO;
+import com.spring.friends.service.FriendsService;
 import com.spring.user.dto.UserDTO;
 import com.spring.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +32,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @RequiredArgsConstructor
 public class WebSocketController {
     private final SimpMessagingTemplate messagingTemplate;
+    private final NotificationService notificationService;
+    private final FriendsService friendsService;
     private final ChatService chatService;
     private final FriendsService friendsService;
     private final UserService userService;
@@ -36,6 +41,22 @@ public class WebSocketController {
     private final Map<String, Integer> sessionCount = new ConcurrentHashMap<>();
     private final Queue<String> matchingQueue = new ConcurrentLinkedQueue<>();
     private final Object matchingLock = new Object();
+
+    @MessageMapping("/notification")
+    public void notification(@Header("type") String type, @Payload Map<String, Object> data, Principal principal){
+        String userId = principal.getName();
+        if(type.equals("READ_NOTIFICATION")) {
+            int notificationId = (int)data.get("notificationId");
+            notificationService.readNotification(Integer.parseInt(userId), notificationId);
+            messagingTemplate.convertAndSendToUser(userId, "/queue/main", Map.of("notificationId", notificationId), Map.of("type", type));
+        }else if(type.equals("ACCEPT_FRIEND")){
+            FriendsDTO friendsDTO = new FriendsDTO();
+            friendsDTO.setRequestUserId((int)data.get("requestUserId"));
+            friendsDTO.setResponseUserId(Integer.parseInt(userId));
+            friendsDTO.setStatus(1);
+            friendsService.updateFriend(friendsDTO);
+        }
+    }
 
     /*
     @MessageMapping("/connect")

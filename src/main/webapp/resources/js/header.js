@@ -1,6 +1,4 @@
 const header = {
-    notificationUnread : 0,
-    chatUnread : 0,
     chatUser : null
 };
 const stompClient = new StompJs.Client({
@@ -50,7 +48,7 @@ stompClient.onConnect = (frame) => {
         }else if(!header.chatUser || header.chatUser.id != data.requestUserId){
             const unreadDiv = messageItem.find(".message-info > div");
             unreadDiv.text(parseInt(unreadDiv.text() || "0") + 1);
-            header.chatUnread++;
+            chatUnreadCountAdd(1);
         }
         break;
       case "READ_MESSAGE_SELF":
@@ -59,7 +57,7 @@ stompClient.onConnect = (frame) => {
         const unreadDiv = messageItem.find(".message-info > div");
         const afterCount = parseInt(unreadDiv.text() || "0") - data.readCount;
         unreadDiv.text(afterCount > 0 ? afterCount : "");
-        header.chatUnread -= data.readCount;
+        chatUnreadCountAdd(-data.readCount);
         if(header.chatUser && header.chatUser.id == data.sender){
             $(".chat-message-wrapper.received").slice(-data.readCount).addClass("read");
         }
@@ -75,12 +73,12 @@ stompClient.onConnect = (frame) => {
         break;
       case "RECEIVE_REQUEST":
         $(`div[data-user-id="${data.id}"]`).remove();
-        header.chatUnread++;
+        chatUnreadCountAdd(1);
         createMessageItem(data);
         break;
       case "SEND_REQUEST_RESPONSE":
         $(`div[data-user-id="${data.id}"]`).remove();
-        header.chatUnread--;
+        chatUnreadCountAdd(-1);
         break;
       case "FRIEND_NEW":
         createMessageItem(data);
@@ -90,6 +88,13 @@ stompClient.onConnect = (frame) => {
         break;
       case "MATCH_FOUND":
         openChat(createMessageItem(data));
+        break;
+      case "RECEIVE_NOTIFICATION":
+        createNotificationItem(data);
+        break;
+      case "READ_NOTIFICATION":
+        $(`div[data-notification-id="${data.notificationId}"]`).remove(); //이 알림의 id에 해당하는 div를 notification-list에서 뺴줘야된다.
+        notificationUnreadCountAdd(-1);
         break;
     }
   });
@@ -101,6 +106,17 @@ function refreshMessageItem(element, data){
     element.parent().find(".empty-message-box").after(element);
 }
 
+function chatUnreadCountAdd(add){
+    const chatUnreadCountDiv = $("#chat-unread-count");
+    const chatUnreadCount = parseInt(chatUnreadCountDiv.text() || "0") + add;
+    chatUnreadCountDiv.text(chatUnreadCount > 0 ? chatUnreadCount : "");
+}
+
+function notificationUnreadCountAdd(add){
+    const notificationUnreadCountDiv = $("#notification-count");
+    const notificationUnreadCount = parseInt(notificationUnreadCountDiv.text() || "0") + add;
+    notificationUnreadCountDiv.text(notificationUnreadCount > 0 ? notificationUnreadCount : "");
+}
 
 $(function () {
     const navLinks = $(".sidebar-nav li > a");
@@ -117,6 +133,19 @@ $(function () {
     //stompClient.heartbeat.incoming = 20000;
     stompClient.activate();
     $.ajax({
+      url: "/notification",
+      type: "GET",
+      contentType: "application/json",
+      success: function (data) {
+        data.forEach((notification) => {
+            createNotificationItem(notification);
+        });
+      },
+      error: function (xhr, status, error) {
+        console.error("알림 기록을 가져오는 중 오류 발생:", error);
+      },
+    });
+    $.ajax({
       url: "/chat/friends",
       type: "GET",
       contentType: "application/json",
@@ -128,9 +157,9 @@ $(function () {
         data.forEach((user) => {
           createMessageItem(user);
           if(user.status <= 2){
-            header.chatUnread += user.unreadCount;
+            chatUnreadCountAdd(user.unreadCount);
           }else{
-            header.chatUnread++;
+            chatUnreadCountAdd(1);
           }
         });
       },
@@ -143,8 +172,6 @@ $(function () {
         sendMessage();
       }
     });
-
-
 // 목업 데이터
     const mockNotifications = [
       {
@@ -159,6 +186,15 @@ $(function () {
         path: null,
         status: 1
       },
+      /*
+      친구 요청을 할 경우
+      userId에는 세션
+      requestUserId에는 요청을 한 상대 id
+      type는 FRIEND_REQUEST
+      relatedId에도 똑같이 요청을 한 상대 id
+      content에는 상대의 nickName,
+      path에는 아무것도 안들어감(null)
+      */
       {
         id: 2,
         userId: 101,
@@ -170,6 +206,16 @@ $(function () {
         path: '/groups/301/schedule',
         status: 1
       },
+      /*
+        모임 일정이 등록될 경우
+        userId에는 세션
+        requestUserId에는 요청을 한 상대 id
+        type는 FRIEND_REQUEST
+        relatedId에도 똑같이 요청을 한 상대 id
+        content에는 상대의 nickName,
+        path에는 아무것도 안들어감(null)
+        */
+
       {
         id: 3,
         userId: 101,
@@ -205,13 +251,6 @@ $(function () {
         status: 1
       }
     ];
-    const notificationList = $("#notification-sidebar .notification-list");
-    console.log(notificationList);
-    mockNotifications.forEach((notification) => {
-        notificationList.append(createNotificationItem(notification));
-    });
-
-
   });
 
 function togglePopup(popupId, show) {
@@ -345,10 +384,10 @@ function createNotificationItem(notification) {
       notificationText = `<strong>${notification.content}</strong>님이 친구를 요청했습니다.`;
       actionsHtml = `
         <div class="notification-actions">
-          <button class="accept-btn" onclick="acceptFriendRequest(${notification.requestUserId})">
+          <button class="accept-btn" onclick="acceptFriendRequest(${notification.id}, ${notification.requestUserId})">
             수락
           </button>
-          <button class="decline-btn" onclick="declineFriendRequest(${notification.requestUserId})">
+          <button class="decline-btn" onclick="declineFriendRequest(${notification.id}, ${notification.requestUserId})">
             거절
           </button>
         </div>
@@ -371,9 +410,10 @@ function createNotificationItem(notification) {
       notificationText = '새로운 알림이 도착했습니다.';
       break;
   }
+  const notificationList = $("#notification-sidebar .notification-list");
   const notificationItem =
   $(`
-     <div class="notification-item ${typeClass}">
+     <div class="notification-item ${typeClass}" data-notification-id="${notification.id}">
        <div class="notification-content">
          <i class="${iconClass} notification-icon"></i>
          <span class="notification-text">
@@ -385,13 +425,39 @@ function createNotificationItem(notification) {
    `);
   if (notification.type != "FRIEND_REQUEST") {
     notificationItem.on("click", () => {
-      // 읽음 처리 API 호출 등의 추가 로직
-      markAsRead(notification.id);
-      // 페이지 이동
+      readNotification(notification.id);
       window.location.href = notification.path;
     });
   }
-  return notificationItem;
+  notificationList.prepend(notificationItem);
+  notificationUnreadCountAdd(1);
+}
+
+function readNotification(notificationId){
+    stompClient.publish({
+        destination: "/app/notification",
+        headers: { type : "READ_NOTIFICATION" },
+        body: JSON.stringify({
+            notificationId : notificationId,
+        })
+    });
+}
+
+function acceptFriendRequest(notificationId, requestUserId){
+    //requestUserId와의 friend 등록
+    stompClient.publish({
+            destination: "/app/notification",
+            headers: { type : "ACCEPT_FRIEND" },
+            body: JSON.stringify({
+                requestUserId : requestUserId,
+            })
+        });
+    readNotification(notificationId);
+}
+
+function declineFriendRequest(notificationId, requestUserId){
+    //requestUserId와의 friend 거부
+    readNotification(notificationId);
 }
 
 function searchUserList(search){
