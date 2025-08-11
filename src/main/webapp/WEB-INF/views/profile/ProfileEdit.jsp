@@ -41,21 +41,19 @@
         </c:otherwise>
     </c:choose>
 
-    <!-- 업로드(교체) -->
+    <!-- 업로드/삭제 통합 폼 -->
     <form class="row" action="${ctx}/profile/photo" method="post" enctype="multipart/form-data">
-        <input type="file" id="profileImage" name="profileFile" accept="image/*" onchange="previewImage(this)" required>
+        <input type="file" id="profileImage" name="profileFile" accept="image/*" onchange="previewImage(this)">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
-        <div class="button-group">
-            <button type="submit" class="btn save">저장</button>
-            <button type="button" class="btn cancel" onclick="location.href='${ctx}/profile'">취소</button>
-        </div>
-    </form>
+        <!-- ✅ 삭제 플래그 -->
+        <input type="hidden" name="deletePhoto" id="deletePhoto" value="false">
 
-    <!-- 삭제(기본 이미지로) -->
-    <form class="row" action="${ctx}/profile/photo/delete" method="post">
-        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
         <div class="button-group">
-            <button type="submit" class="btn delete">사진 제거</button>
+            <!-- ✅ 파일 선택/삭제 후 활성화 -->
+            <button type="submit" class="btn save" id="btnSave" disabled>저장</button>
+            <button type="button" class="btn cancel" onclick="location.href='${ctx}/profile'">취소</button>
+            <!-- ✅ 제출 아님: 삭제 표시만 -->
+            <button type="button" class="btn delete" id="btnDeletePhoto">사진 제거</button>
         </div>
     </form>
 
@@ -79,15 +77,43 @@
     </div>
 </div>
 
+<!-- ✅ 서버에서 withdrawError가 오면 alert -->
+<c:if test="${not empty withdrawError}">
+    <script>
+        alert('<c:out value="${withdrawError}"/>');
+    </script>
+</c:if>
+
 <script>
 function previewImage(input){
     const preview = document.getElementById('preview');
+    const btnSave = document.getElementById('btnSave');
+    const del = document.getElementById('deletePhoto');
+
     if (input.files && input.files[0]) {
         const reader = new FileReader();
-        reader.onload = e => preview.src = e.target.result;
+        reader.onload = e => { preview.src = e.target.result; };
         reader.readAsDataURL(input.files[0]);
+        // 새 파일 선택 시 삭제 플래그 해제
+        if (del) del.value = 'false';
+        if (btnSave) btnSave.disabled = false;
+    } else {
+        if (btnSave) btnSave.disabled = true;
     }
 }
+
+// ✅ 사진 제거: 미리보기 기본이미지로, deletePhoto=true, 파일 입력 초기화, 저장 버튼 활성화
+document.getElementById('btnDeletePhoto')?.addEventListener('click', function(){
+    const preview = document.getElementById('preview');
+    const btnSave = document.getElementById('btnSave');
+    const del = document.getElementById('deletePhoto');
+    const file = document.getElementById('profileImage');
+
+    if (preview) preview.src = '${ctx}/resources/images/default-profile.jpg';
+    if (del) del.value = 'true';
+    if (file) file.value = '';
+    if (btnSave) btnSave.disabled = false;
+});
 
 // 탈퇴 전 클라이언트 검증(비번 입력 + 동의 체크 + 재확인)
 function confirmWithdraw(){

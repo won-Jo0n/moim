@@ -46,4 +46,8 @@ public class ProfileRepository {
     public List<GroupDTO> findGroupsByUserId(Long userId) {
         return sql.selectList("Profile.findGroupsByUserId", userId);
     }
+
+    public int deleteFriendship(java.util.Map<String,Object> param) {
+        return sql.delete("Friends.deleteFriendship", param);
+    }
 }
