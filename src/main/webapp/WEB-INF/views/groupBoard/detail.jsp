@@ -25,6 +25,7 @@
         </div>
       </div>
 
+<div class="post__body-layout">
       <c:if test="${board.fileId ne 0}">
         <div class="post__media">
           <img src="/file/preview?fileId=${board.fileId}" alt="첨부 이미지">
@@ -34,6 +35,8 @@
       <div class="post__content">
         <p>${board.content}</p>
       </div>
+   </div>
+
 
       <!-- 글 수정/삭제/신고 -->
       <div class="actions">
