@@ -59,4 +59,7 @@ public class UserRepository {
     }
 
 
+    public void updateLastLogin(UserDTO loginUser) {
+        sql.update("User.updateLastLogin",loginUser);
+    }
 }

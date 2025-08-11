@@ -77,6 +77,8 @@ public class UserController {
 
     @GetMapping("/logout")
     public String logout(HttpSession session){
+        UserDTO user = userService.getUserById((Integer) session.getAttribute("userId"));
+        userService.updateLastLogin(user);
         session.invalidate();
         return "redirect:/";
     }
