@@ -1,0 +1,214 @@
+/* ============================
+   groupUpdate.css
+   (Group Update Form – 퍼플 톤)
+   ============================ */
+
+/* ---- Design tokens (네가 준 값 그대로) ---- */
+:root{
+  --color-main:#7E57C2;      /* 세련된 중간톤 퍼플 */
+  --color-sub:#B18FCF;       /* 부드러운 라벤더 */
+  --color-accent:#4527A0;    /* 깊은 퍼플 */
+  --color-bg:#F7F6FB;
+  --color-card:#FFFFFF;
+  --color-text:#2F2A3B;
+  --color-muted:#7A718D;
+  --radius-xl:20px;
+  --radius-lg:14px;
+  --radius-md:10px;
+  --shadow-md:0 10px 24px rgba(69,39,160,0.12);
+  --shadow-sm:0 4px 12px rgba(69,39,160,0.08);
+  --border:#E8E3F3;
+  --focus: 0 0 0 3px rgba(126,87,194,0.3);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  color:var(--color-text);
+  background:linear-gradient(180deg, var(--color-bg), #FFF);
+}
+
+/* ---- Page shell (공통) ---- */
+.page{
+  max-width:980px;
+  margin:40px auto 80px;
+  padding:0 20px;
+}
+.page__header{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:18px;
+}
+.page__title{
+  margin:0;
+  font-size:28px;
+  font-weight:800;
+  letter-spacing:-0.2px;
+  color:var(--color-accent);
+}
+.link-back{
+  text-decoration:none;
+  color:var(--color-main);
+  padding:8px 12px;
+  border-radius:var(--radius-md);
+  background:rgba(126,87,194,0.08);
+  transition:transform .06s ease, background .2s ease;
+}
+.link-back:hover{background:rgba(126,87,194,0.14)}
+.link-back:active{transform:translateY(1px)}
+.link-back:focus-visible{outline:none; box-shadow:var(--focus)}
+
+/* ---- Card ---- */
+.card{
+  background:var(--color-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius-xl);
+  box-shadow:var(--shadow-md);
+  padding:22px;
+  margin-top:18px;
+}
+.card__head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:16px;
+}
+.card__title{
+  margin:0;
+  font-size:20px;
+  font-weight:700;
+  color:var(--color-accent);
+}
+.card__subtitle{
+  margin:0;
+  font-size:14px;
+  color:var(--color-muted);
+}
+
+/* ---- Form ---- */
+.form{
+  display:grid;
+  gap:16px;
+}
+.form__row{
+  display:grid;
+  gap:8px;
+}
+.form__row--grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:16px;
+}
+@media (max-width:720px){
+  .form__row--grid{grid-template-columns: 1fr;}
+}
+
+.label{
+  font-size:14px;
+  font-weight:700;
+  color:var(--color-text);
+}
+
+.input,
+.select,
+.textarea{
+  width:100%;
+  padding:12px 14px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:#fff;
+  color:var(--color-text);
+  font-size:14px;
+  transition:border-color .2s ease, box-shadow .2s ease, background .2s ease;
+  box-shadow:0 2px 6px rgba(0,0,0,0.02) inset;
+}
+.input::placeholder,
+.textarea::placeholder{color:#B3ABC6}
+
+.input:focus,
+.select:focus,
+.textarea:focus{
+  outline:none;
+  border-color:var(--color-sub);
+  box-shadow:var(--focus);
+}
+
+.textarea{
+  min-height:120px;
+  resize:vertical;
+  line-height:1.5;
+}
+
+/* ---- Helper text ---- */
+.help{
+  margin-top:6px;
+  font-size:12px;
+  color:var(--color-muted);
+}
+
+/* ---- Actions ---- */
+.actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:flex-end;
+  margin-top:8px;
+}
+.btn{
+  appearance:none;
+  border:none;
+  padding:12px 16px;
+  border-radius:12px;
+  font-weight:800;
+  cursor:pointer;
+  background:#EEE;
+  transition:transform .06s ease, box-shadow .2s ease, background .2s ease, color .2s ease;
+  box-shadow:0 4px 10px rgba(0,0,0,0.04);
+}
+.btn:active{transform:translateY(1px)}
+.btn:focus-visible{outline:none; box-shadow:var(--focus)}
+
+.btn--primary{
+  background:linear-gradient(180deg, var(--color-main), var(--color-accent));
+  color:#fff;
+}
+.btn--primary:hover{filter:brightness(1.05)}
+
+.btn--ghost{
+  background:#fff;
+  color:var(--color-accent);
+  border:1px solid var(--color-sub);
+}
+.btn--ghost:hover{background:#FBF8FF}
+
+/* ---- Inline validation (옵션) ---- */
+.input.is-invalid,
+.select.is-invalid,
+.textarea.is-invalid{
+  border-color:#E08C8C;
+  box-shadow:0 0 0 3px rgba(224,140,140,0.2);
+}
+.help--error{color:#A13232}
+
+/* ---- Small utils ---- */
+.row-inline{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.badge{
+  display:inline-block;
+  padding:6px 10px;
+  font-size:12px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:#fff;
+  color:var(--color-text);
+}

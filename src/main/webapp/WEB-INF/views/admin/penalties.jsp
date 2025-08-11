@@ -10,6 +10,11 @@
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 </head>
 <body>
+    <%@ include file="adminSidebar.jsp" %>
+    <div class="top-button-container">
+        <button onclick="window.history.back()" class="back-to-home-button">돌아가기</button>
+    </div>
+
     <div class="user-search-container">
         <h2>유저 검색</h2>
         <form action="/admin/penaltiesSearch" method="post">
@@ -37,7 +42,6 @@
                     <div>
                         <a href="#" class="action-link">사용자 페이지 가기</a>
                     </div>
-
                 </div>
 
                 <div class="penalties-section">
@@ -104,7 +108,6 @@
 </body>
 
 <script>
-
     window.onload = function(){
         <c:if test="${not empty sessionScope.errorMsg}">
             alert("${errorMsg}");
@@ -143,10 +146,9 @@
 
     const getPenalti = document.getElementById("get-penalti");
     getPenalti.addEventListener("submit", function(e){
-        if(!confirm("사용자를 정자하시겠습니까?")){
+        if(!confirm("사용자를 정지하시겠습니까?")){
             e.preventDefault();
         }
     });
-
 </script>
 </html>

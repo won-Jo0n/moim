@@ -1,48 +1,159 @@
+/* report.css */
+
 body {
-    font-family: '맑은 고딕', sans-serif;
-    margin: 40px;
+    font-family: Arial, sans-serif;
+    background-color: #F5F5F5;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
 }
 
 h2 {
-    text-align: center;
-    margin-bottom: 30px;
+    text-align: left; /* Flexbox를 사용하므로 텍스트 정렬을 왼쪽으로 변경 */
+    color: #333;
+    margin: 0; /* 불필요한 마진 제거 */
+    font-size: 1.5rem;
+}
+
+.table-container {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
+    margin-bottom: 0;
 }
 
-thead {
-    background-color: #f2f2f2;
+thead th {
+    background-color: #333333;
+    color: white;
+    padding: 15px 12px;
+    text-align: left;
+    font-weight: bold;
 }
 
-th, td {
+tbody tr {
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+tbody tr:last-child {
+    border-bottom: none;
+}
+
+tbody tr:hover:not(.status-processed) {
+    background-color: #e6f2ff;
+}
+
+tbody td {
     padding: 12px;
-    border: 1px solid #ccc;
-    text-align: center;
+    vertical-align: middle;
 }
 
-tbody tr:hover {
-    background-color: #f9f9f9;
+.status-processed {
+    background-color: #e9ecef;
+    color: #888;
+    cursor: default;
+}
+
+.status-processed:hover {
+     background-color: #e9ecef;
+}
+
+.status-pending {
+    color: #D9534F;
+    font-weight: bold;
+}
+
+.status-completed {
+    color: #5CB85C;
+    font-weight: bold;
+}
+
+.action-button {
+    background-color: #333333;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.action-button:hover {
+    background-color: #F5F5F5;
+    color: #333333;
+}
+
+.action-button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
 }
 
 .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
+    text-align: center;
     margin-top: 20px;
 }
+
 .pagination a {
+    display: inline-block;
     padding: 8px 16px;
-    border: 1px solid #ccc;
     text-decoration: none;
-    color: #333;
+    color: #333333;
+    border: 1px solid #ddd;
+    margin: 0 4px;
     border-radius: 4px;
+    transition: background-color 0.2s ease;
 }
-.pagination a.active, .pagination a:hover {
-    background-color: #007bff;
+
+.pagination a:hover:not(.active) {
+    background-color: #e9ecef;
+}
+
+.pagination a.active {
+    background-color: #333333;
     color: white;
-    border-color: #007bff;
+    border: 1px solid #333333;
+}
+
+/* 추가된 CSS */
+.top-button-container {
+    /* 기존 스타일 재정의 */
+    margin: 0;
+    padding: 0;
+}
+
+.back-to-home-button {
+    background-color: #333333;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.back-to-home-button:hover {
+    background-color: #494848;
 }
