@@ -3,192 +3,93 @@
   메인: #7E57C2; 서브: #B18FCF; 포인트: #4527A0;
   배경: #F8F9FA; 텍스트: #495057; 경계선: #E0E0E0
 */
-
-
-*{ box-sizing: border-box; }
-
-
-body {
-  background-color: #F8F9FA;
-  font-family: 'Pretendard','Noto Sans KR',sans-serif;
-  color: #495057;
-  padding: 2rem;
-  margin: 0;
-}
-
-/* 중앙정렬 래퍼: 안의 검색폼/표의 오른쪽 끝이 서로 딱 맞음 */
-.group-list-wrap{
-  width: 100%;
-  max-width: 1000px;          /* 필요시 960~1100px로 조절 */
-  margin: 0 auto;             /* 중앙정렬 핵심 */
-}
-
-h2 {
-    color: #4527A0;
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-/* 검색 폼: 래퍼 안에서 오른쪽 정렬 유지 */
-.search-form{
-  display: flex;
-  justify-content: flex-end;  /* 오른쪽 정렬 */
-  width: 100%;                /* 래퍼 폭 꽉 채움 */
-  margin: 0 0 2rem 0;         /* 좌우 여백은 래퍼가 담당 */
-}
-
-.search-form input[type="text"] {
-    width: 300px;
-    padding: 0.75rem 1.5rem;
-    border: 1px solid #B18FCF;
-    border-radius: 2rem;
-    font-size: 1rem;
-    outline: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
-.search-form input[type="text"]:focus {
-    border-color: #7E57C2;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-.search-form button {
-    background-color: #7E57C2;
-    color: #FFFFFF;
-    border: none;
-    border-radius: 2rem;
-    padding: 0.75rem 1.5rem;
-    font-weight: 600;
-    cursor: pointer;
-    margin-left: 0.5rem;
-    transition: background-color 0.3s, transform 0.3s;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
-.search-form button:hover{ background:#6748A5; transform:translateY(-2px); }
-
-table{
-  width:100%;
-  border-collapse:separate;
-  border-spacing:0;
-  background:#fff;
-  border-radius:1rem;
-  overflow:hidden;
-  box-shadow:0 8px 25px rgba(0,0,0,.08);
-  margin:0;                   /* 좌우는 래퍼가 관리 */
-}
-
-
-thead th{
-  background:#7E57C2; color:#fff; font-weight:600; padding:1rem; text-align:center;
-}
-tbody tr{ transition:background-color .2s ease; }
-tbody tr:hover{ background:#F0F2F5; cursor:pointer; }
-tbody td{
-  padding:1rem; border-top:1px solid #E0E0E0; text-align:center; vertical-align:middle;
-}
-table, th, td{ border:none !important; }
-tbody tr:first-child td{ border-top:none; }
-
-tbody img{
-  width:80px; height:80px; border-radius:50%; object-fit:cover;
-  box-shadow:0 2px 5px rgba(0,0,0,.1);
-}
-
-/* 좁은 화면 대응 */
-@media (max-width:1024px){
-  .group-list-wrap{ max-width: 100%; padding: 0 1rem; }
-}
-
-/* 컨트롤 바: 좌측 버튼 + 우측 검색을 한 줄에 */
-.controls{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  width:100%;
-  margin-bottom:2rem;
-}
-
-/* 기존 .search-form는 그대로 두되, controls 안에서 오른쪽 정렬 유지 */
-.search-form{
-  display:flex;
-  justify-content:flex-end;
-  align-items:center;
-  gap:.5rem;
-  width:100%;
-}
-
-/* 모임 만들기 버튼 – 검색 입력과 높이/라운드 맞춤 */
-.btn-create{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding: 0.75rem 1.5rem;      /* 검색 input과 동일 높이 */
-  background:#7E57C2;
-  color:#fff;
-  text-decoration:none;
-  border-radius:2rem;
-  font-weight:600;
-  box-shadow:0 4px 10px rgba(0,0,0,.05);
-  transition:background .3s, transform .3s;
-  white-space:nowrap;           /* 줄바꿈 방지 */
-}
-.btn-create:hover{ background:#6748A5; transform:translateY(-2px); }
-
-/* 반응형 – 좁을 땐 세로로 쌓기 */
-@media (max-width:768px){
-  .controls{ flex-direction:column; align-items:stretch; gap:.75rem; }
-  .search-form{ width:100%; justify-content:space-between; }
-}
-
 :root{
-  --ctl-h: 48px;           /* 컨트롤 공통 높이 */
-  --pill: 9999px;          /* 동그란 라운드 */
+  --main:#7E57C2; --sub:#B18FCF; --accent:#4527A0;
+  --bg:#F8F9FA; --text:#495057; --line:#E0E0E0;
+  --radius:16px; --shadow:0 8px 25px rgba(0,0,0,.08);
+  --ctl-h:48px; --pill:9999px;
 }
 
-/* 한 줄 정렬 유지 */
-.controls{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;      /* ⬅ 세로 기준 맞춤 */
-  width:100%;
-  margin-bottom:2rem;
-  gap: 1rem;
-}
+*{ box-sizing:border-box; }
+body{ background:#F8F9FA; font-family:'Pretendard','Noto Sans KR',sans-serif; color:var(--text); margin:0; padding:2rem; }
 
-/* 검색폼: 같은 줄에서 우측 정렬 */
-.search-form{
-  display:flex;
-  align-items:center;      /* ⬅ 세로 중앙 정렬 */
-  justify-content:flex-end;
-  gap:.5rem;
-  margin:0;
-}
+.group-list-wrap{ width:100%; max-width:1000px; margin:0 auto; }
 
-/* ⬇︎ 세 요소 모두 동일한 높이 강제 */
-.btn-create,
+h2{ color:var(--accent); font-weight:700; text-align:center; margin-bottom:2rem; }
+
+/* 컨트롤 바 */
+.controls{ display:flex; justify-content:space-between; align-items:center; gap:1rem; margin-bottom:2rem; }
+.search-form{ display:flex; align-items:center; gap:.5rem; margin:0; }
 .search-form input[type="text"],
-.search-form button{
-  height: var(--ctl-h);
-  font-size: 1rem;
-  border-radius: var(--pill);
+.search-form button,
+.btn-create{
+  height:var(--ctl-h); border-radius:var(--pill); font-size:1rem;
 }
-
-/* 버튼들은 텍스트가 정확히 가운데 오도록 */
-.btn-create,
-.search-form button{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding: 0 1.5rem;       /* 좌우만 패딩, 높이는 위에서 통일 */
-  line-height: 1;          /* OS 기본버튼 라인하이트 보정 */
-}
-
-/* 입력창 스타일 (기존 값 유지 + 높이만 통일) */
 .search-form input[type="text"]{
-  padding: 0 1.5rem;       /* 좌우만 – 높이는 var(--ctl-h)로 결정 */
-  border: 1px solid #B18FCF;
-  outline: none;
-  box-shadow: 0 4px 10px rgba(0,0,0,.05);
-  -webkit-appearance:none; /* 브라우저간 높이 차 최소화 */
-  appearance:none;
+  width:300px; padding:0 1.25rem; border:1px solid var(--sub); outline:none;
+  box-shadow:0 4px 10px rgba(0,0,0,.05); appearance:none;
+}
+.search-form input[type="text"]:focus{ border-color:var(--main); box-shadow:0 4px 15px rgba(0,0,0,.1); }
+.search-form button,
+.btn-create{
+  display:inline-flex; align-items:center; justify-content:center; padding:0 1.5rem; line-height:1;
+  border:none; background:var(--main); color:#fff; font-weight:600; box-shadow:0 4px 10px rgba(0,0,0,.05); cursor:pointer;
+  transition:transform .2s, background .2s;
+}
+.search-form button:hover, .btn-create:hover{ background:#6748A5; transform:translateY(-2px); }
+@media (max-width:768px){ .controls{ flex-direction:column; align-items:stretch; } .search-form{ width:100%; } }
+
+/* 테이블 */
+.group-table{
+  width:100%; table-layout:fixed; /* ⬅︎ 폭 고정으로 정렬 안정화 */
+  border-collapse:separate; border-spacing:0; background:#fff; border-radius:var(--radius);
+  overflow:hidden; box-shadow:var(--shadow); margin:0;
+}
+.group-table thead th{
+  background:var(--main); color:#fff; font-weight:600; padding:1rem; text-align:center;
+}
+.group-table tbody tr{ transition:background-color .2s ease; }
+.group-table tbody tr:hover{ background:#F0F2F5; cursor:pointer; }
+.group-table td{
+  padding:1rem; border-top:1px solid var(--line);
+  text-align:center; vertical-align:top; /* ⬅︎ 길어져도 위쪽 정렬 */
+  word-break:break-word; /* ⬅︎ 긴 단어/영문도 줄바꿈 */
+}
+.group-table tbody tr:first-child td{ border-top:none; }
+.group-table img{
+  width:80px; height:80px; border-radius:50%; object-fit:cover; box-shadow:0 2px 5px rgba(0,0,0,.1);
+}
+
+/* 컬럼별 정렬 */
+.td-title{ font-weight:600; }
+.td-thumb{ text-align:center; }
+.td-loc{ white-space:normal; }
+.td-num{ white-space:nowrap; }   /* 인원은 그대로 한 줄 */
+.td-date{ white-space:normal; }  /* 날짜는 줄바꿈 허용 */
+
+/* 모임 소개: 좌측 정렬 + 보기 좋은 행간 */
+.td-desc{
+  text-align:left; line-height:1.5;
+  /* 서버에서 100자로 자르지만, 예외 상황 대비 추가 안전장치 */
+  overflow:hidden;
+}
+
+/* 빈 이미지 텍스트 */
+.no-image{ display:inline-block; padding:.25rem .5rem; background:#EEE8F6; color:#6A5FB4; border-radius:8px; font-size:.85rem; }
+
+/* 페이징 */
+.paging-wrap{ margin-top:1.25rem; text-align:center; }
+.paging-wrap a{
+  display:inline-block; margin:0 .25rem; padding:.5rem .75rem; border:1px solid var(--line); border-radius:8px;
+  text-decoration:none; color:#444; background:#fff;
+}
+.paging-wrap a.active{ background:var(--main); color:#fff; border-color:var(--main); }
+
+/* 버튼 밑줄 완전 제거 */
+.btn-create,
+.btn-create:link,
+.btn-create:visited,
+.btn-create:hover,
+.btn-create:active{
+  text-decoration: none !important;
 }

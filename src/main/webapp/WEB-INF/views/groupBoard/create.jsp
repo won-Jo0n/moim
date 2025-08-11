@@ -39,9 +39,9 @@
         </div>
 
         <div class="form__row">
-          <label for="groupBoardFile" class="label">이미지 첨부 (선택)</label>
+          <label for="groupBoardFile" class="label" >이미지 첨부 (선택)</label>
           <div class="filebox">
-            <input type="file" id="groupBoardFile" name="groupBoardFile" class="filebox__input" accept="image/*">
+            <input type="file" id="groupBoardFile" name="groupBoardFile" class="filebox__input" accept="image/*" required>
             <label for="groupBoardFile" class="filebox__button">파일 선택</label>
             <span class="filebox__name" id="fileName">선택된 파일 없음</span>
           </div>
@@ -49,8 +49,8 @@
         </div>
 
         <div class="actions">
-          <button type="submit" class="btn btn--primary">등록</button>
-          <button type="button" class="btn btn--ghost" onclick="history.back()">취소</button>
+          <button type="submit" class="pill-btn pill-btn--accent">등록</button>
+          <button type="button" class="pill-btn" onclick="history.back()">취소</button>
         </div>
       </form>
     </section>

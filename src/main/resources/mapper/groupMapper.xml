@@ -87,7 +87,13 @@
     </insert>
 
     <select id="getGroupScheduleByGroupId" parameterType="int" resultType="groupSchedule">
-        SELECT * FROM groupSchedule WHERE groupId = #{groupId};
+        <![CDATA[
+        SELECT *
+        FROM groupSchedule
+        WHERE groupId = #{groupId}
+        ORDER BY (startTime > NOW()) ASC,
+        startTime DESC;
+        ]]>
     </select>
 
     <select id="getGroupScheduleDetail" parameterType="int" resultType="groupSchedule">
