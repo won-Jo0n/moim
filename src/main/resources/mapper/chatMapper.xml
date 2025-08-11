@@ -5,7 +5,7 @@
     <select id="getChatFriends" parameterType="int" resultType="chatUser">
         <![CDATA[
         SELECT
-            u.id,
+            DISTINCT u.id,
             u.fileId,
             f.status,
             cs.unreadCount,
@@ -84,8 +84,7 @@
             ON cs.friendId = u.id AND cs.rn = 1
         ORDER BY
             f.status ASC,
-            cs.sendAt DESC,
-            f.responsedAt DESC,
+            lastChatTime DESC,
             u.nickName ASC;
         ]]>
     </select>
@@ -153,7 +152,7 @@
     <select id="getChatFriendById" parameterType="chatMessage" resultType="chatUser">
         <![CDATA[
         SELECT
-            u.id,
+            DISTINCT u.id,
             u.fileId,
             f.status,
             cs.unreadCount,
@@ -229,8 +228,7 @@
         WHERE u.id = #{responseUserId}
         ORDER BY
             f.status ASC,
-            cs.sendAt DESC,
-            f.responsedAt DESC,
+            lastChatTime DESC,
             u.nickName ASC;
         ]]>
     </select>

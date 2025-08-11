@@ -3,13 +3,15 @@ package com.spring.websocket;
 import com.spring.chat.dto.ChatMessageDTO;
 import com.spring.chat.dto.ChatUserDTO;
 import com.spring.chat.service.ChatService;
+import com.spring.friends.dto.FriendsDTO;
+import com.spring.friends.service.FriendsService;
+import com.spring.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
@@ -24,11 +26,29 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @RequiredArgsConstructor
 public class WebSocketController {
     private final SimpMessagingTemplate messagingTemplate;
+    private final NotificationService notificationService;
+    private final FriendsService friendsService;
     private final ChatService chatService;
     private final Map<String, String> sessionToUser = new ConcurrentHashMap<>();
     private final Map<String, Integer> sessionCount = new ConcurrentHashMap<>();
     private final Queue<String> matchingQueue = new ConcurrentLinkedQueue<>();
     private final Object matchingLock = new Object();
+
+    @MessageMapping("/notification")
+    public void notification(@Header("type") String type, @Payload Map<String, Object> data, Principal principal){
+        String userId = principal.getName();
+        if(type.equals("READ_NOTIFICATION")) {
+            int notificationId = (int)data.get("notificationId");
+            notificationService.readNotification(Integer.parseInt(userId), notificationId);
+            messagingTemplate.convertAndSendToUser(userId, "/queue/main", Map.of("notificationId", notificationId), Map.of("type", type));
+        }else if(type.equals("ACCEPT_FRIEND")){
+            FriendsDTO friendsDTO = new FriendsDTO();
+            friendsDTO.setRequestUserId((int)data.get("requestUserId"));
+            friendsDTO.setResponseUserId(Integer.parseInt(userId));
+            friendsDTO.setStatus(1);
+            friendsService.updateFriend(friendsDTO);
+        }
+    }
 
     @MessageMapping("/match")
     public void matchMaking(@Payload String s, Principal principal){

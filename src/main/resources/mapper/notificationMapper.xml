@@ -6,5 +6,12 @@
         INSERT INTO notification (userId, requestUserId, relatedId, type, content, path)
         VALUES (#{userId}, #{requestUserId}, #{relatedId}, #{type}, #{content}, #{path});
     </insert>
-
+    <select id="findAllByUserId" parameterType="int" resultType="notification">
+        SELECT * FROM notification
+        WHERE userId = #{userId} AND status = 1
+        ORDER BY createdAt DESC;
+    </select>
+    <update id="readNotification" parameterType="int">
+        UPDATE notification SET status = -1 WHERE id = #{notificationId}
+    </update>
 </mapper>
