@@ -28,4 +28,7 @@ public class ProfileService {
         return profileRepository.findByUserId(userId);
     }
 
+    public void updateFileId(Long userId, Integer fileId) {
+        profileRepository.updateFileId(userId, fileId);
+    }
 }

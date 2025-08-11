@@ -6,7 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor
@@ -25,4 +27,11 @@ public class ProfileRepository {
         return sql.selectOne("MbtiBoard.findById", id);
     }
 
+    public int updateFileId(Long userId, Integer fileId) {
+        Map<String, Object> p = new HashMap<>();
+        p.put("userId", userId);
+        p.put("fileId", fileId);
+        // Mapper의 id는 "Profile.updateFileId" (아래 XML과 일치)
+        return sql.update("Profile.updateFileId", p);
+    }
 }

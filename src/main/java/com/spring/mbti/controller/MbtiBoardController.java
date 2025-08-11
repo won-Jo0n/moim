@@ -64,6 +64,8 @@ public class MbtiBoardController {
     }
 
 
+
+
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable Long id, Model model, HttpSession session) {
         // ✅ 세션당 1회만 조회수 증가 (서비스에 중복 방지 포함)
@@ -84,7 +86,7 @@ public class MbtiBoardController {
 
         model.addAttribute("board", board);
         model.addAttribute("commentList", commentList);
-        model.addAttribute("isAuthor", isAuthor);
+         model.addAttribute("isAuthor", isAuthor);
         return "MbtiBoardViews/detail";
     }
 
