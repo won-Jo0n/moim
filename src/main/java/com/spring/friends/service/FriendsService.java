@@ -34,25 +34,31 @@ public class FriendsService {
     }
 
     public int addFriend(FriendsDTO friendsDTO){
-        NotificationDTO notificationDTO = new NotificationDTO();
-        notificationDTO.setUserId(friendsDTO.getResponseUserId());
-        notificationDTO.setRequestUserId(friendsDTO.getRequestUserId());
-        notificationDTO.setRelatedId(friendsDTO.getRequestUserId());
-        notificationDTO.setType("FRIEND_REQUEST");
-        notificationDTO.setContent(userService.getUserById(friendsDTO.getRequestUserId()).getNickName());
-        notificationService.createNotification(notificationDTO);
-        return friendsRepository.addFriend(friendsDTO);
+        int result = friendsRepository.addFriend(friendsDTO);
+        if(result > 0){
+            NotificationDTO notificationDTO = new NotificationDTO();
+            notificationDTO.setUserId(friendsDTO.getResponseUserId());
+            notificationDTO.setRequestUserId(friendsDTO.getRequestUserId());
+            notificationDTO.setRelatedId(friendsDTO.getRequestUserId());
+            notificationDTO.setType("FRIEND_REQUEST");
+            notificationDTO.setContent(userService.getUserById(friendsDTO.getRequestUserId()).getNickName());
+            notificationDTO.setPath(null);
+            notificationService.createNotification(notificationDTO);
+        }
+        return result;
     }
 
     public int updateFriend(FriendsDTO friendDTO){
-        if(friendDTO.getStatus() == 1){
-            UserDTO userDTO1 = userService.getUserById(friendDTO.getResponseUserId());
-            messagingTemplate.convertAndSendToUser(String.valueOf(friendDTO.getRequestUserId()), "/queue/main", userDTO1, Map.of("type", "FRIEND_NEW"));
-            UserDTO userDTO2 = userService.getUserById(friendDTO.getRequestUserId());
-            messagingTemplate.convertAndSendToUser(String.valueOf(friendDTO.getResponseUserId()), "/queue/main", userDTO2, Map.of("type", "FRIEND_NEW"));
+        int result = friendsRepository.updateFriend(friendDTO);
+        if(result > 0){
+            if(friendDTO.getStatus() == 1){
+                ChatUserDTO chatUserDTO1 = chatService.getChatFriendById(friendDTO.getRequestUserId(), friendDTO.getResponseUserId());
+                messagingTemplate.convertAndSendToUser(String.valueOf(friendDTO.getRequestUserId()), "/queue/main", chatUserDTO1, Map.of("type", "FRIEND_NEW"));
+                ChatUserDTO chatUserDTO2 = chatService.getChatFriendById(friendDTO.getResponseUserId(), friendDTO.getRequestUserId());
+                messagingTemplate.convertAndSendToUser(String.valueOf(friendDTO.getResponseUserId()), "/queue/main", chatUserDTO2, Map.of("type", "FRIEND_NEW"));
+            }
         }
-        //임시, update가 되기 전에 ChatUser를 받아올수는 없으므로 나중에 수정하자
-        return friendsRepository.updateFriend(friendDTO);
+        return result;
     }
 
     public int cancelFriend(FriendsDTO dto) {

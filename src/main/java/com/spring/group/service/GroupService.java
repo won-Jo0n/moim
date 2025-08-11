@@ -3,6 +3,8 @@ package com.spring.group.service;
 import com.spring.group.dto.GroupDTO;
 import com.spring.group.dto.GroupScheduleDTO;
 import com.spring.group.repository.GroupRepository;
+import com.spring.notification.dto.NotificationDTO;
+import com.spring.notification.service.NotificationService;
 import com.spring.schedule.dto.ScheduleDTO;
 import com.spring.user.dto.UserScheduleDTO;
 import com.spring.userjoingroup.dto.UserJoinGroupDTO;
@@ -17,7 +19,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class GroupService {
-
+    private final NotificationService notificationService;
     private final GroupRepository groupRepository;
     private final UserJoinGroupRepository userJoinGroupRepository;
 
@@ -119,6 +121,18 @@ public class GroupService {
 
     public void createGroupSchedule(GroupScheduleDTO groupScheduleDTO) {
         groupRepository.createGroupSchedule(groupScheduleDTO);
+        //모임 일정 등록하면 모임의 구성원들에게 알림이 가도록 하는 코드
+        List<UserJoinGroupDTO> approvedMembers = userJoinGroupRepository.findApprovedMembersByGroupId(groupScheduleDTO.getGroupId());
+        for(UserJoinGroupDTO member : approvedMembers){
+            NotificationDTO notificationDTO = new NotificationDTO();
+            notificationDTO.setUserId(member.getUserId());
+            notificationDTO.setRequestUserId(groupScheduleDTO.getScheduleLeader());
+            notificationDTO.setRelatedId(groupScheduleDTO.getId());
+            notificationDTO.setType("NEW_SCHEDULE");
+            notificationDTO.setContent(groupScheduleDTO.getTitle());
+            notificationDTO.setPath(null);
+            notificationService.createNotification(notificationDTO);
+        }
     }
 
     public List<GroupScheduleDTO> getGroupScheduleByGroupId(int groupId) {

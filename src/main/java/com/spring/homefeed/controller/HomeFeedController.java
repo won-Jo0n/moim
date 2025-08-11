@@ -30,16 +30,8 @@ public class HomeFeedController {
     private final FileService fileService;
 
     @GetMapping("/getFeedList")
-    public @ResponseBody List<HomeFeedDTO> getFeedList(Model model){
+    public @ResponseBody List<HomeFeedDTO> getFeedList(){
         List<HomeFeedDTO> homeFeedList = homeFeedService.getFeedList();
-
-        for(HomeFeedDTO homeFeed : homeFeedList){
-            UserDTO author = userService.getUserById(homeFeed.getAuthor());
-            MbtiDTO mbti = mbtiService.getMbti(author.getMbtiId());
-            homeFeed.setAuthorName(author.getNickName());
-            homeFeed.setAuthorProfile(author.getFileId());
-            homeFeed.setMbti(mbti.getMbti());
-        }
         return homeFeedList;
     }
 }

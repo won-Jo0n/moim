@@ -25,12 +25,24 @@ main {
     background-color: #fcf8ff;
     padding: 1rem;
     margin-bottom: 1.5rem;
+    cursor:pointer;
 }
 
 .post-header {
     display: flex;
     align-items: center;
     margin-bottom: 1rem;
+    cursor:pointer;
+}
+
+.post-header:hover{
+    background-color: #f9f3ff;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
 }
 
 .post-avatar {
@@ -45,8 +57,21 @@ main {
     color: #4c1d95;
 }
 
+.compatibility-badge {
+    display: inline-block;
+    background-color: #7e57c2;
+    color: #ffffff;
+    font-weight: 500;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+}
+
 .post-image {
-    width: 100%;
+    max-width: 100%;
+    width:500px;
+    aspect-ratio: 1 / 1;
+    object-fit:cover;
     border-radius: 0.5rem;
     margin-bottom: 1rem;
 }
@@ -68,6 +93,21 @@ main {
     width: 1.5rem;
     color: #9333ea;
     cursor: pointer;
+}
+
+.report-button {
+    background-color: #f3e8ff;
+    color: #6b21a8;
+    border: 1px solid #c084fc;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.report-button:hover {
+    background-color: #e9d5ff;
 }
 
 .post-likes {
@@ -121,3 +161,34 @@ main {
         transform: rotate(360deg);
     }
 }
+
+
+#fixed-add-post-button {
+    position: fixed;
+    top: 2rem;       /* 상단에서 2rem 떨어진 위치 */
+    right: 2rem;     /* 오른쪽에서 2rem 떨어진 위치로 변경 */
+    width: 3.5rem;   /* 버튼 너비 */
+    height: 3.5rem;  /* 버튼 높이 */
+    border-radius: 50%; /* 둥근 원 모양으로 만듭니다. */
+    background-color: #9333ea;
+    color: #ffffff;
+    font-size: 2rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;   /* 다른 요소들 위에 보이도록 설정 */
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+#fixed-add-post-button:hover {
+    background-color: #7e22ce;
+    transform: scale(1.1); /* 마우스를 올렸을 때 살짝 커지는 효과 */
+}
+
+
+
+
