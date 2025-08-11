@@ -1,5 +1,6 @@
 package com.spring.userjoingroup.repository;
 
+import com.spring.group.dto.GroupDTO;
 import com.spring.userjoingroup.dto.UserJoinGroupDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -53,4 +54,6 @@ public interface UserJoinGroupRepository {
     int updateRole(@Param("groupId") int groupId,
                    @Param("userId") int userId,
                    @Param("role") String role);
+
+    GroupDTO findById(int groupId);
 }

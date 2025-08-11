@@ -103,8 +103,6 @@ body{
     padding-top: 0;
 }
 
-
-/* Mobile Responsive for Post Media */
 @media (max-width: 720px) {
     .post__media {
         width: 100%; /* 모바일에서 이미지 전체 너비 */
@@ -118,10 +116,8 @@ body{
     }
 }
 
-
-/* Actions & Buttons */
 .actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:flex-end; margin-top:12px}
-.actions--compact{justify-content:flex-start; margin-top:8px}
+
 .inline-form{display:inline}
 .btn{
   appearance:none; border:none; border-radius:12px; font-weight:800; cursor:pointer;
@@ -136,35 +132,27 @@ body{
 }
 .btn:active{transform:translateY(1px)}
 .btn:focus-visible{outline:none; box-shadow:var(--focus)}
-.btn--primary{background:linear-gradient(180deg, var(--color-main), var(--color-accent)); color:#fff}
-.btn--primary:hover{filter:brightness(1.05)}
+
 .btn--ghost{background:#fff; color:var(--color-accent); border:1px solid var(--color-sub)}
 .btn--ghost:hover{background:#FBF8FF}
 .btn--danger{background:#FCE4EC; color:#AD1457; border:1px solid #F8BBD0}
 
 /* Comments */
-.comment-section{display:grid; gap:16px}
+.comment-section{
+  display: grid;
+  gap: 12px;
+}
 .comment{
   border:1px solid var(--border); border-radius:14px; background:#fff; box-shadow:var(--shadow-sm);
   padding: 10px 16px;
 }
-.comment__meta{display:flex; align-items:center; gap:10px; margin-bottom: 4px;}
-.comment__content{
-    line-height:1.65;
-    white-space:pre-wrap;
-    margin: 2px 0; /* 상단 2px, 하단 2px 마진으로 통일 */
+
+/* Reply */
+.reply{
+  margin-top:10px; margin-left:14px; padding-left:10px;
+  border-left: 2px solid rgba(126,87,194,0.18);
 }
 
-/* Reply (indent) */
-.reply{
-  margin-top:12px; margin-left:22px; padding-left:12px;
-  border-left:3px solid rgba(126,87,194,0.18);
-}
-.reply .comment__content{
-    line-height:1.65;
-    white-space:pre-wrap;
-    margin: 2px 0; /* 상단 2px, 하단 2px 마진으로 통일 */
-}
 
 /* Forms (edit/reply/new) */
 .textarea{
@@ -198,28 +186,6 @@ body{
   justify-content: center;
   align-items: center;
   text-align: center;
-}
-
-/* === 댓글/대댓글 버튼 크기 통일 (작은 사이즈) === */
-.actions--compact .btn,
-.actions--compact input[type="submit"].btn{
-  min-width: unset;
-  padding:8px 12px;
-  border-radius:12px;
-  font-size: 12px;
-  text-decoration: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-/* === 대댓글 들여쓰기 & 가이드라인 정리 === */
-.reply{
-  margin-top:12px;
-  margin-left:18px;
-  padding-left:14px;
-  border-left:3px solid rgba(126,87,194,0.2);
 }
 
 /* === 버튼 스타일 보강(폼 submit도 동일하게 보이게) === */
@@ -284,9 +250,6 @@ input[type="submit"].btn{appearance:none; border:none}
   text-align: center;
 }
 
-/* ===== 댓글 영역 레이아웃 안정화 ===== */
-
-/* 댓글 카드 기본 여백/타이포 */
 .comment{
   padding: 10px 16px;
   border:1px solid var(--border);
@@ -294,11 +257,20 @@ input[type="submit"].btn{appearance:none; border:none}
   background:#fff;
   box-shadow:var(--shadow-sm);
 }
-.comment__meta{display:flex; align-items:center; gap:10px; margin-bottom: 4px;}
+.comment__meta{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
 .comment__content{
-    line-height:1.65;
-    white-space:pre-wrap;
-    margin: 2px 0; /* 상단 2px, 하단 2px 마진으로 통일 */
+  line-height: 1.6;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  word-break: break-all;
+  hyphens: auto;
+  margin: 4px 0 2px;
 }
 
 /* 댓글 액션: 항상 오른쪽 정렬 + 촘촘한 버튼 */
@@ -307,27 +279,10 @@ input[type="submit"].btn{appearance:none; border:none}
   align-items:center;
   justify-content:flex-end;
   gap:8px;
-  margin-top:10px;
-}
-.actions--compact .btn,
-.actions--compact input[type="submit"].btn{
-  min-width: unset;
-  padding:8px 12px;
-  font-size: 12px;
-  text-decoration: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+  margin-top:8px;
 }
 
-/* 대댓글 들여쓰기 & 라인 얇게 (여백 과다 방지) */
-.reply{
-  margin-top:14px;
-  margin-left:18px;
-  padding-left:12px;
-  border-left:2px solid rgba(126,87,194,0.18);
-}
+
 
 /* 대댓글 내부 액션도 오른쪽 정렬 */
 .reply .actions--compact{
@@ -352,3 +307,68 @@ input[type="submit"].btn{appearance:none; border:none}
   box-shadow:0 2px 6px rgba(0,0,0,0.02) inset;
 }
 .textarea:focus{outline:none; border-color:var(--color-sub); box-shadow:var(--focus)}
+
+/* 이미지·내용 레이아웃에서도 텍스트가 무한 확장되지 않도록 안전장치 */
+.post__content{
+  flex-grow: 1;
+  line-height: 1.75;
+  white-space: pre-line;        /* 본문도 동일 정책 적용 */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  word-break: break-all;
+}
+
+/* 버튼/폼 주위 불필요한 상단여백 방지(브라우저 기본 스타일 견제) */
+.edit-form, .reply-form, .comment-form{
+  margin-top: 8px;
+}
+
+/* === 댓글/대댓글 버튼 규격 ‘완전 동일’ 강제 === */
+.actions--compact {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* a, button, input 모두 동일한 버튼 규격 */
+.actions--compact .btn,
+.actions--compact a.btn,
+.actions--compact button.btn,
+.actions--compact input.btn,
+.actions--compact input[type="submit"],
+.actions--compact button,
+.actions--compact a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+
+  height: 30px;          /* 동일 높이 */
+  padding: 6px 12px;     /* 동일 패딩 */
+  border-radius: 10px;   /* 동일 라운드 */
+  font-size: 12px;       /* 동일 폰트 */
+  line-height: 1;        /* 높이 계산 안정화 */
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* 색상/테마 (기존과 동일) */
+.actions--compact .btn--primary,
+.actions--compact button.btn--primary { background: linear-gradient(180deg, var(--color-main), var(--color-accent)); color:#fff; }
+.actions--compact .btn--primary:hover { filter: brightness(1.05); }
+
+.actions--compact .btn--ghost,
+.actions--compact button.btn--ghost { background:#fff; color:var(--color-accent); border:1px solid var(--color-sub); }
+.actions--compact .btn--ghost:hover { background:#FBF8FF; }
+
+.actions--compact .btn--danger,
+.actions--compact button.btn--danger,
+.actions--compact input[type="submit"] { background:#FCE4EC; color:#AD1457; border:1px solid #F8BBD0; }
+.actions--compact .btn--danger:hover,
+.actions--compact input[type="submit"]:hover { background:#F8BBD0; }
+
+/* 폼 안의 버튼도 한 줄 정렬 */
+.inline-form { display:inline-flex; align-items:center; margin:0; }

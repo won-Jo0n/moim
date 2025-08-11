@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
+
 <Context docBase="C:/spring_workspace/moim/src/main/webapp">
   <Resources cacheMaxSize="10240">
     <PreResources base="C:/spring_workspace/moim/target/classes" className="org.apache.catalina.webresources.DirResourceSet" webAppMount="/WEB-INF/classes"/>
@@ -41,5 +42,6 @@
     <PostResources base="C:/Users/keduit/.m2/repository/com/googlecode/json-simple/json-simple/1.1.1/json-simple-1.1.1.jar" className="org.apache.catalina.webresources.FileResourceSet" webAppMount="/WEB-INF/lib/json-simple-1.1.1.jar"/>
     <PostResources base="C:/Users/keduit/.m2/repository/com/google/code/gson/gson/2.10.1/gson-2.10.1.jar" className="org.apache.catalina.webresources.FileResourceSet" webAppMount="/WEB-INF/lib/gson-2.10.1.jar"/>
     <PostResources base="C:/Users/keduit/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.18.3/jackson-core-2.18.3.jar" className="org.apache.catalina.webresources.FileResourceSet" webAppMount="/WEB-INF/lib/jackson-core-2.18.3.jar"/>
+
   </Resources>
 </Context>

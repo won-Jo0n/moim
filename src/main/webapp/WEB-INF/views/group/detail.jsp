@@ -89,11 +89,11 @@
               </c:choose>
             </c:if>
 
-            <c:if test="${isApprovedMember}">
+            <c:if test="${isApprovedMember and not isLeader}">
                 <form action="/groupjoin/leave" method="post" onsubmit="return confirm('정말 모임을 탈퇴하시겠습니까?');">
                     <input type="hidden" name="groupId" value="${group.id}"/>
                     <button type="submit" class="btn-secondary">모임 탈퇴</button>
-                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                 </form>
             </c:if>
 
@@ -167,47 +167,56 @@
 
     <h3 style="margin-top: 3rem;">그룹 스케줄</h3>
     <c:choose>
-        <c:when test="${not empty groupScheduleList}">
-            <table>
-                <thead>
-                    <tr>
-                        <th>리더</th>
-                        <th>제목</th>
-                        <th>설명</th>
-                        <th>시작 시간</th>
-                        <th>종료 시간</th>
-                        <th>최대 인원</th>
-                        <th>상태</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <c:forEach var="schedule" items="${groupScheduleList}">
-                        <tr onclick="clickGroupScheduleDetail(${schedule.id});">
-                            <td>${groupScheduleLeaderNickName[schedule.id]}</td>
-                            <td>${schedule.title}</td>
-                            <td>${schedule.description}</td>
-                            <td>${groupScheduleStartTime[schedule.id]}</td>
-                            <td>${groupScheduleEndTime[schedule.id]}</td>
-                            <td>${schedule.maxUserNum}</td>
-                            <td>
-                                <c:choose>
-                                    <c:when test="${schedule.status eq 0}">
-                                        모집중
-                                    </c:when>
-                                    <c:when test="${schedule.status eq 1}">
-                                        모집 완료
-                                    </c:when>
-                                </c:choose>
-                            </td>
-                        </tr>
-                    </c:forEach>
-                </tbody>
-            </table>
-        </c:when>
-        <c:otherwise>
-            <p class="no-schedules">등록된 그룹 스케줄이 없습니다.</p>
-        </c:otherwise>
+      <c:when test="${not empty groupScheduleList}">
+        <table>
+          <thead>
+            <tr>
+              <th>리더</th>
+              <th>제목</th>
+              <th>설명</th>
+              <th>시작 시간</th>
+              <th>종료 시간</th>
+              <th>최대 인원</th>
+              <th>상태</th>
+            </tr>
+          </thead>
+          <tbody>
+            <c:forEach var="schedule" items="${groupScheduleList}">
+              <tr
+                class="schedule-row"
+                style="cursor:pointer;"
+                <c:choose>
+                  <c:when test="${isMember}">
+                    onclick="clickGroupScheduleDetail(${schedule.id});"
+                  </c:when>
+                  <c:otherwise>
+                    onclick="alert('모임에 가입한 사람만 이용 가능합니다'); return false;"
+                  </c:otherwise>
+                </c:choose>
+              >
+                <td>${groupScheduleLeaderNickName[schedule.id]}</td>
+                <td>${schedule.title}</td>
+                <td>${schedule.description}</td>
+                <td>${groupScheduleStartTime[schedule.id]}</td>
+                <td>${groupScheduleEndTime[schedule.id]}</td>
+                <td>${schedule.maxUserNum}</td>
+                <td>
+                  <c:choose>
+                    <c:when test="${schedule.status eq 0}">모집중</c:when>
+                    <c:when test="${schedule.status eq 1}">모집 완료</c:when>
+                    <c:otherwise>—</c:otherwise>
+                  </c:choose>
+                </td>
+              </tr>
+            </c:forEach>
+          </tbody>
+        </table>
+      </c:when>
+      <c:otherwise>
+        <p class="no-schedules">등록된 그룹 스케줄이 없습니다.</p>
+      </c:otherwise>
     </c:choose>
+
     <a href="/group/list" class="back-link">목록으로 돌아가기</a>
 
     <script>

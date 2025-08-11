@@ -10,13 +10,11 @@
     <title>모임 만들기</title>
     <!-- Bootstrap CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <!-- jQuery CDN -->
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
     <link rel="stylesheet" href="../resources/css/groupCreate.css" >
 </head>
 <body>
     <div class="container container-form my-5">
-
     <c:if test="${not empty error}">
         <div class="alert alert-warning" role="alert" style="margin-bottom:16px;">
           ${fn:escapeXml(error)}
@@ -33,8 +31,6 @@
                     <input type="text" class="form-control" id="title" name="title" placeholder="모임 이름을 입력하세요" required>
                     <div class="invalid-feedback">모임 이름을 입력해주세요.</div>
                 </div>
-
-
 
                 <!-- 모임 대표사진 -->
                 <div class="mb-3">

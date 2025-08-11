@@ -70,7 +70,6 @@ public class GroupService {
                     userJoinGroupRepository.updateStatus(fix);
                 }
             }
-
             groupDTO.setId(inactiveId); // 필요시 컨트롤러 리다이렉트용
             return;
         }
@@ -137,6 +136,8 @@ public class GroupService {
     public void acceptSchedule(ScheduleDTO scheduleDTO) {
         groupRepository.acceptSchedule(scheduleDTO);
     }
+
+    public void refuseSchedule(ScheduleDTO scheduleDTO) {groupRepository.refuseSchedule(scheduleDTO);}
 
     public void endRecruit(int id) {
         groupRepository.endRecruit(id);

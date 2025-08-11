@@ -29,17 +29,26 @@
         <div class="form__row">
           <label for="title" class="label">제목</label>
           <input type="text" id="title" name="title" class="input" placeholder="제목을 입력하세요" required>
-          <p class="help">  50자 이내 권장</p>
+          <div class="form__meta">
+            <p class="help">40자 이내 권장</p>
+            <span class="count" id="titleCount">0/40</span>
+          </div>
+          <p class="error-text" id="titleError">제목은 40자 이내로 입력해주세요.</p>
         </div>
 
         <div class="form__row">
           <label for="content" class="label">내용</label>
           <textarea id="content" name="content" class="textarea" rows="10" placeholder="내용을 입력하세요" required></textarea>
-
+          <div class="form__meta">
+            <p class="help">300자 이내 권장</p>
+            <span class="count" id="contentCount">0/300</span>
+          </div>
+          <p class="error-text" id="contentError">내용은 300자 이내로 입력해주세요.</p>
         </div>
 
+
         <div class="form__row">
-          <label for="groupBoardFile" class="label" >이미지 첨부 (선택)</label>
+          <label for="groupBoardFile" class="label" >이미지 첨부 (필수)</label>
           <div class="filebox">
             <input type="file" id="groupBoardFile" name="groupBoardFile" class="filebox__input" accept="image/*" required>
             <label for="groupBoardFile" class="filebox__button">파일 선택</label>
@@ -57,10 +66,54 @@
   </div>
 
   <script>
-    // 선택한 파일명 표시
-    $('#groupBoardFile').on('change', function(){
-      const file = this.files && this.files.length ? this.files[0].name : '선택된 파일 없음';
-      $('#fileName').text(file);
+    // 실시간 길이 업데이트 함수
+    function bindCounter($field, max, $count, $error){
+      const update = () => {
+        const len = $field.val().length;
+        $count.text(len + "/" + max);
+        const over = len > max;
+        $count.toggleClass('count--over', over);
+        $field.toggleClass('is-invalid', over);
+        $error.toggleClass('show', over);
+      };
+      $field.on('input', update);
+      update(); // 초기 1회
+    }
+
+    $(function(){
+      // 카운터 바인딩
+      bindCounter($('#title'), 40, $('#titleCount'), $('#titleError'));
+      bindCounter($('#content'), 300, $('#contentCount'), $('#contentError'));
+
+      // 폼 제출 유효성 검사
+      $('form').on('submit', function(e){
+        const titleLen = $('#title').val().trim().length;
+        const contentLen = $('#content').val().trim().length;
+        let ok = true;
+
+        if(titleLen > 40){
+          $('#title').addClass('is-invalid');
+          $('#titleError').addClass('show');
+          ok = false;
+        }
+        if(contentLen > 300){
+          $('#content').addClass('is-invalid');
+          $('#contentError').addClass('show');
+          ok = false;
+        }
+
+        if(!ok){
+          e.preventDefault();
+          alert('입력값을 확인해주세요.\n- 제목 40자 이내\n- 내용 300자 이내');
+        }
+      });
+
+      // 파일명 표시(네가 기존에 쓰던 로직 유지)
+      $('#groupBoardFile').on('change', function(){
+        const file = this.files && this.files.length ? this.files[0].name : '선택된 파일 없음';
+        $('#fileName').text(file);
+      });
     });
   </script>
+
 </body>

@@ -82,14 +82,14 @@
 
     <!-- 모임 일정 관련 -->
     <insert id="createGroupSchedule" parameterType="groupSchedule">
-        INSERT INTO groupSchedule(scheduleLeader, groupId, title, description,startTime,endTime,maxUserNum)
-        VALUES(#{scheduleLeader},#{groupId},#{title},#{description},#{startTime},#{endTime},#{maxUserNum});
+        INSERT INTO groupschedule(scheduleLeader, groupId, title, description,startTime,endTime,maxUserNum, status)
+        VALUES(#{scheduleLeader},#{groupId},#{title},#{description},#{startTime},#{endTime},#{maxUserNum}, 0);
     </insert>
 
     <select id="getGroupScheduleByGroupId" parameterType="int" resultType="groupSchedule">
         <![CDATA[
         SELECT *
-        FROM groupSchedule
+        FROM groupschedule
         WHERE groupId = #{groupId}
         ORDER BY (startTime > NOW()) ASC,
         startTime DESC;
@@ -97,27 +97,50 @@
     </select>
 
     <select id="getGroupScheduleDetail" parameterType="int" resultType="groupSchedule">
-        SELECT * FROM groupSchedule WHERE id=#{groupScheduleId};
+        SELECT * FROM groupschedule WHERE id=#{groupScheduleId};
     </select>
 
+    <!-- 대기(0) + 수락(1) 리스트, 대기 먼저 보이게 정렬 -->
     <select id="getScheduleGroupByGroup" parameterType="int" resultType="userSchedule">
-        SELECT * FROM userschedule WHERE groupScheduleId = #{groupScheduleId} AND status = 0;
+        SELECT *
+        FROM userschedule
+        WHERE groupScheduleId = #{groupScheduleId}
+        AND status IN (0, 1)
+        ORDER BY status ASC, userId ASC;
     </select>
+
+    <!-- 수락자 리스트
+    <select id="getApprovedByGroupSchedule" parameterType="int" resultType="userSchedule">
+        SELECT *
+        FROM userschedule
+        WHERE groupScheduleId = #{groupScheduleId}
+        AND status = 1
+    </select>-->
 
     <update id="acceptSchedule" parameterType="schedule">
-        UPDATE userschedule SET status = 1
+        UPDATE userschedule
+        SET status = 1
         WHERE userId = #{userId}
-        AND groupScheduleId = #{groupScheduleId};
+        AND groupScheduleId = #{groupScheduleId}
+        AND status = 0
+    </update>
+
+    <update id="refuseSchedule" parameterType="schedule">
+        UPDATE userschedule
+        SET status = -1
+        WHERE userId = #{userId}
+        AND groupScheduleId = #{groupScheduleId}
+        AND status = 0
     </update>
 
     <update id="endRecruit" parameterType="int">
-        UPDATE groupSchedule SET status = 1
+        UPDATE groupschedule SET status = 1
         WHERE id = #{id};
     </update>
 
     <select id="findGroupIdByScheduleId" parameterType="int" resultType="int">
         SELECT groupId
-        FROM groupSchedule
+        FROM groupschedule
         WHERE id = #{groupScheduleId}
     </select>
 

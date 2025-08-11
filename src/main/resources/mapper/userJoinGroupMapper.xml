@@ -35,7 +35,7 @@
 
     <!-- 대기 중인 신청자 목록 조회 -->
     <select id="findPendingByGroupId" parameterType="userJoinGroup" resultType="userJoinGroup">
-        SELECT uj.userId, uj.groupId, uj.joinedAt, uj.role, uj.status,u.nickName AS userName
+        SELECT uj.userId, uj.groupId, uj.joinedAt, uj.role, uj.status,u.nickName AS nickName
         FROM userjoingroup uj
         JOIN user u ON uj.userId = u.id
         WHERE uj.groupId = #{groupId}
@@ -102,5 +102,8 @@
         AND userId = #{userId}
     </update>
 
+    <select id="findById" parameterType="int" resultType="group">
+        SELECT * FROM `group` WHERE id = #{groupId}
+    </select>
 
 </mapper>

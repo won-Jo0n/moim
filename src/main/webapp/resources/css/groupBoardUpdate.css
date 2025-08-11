@@ -1,0 +1,146 @@
+
+:root{
+  --color-main:#7E57C2;      /* 메인 퍼플 */
+  --color-sub:#B18FCF;       /* 서브 라벤더 */
+  --color-accent:#4527A0;    /* 포인트 딥 퍼플 */
+  --color-bg:#F7F6FB;
+  --color-card:#FFFFFF;
+  --color-text:#2F2A3B;
+  --color-muted:#7A718D;
+  --border:#E8E3F3;
+
+  --radius-xl:20px;
+  --radius-lg:14px;
+  --radius-md:10px;
+
+  --shadow-md:0 10px 24px rgba(69,39,160,0.12);
+  --shadow-sm:0 4px 12px rgba(69,39,160,0.08);
+  --focus:0 0 0 3px rgba(126,87,194,0.28);
+}
+
+*{box-sizing:border-box}
+
+html,body{height:100%}
+body{
+  margin:0;
+  background:var(--color-bg);
+  color:var(--color-text);
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+               "Noto Sans KR","Apple SD Gothic Neo", Roboto, Arial, "맑은 고딕", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 페이지 타이틀 */
+h2{
+  margin:32px auto 16px;
+  text-align:center;
+  color:var(--color-accent);
+  font-size:28px;
+  letter-spacing:0.2px;
+}
+
+/* 폼 카드 */
+form{
+  max-width: 820px;
+  margin: 0 auto 64px;
+  background: var(--color-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  padding: 28px;
+}
+
+/* 라벨 & 입력 레이아웃 – 결(라인) 맞춤 */
+label{
+  display:block;
+  font-weight:600;
+  color:var(--color-text);
+  margin: 14px 0 10px;
+}
+#title, #content{
+  width:100%;
+  border:1px solid var(--border);
+  background:#FFF;
+  color:var(--color-text);
+  border-radius:14px;
+  padding:14px 16px;
+  outline:none;
+  transition: box-shadow .15s ease, border-color .15s ease, transform .02s ease-in-out;
+}
+
+/* 텍스트필드 높이 */
+#title{
+  height:46px;
+  line-height:46px;
+}
+#content{
+  min-height: 260px;
+  resize: vertical; /* 사용자가 높이 조절 가능 */
+}
+
+/* 포커스 상태(일관된 보라 톤 포커스 링) */
+#title:focus, #content:focus{
+  border-color: var(--color-sub);
+  box-shadow: var(--focus);
+}
+
+/* 헬퍼 텍스트(필요시) */
+.muted{
+  color:var(--color-muted);
+  font-size: 13px;
+}
+
+/* 버튼 */
+input[type="submit"]{
+  appearance:none;
+  border:none;
+  background: linear-gradient(180deg, var(--color-main), var(--color-accent));
+  color:#FFF;
+  font-weight:700;
+  padding: 12px 18px;
+  border-radius: 12px;
+  cursor:pointer;
+  margin-top: 18px;
+  box-shadow: var(--shadow-sm);
+  transition: transform .05s ease, filter .2s ease, box-shadow .2s ease;
+}
+input[type="submit"]:hover{
+  filter: brightness(1.02);
+  box-shadow: 0 8px 18px rgba(69,39,160,0.16);
+}
+input[type="submit"]:active{
+  transform: translateY(1px);
+}
+
+/* 필수 표시 스타일(기본 required 활용 시) */
+input:required:invalid, textarea:required:invalid{
+  /* 초기 입력 단계에선 붉은 테두리 과도함 → 기본 유지 */
+}
+input:required:valid, textarea:required:valid{
+  border-color:#D9CEF3;
+}
+
+/* 링크 기본 밑줄 제거(일관성) */
+a{ color:var(--color-accent); text-decoration:none }
+a:hover{ text-decoration:underline }
+
+/* 간격 정리 */
+br{ display:none } /* 기존 <br> 줄바꿈은 카드 패딩/마진으로 대체 */
+
+/* 반응형 */
+@media (max-width: 768px){
+  form{
+    margin: 0 16px 48px;
+    padding: 20px;
+    border-radius: var(--radius-lg);
+  }
+  h2{ font-size:24px; margin:24px auto 12px; }
+  #content{ min-height: 220px; }
+}
+
+/* 접근성: 키보드 포커스 가시화 */
+:focus-visible{
+  outline: none;
+  box-shadow: var(--focus);
+}
