@@ -10,13 +10,13 @@
         :root {
             --paper: #ffffff;
             --bg: #f5f6fa;
-            --brand: #2e86de;
+            --brand: #7E57C2;   /* Purple */
             --text: #333;
 
-            /* Animated gradient tokens */
-            --grad-1:#7c4dff; /* purple */
-            --grad-2:#0a66ff; /* blue */
-            --grad-3:#7c4dff;
+            /* Animated gradient tokens (Purple line) */
+            --grad-1:#7E57C2;   /* Purple */
+            --grad-2:#5E35B1;   /* Royal Purple */
+            --grad-3:#4527A0;   /* Deep Purple */
         }
 
         @keyframes gradientShift {
@@ -28,7 +28,10 @@
         body {
             margin: 0;
             font-family: 'Noto Sans KR', sans-serif;
-            background-color: var(--bg);
+            /* 라벤더/라일락 살짝 얹은 은은한 배경 */
+            background:
+              linear-gradient(180deg, rgba(203,170,203,.08), rgba(177,143,207,.08)),
+              var(--bg);
         }
         .container {
             max-width: 1000px;
@@ -61,13 +64,13 @@
             background-image: linear-gradient(90deg, var(--grad-1), var(--grad-2), var(--grad-3));
             background-size: 200% 200%;
             animation: gradientShift 8s linear infinite;
-            box-shadow: 0 8px 22px rgba(10,102,255,.18);
+            box-shadow: 0 8px 22px rgba(94,53,177,.18); /* 퍼플 톤 */
             transition: transform .12s ease, box-shadow .18s ease, filter .18s ease, background-position .3s linear;
         }
         .top-bar > a:hover {
             transform: translateY(-1px);
             filter: brightness(1.02);
-            box-shadow: 0 12px 28px rgba(10,102,255,.22);
+            box-shadow: 0 12px 28px rgba(94,53,177,.22); /* 퍼플 톤 */
         }
 
         .menu-btn {
@@ -80,7 +83,7 @@
             background-image: linear-gradient(90deg, var(--grad-1), var(--grad-2), var(--grad-3));
             background-size: 200% 200%;
             animation: gradientShift 8s linear infinite;
-            box-shadow: 0 8px 22px rgba(10,102,255,.18);
+            box-shadow: 0 8px 22px rgba(94,53,177,.18); /* 퍼플 톤 */
             transition: transform .12s ease, box-shadow .18s ease, filter .18s ease, background-position .3s linear;
         }
         .menu-btn:hover { transform: translateY(-1px); filter: brightness(1.02); }
@@ -126,8 +129,8 @@
             display: inline-block;
             padding: 4px 10px;
             border-radius: 20px;
-            background: #e0caff;
-            color: #6639a6;
+            background: #B18FCF; /* Lavender */
+            color: #fff;
             font-size: 13px;
             font-weight: 700;
         }
@@ -195,7 +198,7 @@
         }
         .post:hover {
             transform: translateY(-3px);
-            box-shadow: 0 16px 38px rgba(0,0,0,0.1);
+            box-shadow: 0 16px 38px rgba(94,53,177,.14); /* 퍼플 톤 */
         }
         .post img {
             width: 100%;
@@ -241,7 +244,7 @@
         }
         .tile:hover {
             transform: translateY(-2px);
-            box-shadow: 0 16px 36px rgba(0,0,0,0.1);
+            box-shadow: 0 16px 36px rgba(94,53,177,.14); /* 퍼플 톤 */
         }
         .tile .icon {
             font-size: 30px;
@@ -263,7 +266,7 @@
             background-image: linear-gradient(90deg, var(--grad-1), var(--grad-2), var(--grad-3));
             background-size: 200% 200%;
             animation: gradientShift 8s linear infinite;
-            box-shadow: 0 8px 22px rgba(10,102,255,.18);
+            box-shadow: 0 8px 22px rgba(94,53,177,.18); /* 퍼플 톤 */
             transition: transform .12s ease, box-shadow .18s ease, filter .18s ease, background-position .3s linear;
             cursor: pointer;
         }
@@ -384,16 +387,33 @@
         <c:if test="${empty groupList}">
             <div class="empty-msg">그룹이 없어요 😢<br>그룹에 가입하거나 새 그룹을 개설해보세요!</div>
         </c:if>
+
         <div class="card-list">
             <c:forEach var="group" items="${groupList}">
-                <div class="tile" onclick="location.href='/group/view/${group.id}'">
-                    <div class="icon">📌</div>
-                    <div>${group.title}</div>
-                    <div>${group.location}</div>
+                <div class="tile" onclick="location.href='${ctx}/group/detail?groupId=${group.id}'">
+                    <c:choose>
+                        <c:when test="${group.fileId != null && group.fileId > 0}">
+                            <img src="${ctx}/file/preview?fileId=${group.fileId}" alt="${group.title}"
+                                 style="width:100%;height:100px;object-fit:cover;border-radius:10px;margin-bottom:8px;"
+                                 onerror="this.onerror=null; this.src='${ctx}/resources/images/default-thumb.jpg'">
+                        </c:when>
+                        <c:otherwise>
+                            <img src="${ctx}/resources/images/default-thumb.jpg" alt="기본 썸네일"
+                                 style="width:100%;height:100px;object-fit:cover;border-radius:10px;margin-bottom:8px;">
+                        </c:otherwise>
+                    </c:choose>
+
+                    <div style="font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                        ${group.title}
+                    </div>
+                    <div style="color:#666;">
+                        ${group.location}
+                    </div>
                 </div>
             </c:forEach>
         </div>
     </div>
+
 </div>
 
 <script>

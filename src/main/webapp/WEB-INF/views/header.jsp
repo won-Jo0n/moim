@@ -36,7 +36,7 @@
               >
             </li>
             <li>
-              <a href="#" role="button"
+              <a href="/mbti/board" role="button"
                 ><i class="fas fa-clipboard"></i> <span>게시판</span></a
               >
             </li>
