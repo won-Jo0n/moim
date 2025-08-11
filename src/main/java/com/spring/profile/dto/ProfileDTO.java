@@ -9,4 +9,6 @@ public class ProfileDTO {
     private String mbti;
     private int rating; // 1~5
     private String joinedAt;
+    private Integer point;
+    private Integer fileId;
 }
