@@ -99,4 +99,8 @@ public class GroupRepository {
     public List<GroupDTO> getPaginationGroups(Map<String, Object> params) {
         return sql.selectList("Group.getPaginationGroups", params);
     }
+
+    public List<GroupDTO> searchByPaginationGroups(Map<String, Object> params) {
+        return sql.selectList("Group.searchByPaginationGroups", params);
+    }
 }

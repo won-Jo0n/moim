@@ -99,6 +99,7 @@ public class GroupController {
         Map<String, Object> params = new HashMap<>();
         params.put("limit", size);
         params.put("offset", (page - 1) * size);
+        params.put("keyword", keyword);
         List<GroupDTO> groupList = groupService.searchGroups(keyword);  // 검색어 없으면 전체 리스트 , 있다면 필터링 된 리스트
         List<GroupDTO> pageGroupList = groupService.getPaginationGroups(params);
         long totalGroup = groupList.size();
