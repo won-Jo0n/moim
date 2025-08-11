@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
 <Context docBase="C:/spring_workspace/moim/src/main/webapp">
   <Resources cacheMaxSize="10240">
     <PreResources base="C:/spring_workspace/moim/target/classes" className="org.apache.catalina.webresources.DirResourceSet" webAppMount="/WEB-INF/classes"/>
+
     <PostResources base="C:/Users/keduit/.m2/repository/org/slf4j/slf4j-simple/1.7.25/slf4j-simple-1.7.25.jar" className="org.apache.catalina.webresources.FileResourceSet" webAppMount="/WEB-INF/lib/slf4j-simple-1.7.25.jar"/>
     <PostResources base="C:/Users/keduit/.m2/repository/opensymphony/sitemesh/2.4.2/sitemesh-2.4.2.jar" className="org.apache.catalina.webresources.FileResourceSet" webAppMount="/WEB-INF/lib/sitemesh-2.4.2.jar"/>
     <PostResources base="C:/Users/keduit/.m2/repository/org/springframework/spring-websocket/5.3.20/spring-websocket-5.3.20.jar" className="org.apache.catalina.webresources.FileResourceSet" webAppMount="/WEB-INF/lib/spring-websocket-5.3.20.jar"/>

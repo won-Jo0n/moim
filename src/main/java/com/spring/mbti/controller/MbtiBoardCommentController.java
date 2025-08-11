@@ -51,9 +51,12 @@ public class MbtiBoardCommentController {
     public String delete(@PathVariable Long id,
                          @RequestParam Long boardId,
                          HttpSession session) {
-        int userId = (int) session.getAttribute("userId");
-        MbtiBoardCommentDTO original = commentService.findById(id);
+        Integer userId = (Integer) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/login";
+        }
 
+        MbtiBoardCommentDTO original = commentService.findById(id);
         if (original == null || original.getAuthor() != userId) {
             return "redirect:/mbti/board/detail/" + boardId;
         }
@@ -61,4 +64,5 @@ public class MbtiBoardCommentController {
         commentService.delete(id);
         return "redirect:/mbti/board/detail/" + boardId;
     }
+
 }

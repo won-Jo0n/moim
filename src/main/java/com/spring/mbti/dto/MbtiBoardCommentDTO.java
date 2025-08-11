@@ -12,5 +12,6 @@ public class MbtiBoardCommentDTO {
     private String content;
     private LocalDateTime createdAt;
     private Long parentId; // 원댓글이면 null
+    private Long profileFileId;
 
 }

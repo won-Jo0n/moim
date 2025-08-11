@@ -5,6 +5,7 @@
 
 <mapper namespace="MbtiBoardComment">
 
+
     <!-- 댓글 저장 -->
     <insert id="save" parameterType="com.spring.mbti.dto.MbtiBoardCommentDTO">
         INSERT INTO mbtiboardcomment (boardId, parentId, author, content, createdAt, status)
@@ -38,5 +39,18 @@
         SET status = 1
         WHERE id = #{id}
     </update>
-
+    <select id="findCommentsByBoardId" resultType="com.spring.mbti.dto.MbtiBoardCommentDTO">
+        SELECT
+        c.id,
+        c.board_id      AS boardId,
+        c.parent_id     AS parentId,
+        c.author,
+        c.content,
+        c.created_at    AS createdAt,
+        u.fileId        AS profileFileId   <!-- 추가 -->
+        FROM mbtiboardcomment c
+        JOIN user u ON u.id = c.author       <!-- 추가 -->
+        WHERE c.board_id = #{boardId}
+        ORDER BY c.parent_id ASC, c.created_at ASC, c.id ASC
+    </select>
 </mapper>
