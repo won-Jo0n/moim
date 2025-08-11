@@ -4,7 +4,35 @@
 
 <mapper namespace="HomeFeed">
    <select id="getFeedList" resultType="homeFeed">
-       SELECT * FROM mbtiboard
-       WHERE status = 1;
+       SELECT
+       b.id,
+       b.author,
+       b.fileId,
+       b.title,
+       b.content,
+       b.hits,
+       b.createdAt,
+       u.nickName AS authorNickName,
+       u.fileId AS authorFileId,
+       m.mbti,
+       COUNT(c.id) AS commentCount,
+       CASE
+       WHEN m.id IN (SELECT compatible FROM mbti WHERE mbti = '내_MBTI_유형') THEN 1
+       ELSE 0
+       END AS isCompatible
+       FROM
+       mbtiboard AS b
+       JOIN
+       user AS u ON b.author = u.id
+       JOIN
+       mbti AS m ON u.mbtiId = m.id
+       LEFT JOIN
+       mbtiboardcomment AS c ON b.id = c.boardId
+       WHERE
+       b.status = 1
+       GROUP BY
+       b.id, b.author,b.fileId,b.title,b.content, b.hits, b.createdAt, authorNickName, authorFileId, m.mbti, isCompatible
+       ORDER BY
+       b.createdAt DESC;
    </select>
 </mapper>

@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class HomeFeedDTO {
-    private int id, mbtiId, author, fileId, status, hits,authorProfile;
-    private String title, content, createdAt, authorName, mbti;
+    private int id, author, fileId, hits, authorFileId, commentCount;
+    private String mbti, content, title , createdAt, authorNickName;
 }

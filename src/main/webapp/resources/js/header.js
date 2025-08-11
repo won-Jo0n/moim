@@ -403,7 +403,7 @@ function createNotificationItem(notification) {
       break;
     case "REPORT_COMPLETED":
       iconClass = 'fas fa-check-circle';
-      notificationText = notification.content;
+      notificationText = `<strong>${notification.content}</strong>에 대한 처리가 완료되었습니다.`;
       break;
     default:
       iconClass = "fas fa-bell";

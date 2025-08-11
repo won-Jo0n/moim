@@ -111,6 +111,9 @@ public class WebSocketController {
             messagingTemplate.convertAndSendToUser(userId, "/queue/main", Map.of("id", Integer.parseInt(chatUserId)), Map.of("type", type));
             ChatUserDTO chatUserDTO = chatService.getChatFriendById(Integer.parseInt(chatUserId), Integer.parseInt(userId));
             messagingTemplate.convertAndSendToUser(chatUserId, "/queue/main", chatUserDTO, Map.of("type", "RECEIVE_REQUEST"));
+
+            //여기서 알림 생성할까?
+
         }else if(type.equals("SEND_REQUEST_RESPONSE")){
             boolean accept = ((String)data.get("action")).equals("accept");
             if(accept) chatService.acceptChat(Integer.parseInt(userId), Integer.parseInt(chatUserId));

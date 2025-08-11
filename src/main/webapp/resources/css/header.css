@@ -96,6 +96,17 @@ body {
 .logo-svg {
   width: 100px;
   height: auto;
+  animation: logo-bounce 2s ease-in-out infinite;
+}
+
+@keyframes logo-bounce {
+    0%,
+    100% {
+      transform: translateY(3px);
+    }
+    50% {
+      transform: translateY(-3px);
+    }
 }
 
 /* 메시지 컨테이너 */
