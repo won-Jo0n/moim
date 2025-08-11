@@ -7,6 +7,7 @@ import com.spring.groupboard.dto.GroupBoardDTO;
 import com.spring.groupboard.service.GroupBoardService;
 import com.spring.mbti.dto.MbtiDTO;
 import com.spring.mbti.service.MbtiService;
+import com.spring.page.dto.PageInfoDTO;
 import com.spring.schedule.dto.ScheduleDTO;
 import com.spring.user.dto.UserDTO;
 import com.spring.user.dto.UserScheduleDTO;
@@ -25,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -91,8 +93,29 @@ public class GroupController {
 
     // 그룹 목록 보기
     @GetMapping("/list")
-    public String groupList(@RequestParam(value = "keyword", required = false) String keyword, Model model) {
+    public String groupList(@RequestParam(value = "keyword", required = false) String keyword, Model model,
+                            @RequestParam(value = "page", defaultValue = "1") int page,
+                            @RequestParam(value="size", defaultValue = "10") int size) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("limit", size);
+        params.put("offset", (page - 1) * size);
+        params.put("keyword", keyword);
         List<GroupDTO> groupList = groupService.searchGroups(keyword);  // 검색어 없으면 전체 리스트 , 있다면 필터링 된 리스트
+        List<GroupDTO> pageGroupList = groupService.getPaginationGroups(params);
+        long totalGroup = groupList.size();
+        int totalPages = (int) Math.ceil((double) totalGroup / size);
+
+        PageInfoDTO pageInfo = new PageInfoDTO();
+        pageInfo.setTotalPage(totalPages);
+        pageInfo.setCurrentPage(page);
+        pageInfo.setPageSize(size);
+        pageInfo.setTotalItems(totalGroup);
+
+        model.addAttribute("pageGroupList", pageGroupList);
+        model.addAttribute("pageInfo", pageInfo);
+
+
+
         model.addAttribute("groupList", groupList);
         return "group/list";
     }
@@ -104,6 +127,7 @@ public class GroupController {
                          Model model) {
         GroupDTO group = groupService.findById(groupId); // 모임 정보 가져오기
         model.addAttribute("group", group);
+
         int loginUserId = (int) session.getAttribute("userId");
         //중복 신청 여부 확인
         UserJoinGroupDTO dto = new UserJoinGroupDTO();
@@ -121,12 +145,22 @@ public class GroupController {
             model.addAttribute("boardList", boardList);
         }
         List<GroupScheduleDTO> groupScheduleList = groupService.getGroupScheduleByGroupId(groupId);
+        Map<Integer, String> groupScheduleStartTime = new HashMap<>();
+        Map<Integer, String> groupScheduleEndTime = new HashMap<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm");
+
         List<UserJoinGroupDTO> approvedMembers = userJoinGroupRepository.findApprovedMembersByGroupId(groupId);
         model.addAttribute("approvedMembers", approvedMembers);
         model.addAttribute("isAppliedMember", isAppliedMember);
         model.addAttribute("isApprovedMember", isApprovedMember);
         model.addAttribute("isLeader", isLeader);
         model.addAttribute("groupScheduleList", groupScheduleList);
+        for(GroupScheduleDTO s : groupScheduleList){
+            groupScheduleStartTime.put(s.getId(), s.getStartTime().format(formatter));
+            groupScheduleEndTime.put(s.getId(), s.getEndTime().format(formatter));
+        }
+        model.addAttribute("groupScheduleStartTime", groupScheduleStartTime);
+        model.addAttribute("groupScheduleEndTime", groupScheduleEndTime);
         model.addAttribute("isManager", isManager);
         model.addAttribute("canCreateSchedule", canCreateSchedule);
 

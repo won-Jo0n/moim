@@ -1,159 +1,63 @@
-/* report.css */
-
-body {
-    font-family: Arial, sans-serif;
-    background-color: #F5F5F5;
-    margin: 0;
-    padding: 20px;
-}
-
-.container {
-    max-width: 1200px;
-    margin: auto;
-    background: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.header-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-}
-
-h2 {
-    text-align: left; /* Flexbox를 사용하므로 텍스트 정렬을 왼쪽으로 변경 */
-    color: #333;
-    margin: 0; /* 불필요한 마진 제거 */
-    font-size: 1.5rem;
-}
-
-.table-container {
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 0;
-}
-
-thead th {
-    background-color: #333333;
+/* 버튼 */
+/* 공통 버튼 스타일 */
+.action-button {
+    background: linear-gradient(135deg, var(--primary-color), #444);
     color: white;
-    padding: 15px 12px;
-    text-align: left;
-    font-weight: bold;
-}
-
-tbody tr {
-    border-bottom: 1px solid #ddd;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 20px;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    font-weight: 600;
+    font-size: 13px;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.action-button:hover {
+    background: linear-gradient(135deg, var(--secondary-color), #4a90e2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
-tbody tr:last-child {
-    border-bottom: none;
+/* 비활성화된 버튼 */
+.action-button:disabled {
+    background: linear-gradient(135deg, #999, #777);
+    color: #e0e0e0;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
 }
 
-tbody tr:hover:not(.status-processed) {
-    background-color: #e6f2ff;
-}
 
-tbody td {
-    padding: 12px;
-    vertical-align: middle;
-}
-
-.status-processed {
+/* 완료된 행 스타일 */
+.row-completed {
     background-color: #e9ecef;
     color: #888;
     cursor: default;
 }
-
-.status-processed:hover {
-     background-color: #e9ecef;
+.row-completed:hover {
+    background-color: #e9ecef;
 }
 
-.status-pending {
-    color: #D9534F;
-    font-weight: bold;
-}
-
-.status-completed {
-    color: #5CB85C;
-    font-weight: bold;
-}
-
-.action-button {
-    background-color: #333333;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.2s ease;
-}
-
-.action-button:hover {
-    background-color: #F5F5F5;
-    color: #333333;
-}
-
-.action-button:disabled {
-    background-color: #6c757d;
-    cursor: not-allowed;
-}
-
+/* 페이지네이션 */
 .pagination {
     text-align: center;
     margin-top: 20px;
 }
-
 .pagination a {
     display: inline-block;
-    padding: 8px 16px;
+    padding: 6px 12px;
     text-decoration: none;
-    color: #333333;
+    color: var(--text-color);
     border: 1px solid #ddd;
     margin: 0 4px;
     border-radius: 4px;
     transition: background-color 0.2s ease;
 }
-
 .pagination a:hover:not(.active) {
     background-color: #e9ecef;
 }
-
 .pagination a.active {
-    background-color: #333333;
+    background-color: var(--primary-color);
     color: white;
-    border: 1px solid #333333;
-}
-
-/* 추가된 CSS */
-.top-button-container {
-    /* 기존 스타일 재정의 */
-    margin: 0;
-    padding: 0;
-}
-
-.back-to-home-button {
-    background-color: #333333;
-    color: white;
-    padding: 0.6rem 1.2rem;
-    border: none;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background-color 0.2s;
-}
-
-.back-to-home-button:hover {
-    background-color: #494848;
+    border: 1px solid var(--primary-color);
 }

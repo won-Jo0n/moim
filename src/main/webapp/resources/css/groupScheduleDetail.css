@@ -1,6 +1,6 @@
 /* ============================
-   Schedule Detail – 퍼플 톤
-   (groupUpdate.css 토큰과 일관)
+   groupScheduleDetail.css
+   (모임 일정 상세 – 퍼플 톤)
    ============================ */
 
 :root{
@@ -11,13 +11,17 @@
   --color-card:#FFFFFF;
   --color-text:#2F2A3B;
   --color-muted:#7A718D;
+  --border:#E8E3F3;
+  --success:#43A047;
+  --closed:#9E9E9E;
+
   --radius-xl:20px;
   --radius-lg:14px;
   --radius-md:10px;
+
   --shadow-md:0 10px 24px rgba(69,39,160,0.12);
   --shadow-sm:0 4px 12px rgba(69,39,160,0.08);
-  --border:#E8E3F3;
-  --focus: 0 0 0 3px rgba(126,87,194,0.3);
+  --focus:0 0 0 3px rgba(126,87,194,0.3);
 }
 
 *{box-sizing:border-box}
@@ -29,23 +33,17 @@ body{
   background:linear-gradient(180deg, var(--color-bg), #FFF);
 }
 
-.page{
-  max-width:980px;
-  margin:40px auto 80px;
-  padding:0 20px;
-}
-
-/* Header */
-.page__header{
-  display:flex; align-items:center; justify-content:space-between; gap:12px;
-}
+/* Page */
+.page{max-width:980px; margin:40px auto 80px; padding:0 20px}
+.page__header{display:flex; align-items:center; justify-content:space-between; gap:12px}
 .page__title{
   margin:0; font-size:28px; font-weight:800; letter-spacing:-0.2px; color:var(--color-accent);
   background:var(--color-card); border:1px solid var(--border);
   border-radius:var(--radius-xl); padding:16px 20px; box-shadow:var(--shadow-md);
 }
 .link-back{
-  text-decoration:none; color:var(--color-main); padding:10px 14px; border-radius:var(--radius-md);
+  text-decoration:none; color:var(--color-main);
+  padding:10px 14px; border-radius:var(--radius-md);
   background:rgba(126,87,194,0.08);
 }
 .link-back:hover{background:rgba(126,87,194,0.14)}
@@ -59,46 +57,71 @@ body{
   box-shadow:var(--shadow-md);
   padding:22px; margin-top:18px;
 }
-.card__head{
-  display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px;
+.card__head{display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:12px; flex-wrap:wrap}
+.card__title{margin:0; font-size:20px; font-weight:800; color:var(--color-accent)}
+.card__subtitle{margin:0; font-size:13px; color:var(--color-muted)}
+
+/* ==== Info: table-like grid ==== */
+.info-table{
+  display:grid;
+  grid-template-columns: 140px 1fr;   /* label / value */
+  gap:10px 12px;                      /* row / col */
 }
-.card__title{margin:0; font-size:20px; font-weight:700; color:var(--color-accent)}
-.card__subtitle{margin:0; font-size:14px; color:var(--color-muted)}
-
-/* Info */
-.info{display:grid; gap:14px}
-.info__row{display:grid; gap:6px}
-.info__grid{display:grid; grid-template-columns: repeat(3, 1fr); gap:12px}
-@media (max-width:720px){ .info__grid{grid-template-columns:1fr} }
-
-.label-small{font-size:12px; color:var(--color-muted)}
-.info__title{font-size:22px; font-weight:800; margin:0}
-.info__desc{margin:0; line-height:1.5}
-.info__time{margin:0; color:var(--color-text)}
+.info-row{display:contents}           /* 각 행을 grid의 두 칸으로 배치 */
+.info-th{
+  align-self:center;
+  justify-self:start;
+  padding:6px 10px;
+  font-size:13px;
+  color:var(--color-muted);
+  background:#FBF8FF;
+  border:1px solid var(--border);
+  border-radius:999px;
+}
+.info-td{
+  padding:12px 14px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:#fff;
+  box-shadow:var(--shadow-sm);
+}
+.info__title{margin:0; font-size:18px; font-weight:700}
+.info__desc{margin:0; line-height:1.7; white-space:pre-wrap}
+.info__time{margin:0; font-weight:700}
 .info__quota{margin:0}
 
-.badge{
-  display:inline-block; padding:6px 10px; font-size:12px; border-radius:999px;
-  border:1px solid var(--border); background:#fff; color:var(--color-text)
+/* Status line */
+.info-status{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; margin-top:16px; flex-wrap:wrap;
 }
-.muted{color:var(--color-muted); font-size:13px; margin-left:8px}
-
-/* Status */
 .c-status{
   display:inline-flex; align-items:center; gap:8px;
-  padding:8px 12px; border-radius:999px; border:1px solid var(--border);
-  background:#fff; color:var(--color-text); box-shadow:var(--shadow-sm);
+  padding:8px 12px; border-radius:999px; font-weight:800; letter-spacing:0.2px;
+  border:1px solid var(--border); background:#fff; box-shadow:var(--shadow-sm);
 }
 .c-status__dot{width:8px; height:8px; border-radius:50%}
-.c-status--open .c-status__dot{background:#7CB342}
-.c-status--closed .c-status__dot{background:#8E24AA}
+.c-status--open{color:var(--success); border-color:rgba(67,160,71,.25)}
+.c-status--open .c-status__dot{background:var(--success)}
+.c-status--closed{color:var(--closed); border-color:rgba(158,158,158,.25)}
+.c-status--closed .c-status__dot{background:var(--closed)}
+
+/* Badges & muted */
+.badge{
+  display:inline-block; padding:6px 10px; font-size:12px; border-radius:999px;
+  border:1px solid var(--border); background:#fff; font-weight:700;
+}
+.muted{color:var(--color-muted); font-size:13px}
 
 /* Actions & Buttons */
-.actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:8px}
+.actions{
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+}
 .btn{
-  appearance:none; border:none; padding:12px 16px; border-radius:12px; font-weight:800; cursor:pointer;
+  appearance:none; border:none; padding:12px 16px; border-radius:12px;
+  font-weight:800; cursor:pointer; line-height:1;
   background:#EEE; box-shadow:0 4px 10px rgba(0,0,0,0.04);
-  transition:transform .06s ease, box-shadow .2s ease, background .2s ease, color .2s ease, filter .2s ease;
+  transition:transform .06s ease, box-shadow .2s ease, background .2s ease, color .2s ease;
 }
 .btn:active{transform:translateY(1px)}
 .btn:focus-visible{outline:none; box-shadow:var(--focus)}
@@ -108,22 +131,143 @@ body{
 .btn--ghost:hover{background:#FBF8FF}
 .btn--danger{background:#FCE4EC; color:#AD1457; border:1px solid #F8BBD0}
 
-/* Applicants */
-.applicant{
-  border:1px solid var(--border); border-radius:14px; padding:14px; margin-top:12px;
-  background:#fff; box-shadow:var(--shadow-sm);
+/* ==== Applicant list: table-like ==== */
+.applicant-table{
+  display:grid;
+  grid-template-columns: 1fr;        /* 행 래퍼 */
+  gap:8px;
 }
-.applicant__main{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap}
-.applicant__meta{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.applicant-thead,
+.applicant-tr{
+  display:grid;
+  grid-template-columns: 160px 1fr 220px; /* 신청자 | 정보 | 처리 */
+  gap:12px;
+  align-items:center;
+}
+.applicant-thead{
+  font-size:12px; color:var(--color-muted);
+  padding:8px 10px; border-radius:10px; background:#FBF8FF; border:1px solid var(--border);
+}
+.applicant-th{font-weight:800}
+.th-actions{text-align:center}
+
+.applicant-tr{
+  padding:12px; border:1px solid var(--border); border-radius:14px; background:#fff; box-shadow:var(--shadow-sm);
+}
+.applicant-td{display:flex; align-items:center; gap:10px}
+.applicant__meta{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
 .c-tag{
-  display:inline-block; padding:6px 10px; border-radius:999px; font-size:12px;
-  border:1px solid var(--border); background:#F6F3FF; color:var(--color-accent)
+  display:inline-flex; align-items:center; gap:6px;
+  padding:6px 10px; border-radius:999px; font-size:12px; font-weight:800;
+  border:1px solid var(--border); background:#fff;
 }
-.c-tag--approved{background:#E8F5E9; color:#2E7D32; border-color:#C8E6C9}
+.c-tag--approved{color:var(--color-accent); border-color:var(--color-sub); background:#FBF8FF}
 
 /* Review form */
-.review-form{display:flex; justify-content:flex-end; margin-top:6px}
+.review-form{display:flex; align-items:center; justify-content:flex-end; gap:10px}
 
-/* Focus */
-a, button{outline:none}
-a:focus-visible, button:focus-visible{box-shadow:var(--focus)}
+/* Submit safeguard if no .btn class */
+.actions input[type="submit"]{
+  appearance:none; border:none; padding:12px 16px; border-radius:12px;
+  background:#FCE4EC; color:#AD1457; border:1px solid #F8BBD0; font-weight:800; cursor:pointer;
+}
+
+/* Responsive */
+@media (max-width:900px){
+  .info-table{grid-template-columns: 120px 1fr}
+  .applicant-thead, .applicant-tr{grid-template-columns: 140px 1fr 180px}
+}
+@media (max-width:640px){
+  .page__title{font-size:24px; padding:14px 16px}
+  .info-table{grid-template-columns: 1fr}
+  .info-th{justify-self:stretch}
+  .info-td{margin-top:-4px}
+
+  .applicant-thead{display:none}
+  .applicant-tr{
+    grid-template-columns: 1fr;
+    gap:8px;
+  }
+  .applicant-td{justify-content:space-between}
+  .review-form{justify-content:flex-start}
+}
+
+/* 값 박스 정렬/높이 개선 */
+.info-table{ grid-template-columns: 120px 1fr; } /* 라벨폭 조금 컴팩트 */
+.info-td{
+  display:flex;
+  align-items:center;          /* 텍스트 수직 가운데 */
+  min-height:56px;             /* 캡슐 높이 통일 */
+  padding:12px 16px;           /* 살짝 넉넉하게 */
+}
+
+/* 설명 행은 여러 줄 대비 상단 정렬 */
+.info-row--desc .info-td{
+  align-items:flex-start;
+}
+
+/* 제목/시간/정원도 캡슐 안에서 줄바꿈 안정화 */
+.info__title, .info__desc, .info__time, .info__quota{
+  margin:0;
+  word-break:break-word;
+}
+
+/* 상태줄: '모집 완료'처럼 우측만 있을 때 오른쪽 정렬 */
+.info-status.closed{
+  justify-content:flex-end;
+}
+
+/* 모바일에서 라벨칸 줄이기 */
+@media (max-width:900px){
+  .info-table{ grid-template-columns: 110px 1fr; }
+}
+@media (max-width:640px){
+  .info-table{ grid-template-columns: 1fr; }
+  .info-td{ min-height:50px; }
+}
+
+/* === Minimal 값 스타일: 테두리·배경 제거, 간격만 유지 === */
+.info-table{
+  grid-template-columns: 110px 1fr;   /* 라벨 폭 살짝 컴팩트하게 */
+  gap: 18px 20px;                      /* 행/열 간격 넉넉하게 */
+}
+
+.info-th{
+  /* 라벨칩을 미니멀 텍스트로 */
+  background: transparent;
+  border: 0;
+  color: var(--color-muted);
+  padding: 0 6px 0 0;
+  font-weight: 700;
+  border-radius: 0;                    /* 칩 모양 제거 */
+}
+
+.info-td{
+  /* 값 박스(흰 캡슐) 테두리/그림자 제거 */
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 4px 0 8px;                 /* 위아래 여백만 */
+  min-height: auto;                    /* 고정 높이 해제 */
+  display: block;                      /* 기본 블록 흐름 */
+}
+
+.info__title,
+.info__desc,
+.info__time,
+.info__quota{
+  margin: 0;
+  word-break: break-word;
+  font-weight: 600;                    /* 살짝 강조 */
+}
+
+/* 설명은 여러 줄 대비 상단 정렬 */
+.info-row--desc .info-td{ align-items: flex-start; }
+
+/* 상태줄이 '모집 완료'만 있을 때 우측 정렬 */
+.info-status.closed{ justify-content: flex-end; }
+
+/* 연한 구분선 —*/
+.info-td{ border-bottom: 1px solid rgba(126,87,194,.10); }
+.info-row:last-of-type .info-td{ border-bottom: 0; }

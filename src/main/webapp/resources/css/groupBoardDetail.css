@@ -61,18 +61,78 @@ body{
 .post__meta{display:flex; align-items:center; gap:10px}
 .badge{display:inline-block; padding:6px 10px; font-size:12px; border-radius:999px; border:1px solid var(--border); background:#fff}
 .muted{color:var(--color-muted); font-size:13px}
-.post__media{margin:14px 0 8px}
-.post__media img{display:block; max-width:100%; height:auto; border-radius:14px; border:1px solid var(--border); box-shadow:var(--shadow-sm)}
-.post__content{line-height:1.75; white-space:pre-wrap; margin-top:6px}
+
+/* Post Body Layout (Image & Content) */
+.post__body-layout {
+    display: flex;
+    align-items: flex-start; /* 이미지와 텍스트를 상단에 정렬 */
+    gap: 20px; /* 이미지와 텍스트 사이 간격 */
+    flex-wrap: wrap; /* 작은 화면에서 줄바꿈 허용 */
+    margin-top: 14px; /* 헤더 아래 여백 */
+}
+
+.post__media {
+    flex-shrink: 0; /* 이미지가 줄어들지 않도록 함 */
+    width: 200px; /* 데스크탑에서 정사각형 너비 */
+    height: 200px; /* 데스크탑에서 정사각형 높이 */
+    margin: 0; /* 기존 마진 제거 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.post__media img {
+    width: 100%; /* 부모 .post__media에 꽉 채우기 */
+    height: 100%; /* 부모 .post__media에 꽉 채우기 */
+    object-fit: cover; /* 이미지를 잘라내어 비율 유지하며 채움 */
+    border-radius: 14px; /* 둥근 모서리 유지 */
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+}
+
+.post__content {
+    flex-grow: 1; /* 남은 공간을 글 내용이 모두 차지하도록 함 */
+    line-height: 1.75;
+    white-space: pre-wrap;
+    margin-top: 0; /* 새로운 레이아웃에서 마진 제거 */
+}
+
+/* post__content 내부의 첫 번째 요소의 상단 여백 제거 */
+.post__content > *:first-child {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+
+/* Mobile Responsive for Post Media */
+@media (max-width: 720px) {
+    .post__media {
+        width: 100%; /* 모바일에서 이미지 전체 너비 */
+        height: auto; /* 모바일에서 높이 자동 조절 */
+        max-height: 250px; /* 너무 커지지 않도록 최대 높이 제한 */
+        margin-bottom: 12px; /* 모바일에서 이미지 아래 여백 */
+    }
+    .post__media img {
+        max-width: 100%;
+        height: auto;
+    }
+}
+
 
 /* Actions & Buttons */
 .actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:flex-end; margin-top:12px}
 .actions--compact{justify-content:flex-start; margin-top:8px}
 .inline-form{display:inline}
 .btn{
-  appearance:none; border:none; padding:10px 14px; border-radius:12px; font-weight:800; cursor:pointer;
+  appearance:none; border:none; border-radius:12px; font-weight:800; cursor:pointer;
   background:#EEE; box-shadow:0 4px 10px rgba(0,0,0,0.04);
   transition:transform .06s ease, box-shadow .2s ease, background .2s ease, color .2s ease;
+  font-size: 13px; /* 모든 기본 버튼 폰트 크기 13px로 통일 */
+  padding: 8px 12px; /* 모든 기본 버튼 패딩 축소 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 .btn:active{transform:translateY(1px)}
 .btn:focus-visible{outline:none; box-shadow:var(--focus)}
@@ -85,17 +145,26 @@ body{
 /* Comments */
 .comment-section{display:grid; gap:16px}
 .comment{
-  border:1px solid var(--border); border-radius:14px; padding:14px; background:#fff; box-shadow:var(--shadow-sm);
+  border:1px solid var(--border); border-radius:14px; background:#fff; box-shadow:var(--shadow-sm);
+  padding: 10px 16px;
 }
-.comment__meta{display:flex; align-items:center; gap:10px; margin-bottom:6px}
-.comment__content{line-height:1.65; white-space:pre-wrap}
+.comment__meta{display:flex; align-items:center; gap:10px; margin-bottom: 4px;}
+.comment__content{
+    line-height:1.65;
+    white-space:pre-wrap;
+    margin: 2px 0; /* 상단 2px, 하단 2px 마진으로 통일 */
+}
 
 /* Reply (indent) */
 .reply{
   margin-top:12px; margin-left:22px; padding-left:12px;
   border-left:3px solid rgba(126,87,194,0.18);
 }
-.reply .comment__content{margin-top:4px}
+.reply .comment__content{
+    line-height:1.65;
+    white-space:pre-wrap;
+    margin: 2px 0; /* 상단 2px, 하단 2px 마진으로 통일 */
+}
 
 /* Forms (edit/reply/new) */
 .textarea{
@@ -113,18 +182,6 @@ body{
   .reply{margin-left:14px}
 }
 
-/* === 이미지 1/6 크기, 중앙 정렬 === */
-.post__media{display:flex; justify-content:center}
-.post__media img{
-  max-width:40%;
-  height:auto;
-}
-
-/* 모바일에서는 꽉 차게 */
-@media (max-width:720px){
-  .post__media img{max-width:100%}
-}
-
 /* === 상단 액션 버튼(수정/삭제/신고) 통일 & 간격 === */
 .actions{
   gap:12px;
@@ -132,23 +189,30 @@ body{
 }
 .actions .btn,
 .actions input[type="submit"].btn{
-  min-width:112px;
-  padding:12px 16px;
+  min-width: unset;
+  padding:10px 14px;
   border-radius:12px;
+  font-size: 13px;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 /* === 댓글/대댓글 버튼 크기 통일 (작은 사이즈) === */
 .actions--compact .btn,
 .actions--compact input[type="submit"].btn{
-  min-width:86px;
-  padding:10px 14px;
+  min-width: unset;
+  padding:8px 12px;
   border-radius:12px;
+  font-size: 12px;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
-
-/* === 댓글 타이포/여백 조정 === */
-.comment{padding:16px}
-.comment__meta{gap:8px; margin-bottom:8px}
-.comment__content{margin-top:4px}
 
 /* === 대댓글 들여쓰기 & 가이드라인 정리 === */
 .reply{
@@ -161,16 +225,16 @@ body{
 /* === 버튼 스타일 보강(폼 submit도 동일하게 보이게) === */
 input[type="submit"].btn{appearance:none; border:none}
 .btn--primary{background:linear-gradient(180deg, var(--color-main), var(--color-accent)); color:#fff}
+.btn--primary:hover{filter:brightness(1.05)}
 .btn--ghost{background:#fff; color:var(--color-accent); border:1px solid var(--color-sub)}
+.btn--ghost:hover{background:#FBF8FF}
 .btn--danger{background:#FCE4EC; color:#AD1457; border:1px solid #F8BBD0}
-.btn--primary:hover,
-.actions .btn:hover{filter:brightness(1.05)}
 
 /* ===== 상단 액션 버튼: 행 정렬/간격/높이 통일 ===== */
 .actions{
   display:flex;
-  align-items:center;            /* 버튼 높이 맞춤 */
-  justify-content:flex-end;      /* 우측 정렬 */
+  align-items:center;
+  justify-content:flex-end;
   gap:12px;
   flex-wrap:wrap;
   margin-top:12px;
@@ -179,9 +243,9 @@ input[type="submit"].btn{appearance:none; border:none}
 /* 폼도 버튼처럼 한 줄 배치 */
 .actions form,
 .inline-form{
-  display:inline-flex;           /* form 자체를 인라인-플렉스로 */
+  display:inline-flex;
   align-items:center;
-  margin:0;                      /* 폼 기본 마진 제거 */
+  margin:0;
 }
 
 /* 버튼 크기 통일 (a, button, input 모두) */
@@ -189,63 +253,72 @@ input[type="submit"].btn{appearance:none; border:none}
 .actions a.btn,
 .actions button.btn,
 .actions input[type="submit"].btn{
-  min-width:112px;
-  padding:12px 16px;
+  min-width: unset;
+  padding:10px 14px;
   border-radius:12px;
   line-height:1;
+  font-size: 13px;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 /* 삭제/신고 등 submit이 .btn 없을 때도 모양 맞춤 (세이프가드) */
 .actions input[type="submit"]{
   appearance:none;
   border:none;
-  padding:12px 16px;
+  padding:10px 14px;
   border-radius:12px;
   background:#FCE4EC;
   color:#AD1457;
   border:1px solid #F8BBD0;
   font-weight:800;
   cursor:pointer;
-}
-
-/* ===== 본문 이미지 1/6, 가운데 정렬 ===== */
-.post__media{display:flex; justify-content:center}
-.post__media img{
-  max-width:16.666%;
-  height:auto;
-  border-radius:14px;
-  border:1px solid var(--border);
-  box-shadow:var(--shadow-sm);
-}
-@media (max-width:720px){
-  .post__media img{max-width:100%}
+  font-size: 13px;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 /* ===== 댓글 영역 레이아웃 안정화 ===== */
 
 /* 댓글 카드 기본 여백/타이포 */
 .comment{
-  padding:16px;
+  padding: 10px 16px;
   border:1px solid var(--border);
   border-radius:14px;
   background:#fff;
   box-shadow:var(--shadow-sm);
 }
-.comment__meta{display:flex; align-items:center; gap:10px; margin-bottom:8px}
-.comment__content{line-height:1.65; white-space:pre-wrap; margin:4px 0 0}
+.comment__meta{display:flex; align-items:center; gap:10px; margin-bottom: 4px;}
+.comment__content{
+    line-height:1.65;
+    white-space:pre-wrap;
+    margin: 2px 0; /* 상단 2px, 하단 2px 마진으로 통일 */
+}
 
 /* 댓글 액션: 항상 오른쪽 정렬 + 촘촘한 버튼 */
 .actions--compact{
   display:flex;
   align-items:center;
-  justify-content:flex-end;      /* ✅ 우측 정렬 고정 */
+  justify-content:flex-end;
   gap:8px;
   margin-top:10px;
 }
 .actions--compact .btn,
 .actions--compact input[type="submit"].btn{
-  min-width:86px;
-  padding:10px 14px;
+  min-width: unset;
+  padding:8px 12px;
+  font-size: 12px;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 /* 대댓글 들여쓰기 & 라인 얇게 (여백 과다 방지) */
@@ -253,7 +326,7 @@ input[type="submit"].btn{appearance:none; border:none}
   margin-top:14px;
   margin-left:18px;
   padding-left:12px;
-  border-left:2px solid rgba(126,87,194,0.18);  /* 얇게 */
+  border-left:2px solid rgba(126,87,194,0.18);
 }
 
 /* 대댓글 내부 액션도 오른쪽 정렬 */

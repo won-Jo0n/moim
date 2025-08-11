@@ -30,7 +30,7 @@
         JOIN user u ON f.responseUserId = u.id
         LEFT JOIN mbti m ON u.mbtiId = m.id
         WHERE f.requestUserId = #{userId}
-        AND f.status = 'ACCEPTED'
+        AND f.status = 1
         ORDER BY f.requestedAt DESC       <!-- ✅ f.id 없는 경우 대비 -->
     </select>
 
