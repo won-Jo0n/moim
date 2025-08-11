@@ -51,6 +51,8 @@ public class HomeController {
             userService.updateUserStatus(loginUser); // DB에 업데이트
         }
 
+        userService.updateLastLogin(loginUser);
+
         session.setAttribute("userId", loginUser.getId());
 
         model.addAttribute("loginUser", loginUser);

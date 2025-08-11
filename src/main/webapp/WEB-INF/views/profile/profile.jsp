@@ -284,7 +284,7 @@
         </c:if>
         <div class="dropdown" id="menu">
             <a href="${pageContext.request.contextPath}/profile/profile/update">수정</a>
-            <a href="/logout">로그아웃</a>
+            <a href="user/logout">로그아웃</a>
         </div>
     </div>
 

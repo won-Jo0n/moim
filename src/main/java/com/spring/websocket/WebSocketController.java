@@ -3,6 +3,10 @@ package com.spring.websocket;
 import com.spring.chat.dto.ChatMessageDTO;
 import com.spring.chat.dto.ChatUserDTO;
 import com.spring.chat.service.ChatService;
+import com.spring.friends.dto.FriendsDTO;
+import com.spring.friends.service.FriendsService;
+import com.spring.user.dto.UserDTO;
+import com.spring.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.Header;
@@ -18,6 +22,7 @@ import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 import java.security.Principal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Controller
@@ -25,10 +30,23 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class WebSocketController {
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatService chatService;
+    private final FriendsService friendsService;
+    private final UserService userService;
     private final Map<String, String> sessionToUser = new ConcurrentHashMap<>();
     private final Map<String, Integer> sessionCount = new ConcurrentHashMap<>();
     private final Queue<String> matchingQueue = new ConcurrentLinkedQueue<>();
     private final Object matchingLock = new Object();
+
+    /*
+    @MessageMapping("/connect")
+    @SendToUser("/queue/main")
+    public Map<String, Object> connect(SimpMessageHeaderAccessor headerAccessor, Principal principal){//내가 연결하면 나의 친구들에게 나의 접속을 알린다. 그리고 나에게 접속한 친구들의 리스트를 보낸다.
+        String sessionId = headerAccessor.getSessionId();
+        String userId = principal.getName();
+
+        return Map.of("userId", userId, "type", "FRIEND_ONLINE");
+    }
+     */
 
     @MessageMapping("/match")
     public void matchMaking(@Payload String s, Principal principal){

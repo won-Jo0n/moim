@@ -115,4 +115,10 @@
         WHERE id = #{groupScheduleId}
     </select>
 
+    <select id="getPaginationGroups" resultType="group">
+        SELECT * FROM `group`
+        ORDER BY createdAt DESC
+        LIMIT #{limit} OFFSET #{offset};
+    </select>
+
 </mapper>
