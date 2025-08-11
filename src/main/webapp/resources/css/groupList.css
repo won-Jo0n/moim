@@ -98,3 +98,97 @@ tbody img{
 @media (max-width:1024px){
   .group-list-wrap{ max-width: 100%; padding: 0 1rem; }
 }
+
+/* 컨트롤 바: 좌측 버튼 + 우측 검색을 한 줄에 */
+.controls{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  width:100%;
+  margin-bottom:2rem;
+}
+
+/* 기존 .search-form는 그대로 두되, controls 안에서 오른쪽 정렬 유지 */
+.search-form{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  gap:.5rem;
+  width:100%;
+}
+
+/* 모임 만들기 버튼 – 검색 입력과 높이/라운드 맞춤 */
+.btn-create{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding: 0.75rem 1.5rem;      /* 검색 input과 동일 높이 */
+  background:#7E57C2;
+  color:#fff;
+  text-decoration:none;
+  border-radius:2rem;
+  font-weight:600;
+  box-shadow:0 4px 10px rgba(0,0,0,.05);
+  transition:background .3s, transform .3s;
+  white-space:nowrap;           /* 줄바꿈 방지 */
+}
+.btn-create:hover{ background:#6748A5; transform:translateY(-2px); }
+
+/* 반응형 – 좁을 땐 세로로 쌓기 */
+@media (max-width:768px){
+  .controls{ flex-direction:column; align-items:stretch; gap:.75rem; }
+  .search-form{ width:100%; justify-content:space-between; }
+}
+
+:root{
+  --ctl-h: 48px;           /* 컨트롤 공통 높이 */
+  --pill: 9999px;          /* 동그란 라운드 */
+}
+
+/* 한 줄 정렬 유지 */
+.controls{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;      /* ⬅ 세로 기준 맞춤 */
+  width:100%;
+  margin-bottom:2rem;
+  gap: 1rem;
+}
+
+/* 검색폼: 같은 줄에서 우측 정렬 */
+.search-form{
+  display:flex;
+  align-items:center;      /* ⬅ 세로 중앙 정렬 */
+  justify-content:flex-end;
+  gap:.5rem;
+  margin:0;
+}
+
+/* ⬇︎ 세 요소 모두 동일한 높이 강제 */
+.btn-create,
+.search-form input[type="text"],
+.search-form button{
+  height: var(--ctl-h);
+  font-size: 1rem;
+  border-radius: var(--pill);
+}
+
+/* 버튼들은 텍스트가 정확히 가운데 오도록 */
+.btn-create,
+.search-form button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding: 0 1.5rem;       /* 좌우만 패딩, 높이는 위에서 통일 */
+  line-height: 1;          /* OS 기본버튼 라인하이트 보정 */
+}
+
+/* 입력창 스타일 (기존 값 유지 + 높이만 통일) */
+.search-form input[type="text"]{
+  padding: 0 1.5rem;       /* 좌우만 – 높이는 var(--ctl-h)로 결정 */
+  border: 1px solid #B18FCF;
+  outline: none;
+  box-shadow: 0 4px 10px rgba(0,0,0,.05);
+  -webkit-appearance:none; /* 브라우저간 높이 차 최소화 */
+  appearance:none;
+}
