@@ -16,17 +16,19 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
+import com.spring.group.dto.GroupDTO;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/profile")
 public class ProfileController {
 
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
     private final FriendsService friendsService;
     private final ProfileService profileService;
     private final MbtiBoardService mbtiBoardService;
 
-    // 파일 저장만 사용 (User 쪽은 전혀 건드리지 않음)
+    // 파일 저장만 사용 (User 모듈 미수정)
     private final FileUtil fileUtil;
 
     @GetMapping
@@ -40,6 +42,9 @@ public class ProfileController {
             userId = (Long) userIdObj;
         }
         if (userId == null) return "redirect:/login";
+
+        List<GroupDTO> groupList = profileService.getGroupList(userId);
+        model.addAttribute("groupList", groupList);
 
         // 프로필 조회 (fileId 포함)
         ProfileDTO profile = profileService.getProfile(userId);
@@ -69,7 +74,7 @@ public class ProfileController {
         return "MbtiBoardViews/detail";
     }
 
-    // 기존 경로 유지
+    // 기존 경로 유지(⇒ 실제 호출 URL: /profile/profile/update)
     @GetMapping("/profile/update")
     public String editForm(HttpSession session, Model model) {
         Object userIdObj = session.getAttribute("userId");
@@ -164,6 +169,26 @@ public class ProfileController {
         Long userId = (uid instanceof Integer) ? ((Integer) uid).longValue() : (Long) uid;
 
         profileService.updateFileId(userId, null); // profile.fileId = NULL
-        return "redirect:/profile";
+        return "redirect:/profile/profile/update";
+    }
+
+    // 회원 탈퇴 (비밀번호 확인 후 status = -1 로 소프트 삭제)
+    @PostMapping("/withdraw")
+    public String withdraw(HttpSession session,
+                           @RequestParam("password") String password,
+                           org.springframework.web.servlet.mvc.support.RedirectAttributes ra) {
+        Object uid = session.getAttribute("userId");
+        if (uid == null) return "redirect:/login";
+        Long userId = (uid instanceof Integer) ? ((Integer) uid).longValue() : (Long) uid;
+
+        String encoded = profileService.getPasswordHash(userId);
+        if (encoded == null || !passwordEncoder.matches(password, encoded)) {
+            ra.addFlashAttribute("error", "비밀번호가 일치하지 않습니다.");
+            return "redirect:/profile/profile/update";
+        }
+
+        profileService.withdraw(userId);   // status = -1 로 업데이트
+        session.invalidate();
+        return "redirect:/";
     }
 }

@@ -1,5 +1,6 @@
 package com.spring.profile.repository;
 
+import com.spring.group.dto.GroupDTO;
 import com.spring.mbti.dto.MbtiBoardDTO;
 import com.spring.profile.dto.ProfileDTO;
 import lombok.RequiredArgsConstructor;
@@ -33,5 +34,16 @@ public class ProfileRepository {
         p.put("fileId", fileId);
         // Mapper의 id는 "Profile.updateFileId" (아래 XML과 일치)
         return sql.update("Profile.updateFileId", p);
+    }
+    public String selectPasswordHash(Long userId) {
+        return sql.selectOne("Profile.selectPasswordHash", userId);
+    }
+
+    public int deleteUser(Long userId) {
+        return sql.update("Profile.deleteUser", userId);   // ← UPDATE로 변경
+    }
+
+    public List<GroupDTO> findGroupsByUserId(Long userId) {
+        return sql.selectList("Profile.findGroupsByUserId", userId);
     }
 }

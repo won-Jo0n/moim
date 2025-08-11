@@ -7,19 +7,84 @@
     <meta charset="UTF-8"/>
     <title>MBTI 성향 테스트</title>
     <style>
-        .wrap{max-width:900px;margin:40px auto;padding:24px;background:#fff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.06)}
-        .title{font-size:24px;font-weight:700;margin:0 0 12px}
+        :root{
+            --paper:#ffffff;
+            --bg:#f5f6fa;
+
+            /* Purple theme */
+            --brand:#7E57C2;   /* Purple */
+            --brand-2:#5E35B1; /* Royal Purple */
+            --brand-3:#4527A0; /* Deep Purple */
+
+            --text:#333;
+            --muted:#f6f6f9;
+            --line:#e6e3f2;
+            --lavender:#B18FCF; /* Lavender */
+        }
+
+        @keyframes gradientShift {
+            0%{background-position:0% 50%}
+            50%{background-position:100% 50%}
+            100%{background-position:0% 50%}
+        }
+
+        body{
+            font-family:'Noto Sans KR',sans-serif; margin:0;
+            background:
+              linear-gradient(180deg, rgba(203,170,203,.08), rgba(177,143,207,.08)),
+              var(--bg);
+            color:var(--text);
+        }
+        .wrap{max-width:900px;margin:40px auto;padding:24px;background:var(--paper);
+            border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.06)}
+        .title{font-size:24px;font-weight:800;margin:0 0 12px;color:var(--brand)}
+
         .bar{height:6px;background:#eee;border-radius:6px;overflow:hidden;margin:12px 0 20px}
-        .bar > span{display:block;height:100%;background:#2ecc71;width:0;transition:width .2s ease}
-        .q-title{font-size:18px;font-weight:600;margin:12px 0 16px}
+        .bar>span{
+            display:block;height:100%;width:0;transition:width .2s ease;
+            background-image:linear-gradient(90deg,var(--brand),var(--brand-2),var(--brand-3));
+            background-size:200% 200%;
+            animation:gradientShift 8s linear infinite;
+            box-shadow:0 2px 8px rgba(94,53,177,.25) inset;
+        }
+
+        .q-title{font-size:18px;font-weight:700;margin:12px 0 16px}
         ul.opts{list-style:none;padding:0;margin:0}
         ul.opts li{margin:8px 0}
-        label.opt{display:block;padding:12px 14px;border:1px solid #ddd;border-radius:8px;cursor:pointer}
+        label.opt{
+            display:block;padding:12px 14px;border:1px solid var(--line);border-radius:10px;cursor:pointer;
+            background:var(--muted);
+            transition:border-color .15s ease, box-shadow .15s ease, background .15s ease, transform .08s ease;
+        }
+        label.opt:hover{
+            border-color:var(--brand);
+            box-shadow:0 6px 18px rgba(94,53,177,.12);
+            background:#faf8ff;
+            transform:translateY(-1px);
+        }
         label.opt input{margin-right:8px}
-        .nav{display:flex;gap:8px;margin-top:18px}
-        .nav button,.nav a{padding:10px 14px;border:1px solid #ddd;border-radius:8px;background:#f6f6f6;text-decoration:none;color:#222}
-        .nav button.primary{background:#2ecc71;border-color:#2ecc71;color:#fff}
-        .nav button:disabled{opacity:.5;cursor:not-allowed}
+
+        .nav{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
+        .nav button,.nav a{
+            padding:10px 14px;border:1px solid var(--line);border-radius:10px;
+            background:#f6f6f9;text-decoration:none;color:#222;font-weight:700;
+            transition:transform .08s ease, box-shadow .15s ease, background .15s ease;
+        }
+        .nav a:hover,.nav button:hover{
+            transform:translateY(-1px); box-shadow:0 8px 18px rgba(94,53,177,.10);
+            background:#faf8ff;
+        }
+
+        .nav button.primary{
+            border:0; color:#fff; font-weight:800;
+            background-image:linear-gradient(90deg,var(--brand),var(--brand-2),var(--brand-3));
+            background-size:200% 200%; animation:gradientShift 8s linear infinite;
+            box-shadow:0 8px 22px rgba(94,53,177,.20);
+        }
+        .nav button.primary:hover{
+            box-shadow:0 12px 28px rgba(94,53,177,.25);
+        }
+        .nav button:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
     </style>
 </head>
 <body>
@@ -43,19 +108,16 @@
     var CSRF_PARAM = '${_csrf.parameterName}';
     var CSRF_TOKEN = '${_csrf.token}';
 
-    // 서버에서 전달된 질문 목록을 JS 배열로 구성
-    // 각 항목: { id: Number, text: String, type: String }
+    // 서버에서 전달된 질문 목록
     var questions = [
         <c:forEach var="q" items="${questions}" varStatus="st">
             { id: ${q.id}, text: '<c:out value="${fn:escapeXml(q.question)}"/>', type: '<c:out value="${fn:escapeXml(q.type)}"/>' }<c:if test="${!st.last}">,</c:if>
         </c:forEach>
     ];
 
-    // 상태
-    var answers = new Array(questions.length).fill(null); // 각 문항 0~4 또는 null
+    var answers = new Array(questions.length).fill(null);
     var idx = 0;
 
-    // 요소
     var root = document.getElementById('q-root');
     var btnPrev = document.getElementById('btn-prev');
     var btnNext = document.getElementById('btn-next');
@@ -65,7 +127,6 @@
         var q = questions[idx] || {text:''};
         var selected = answers[idx];
 
-        // 진행바 업데이트
         var pct = Math.round((idx / Math.max(1, questions.length)) * 100);
         progress.style.width = pct + '%';
 
@@ -85,15 +146,12 @@
             +   '<ul class="opts">' + optsHtml + '</ul>'
             + '</div>';
 
-        // ★ 핵심: 기존 DOM을 지우고 한 개만 다시 그림 (append 금지)
         root.innerHTML = html;
 
-        // 버튼 상태
         btnPrev.disabled = (idx === 0);
         btnNext.textContent = (idx === questions.length - 1) ? '제출' : '다음';
         btnNext.disabled = (answers[idx] === null);
 
-        // 라디오 체인지
         var radios = root.querySelectorAll('input[name="ans"]');
         for (var r=0; r<radios.length; r++) {
             radios[r].addEventListener('change', function(){
@@ -102,24 +160,18 @@
             });
         }
 
-        // 뷰 상단으로 스크롤 (선택)
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     btnPrev.addEventListener('click', function(){
-        if (idx > 0) {
-            idx--;
-            render(); // 교체 렌더
-        }
+        if (idx > 0) { idx--; render(); }
     });
 
     btnNext.addEventListener('click', function(){
         if (idx < questions.length - 1) {
             if (answers[idx] === null) return;
-            idx++;
-            render(); // 교체 렌더
+            idx++; render();
         } else {
-            // 제출
             submitAnswers();
         }
     });
@@ -129,14 +181,12 @@
         form.method = 'post';
         form.action = '/mbti/submit';
 
-        // CSRF
         var csrf = document.createElement('input');
         csrf.type = 'hidden';
         csrf.name = CSRF_PARAM;
         csrf.value = CSRF_TOKEN;
         form.appendChild(csrf);
 
-        // answers0..n 으로 전송 (컨트롤러가 map.get("answers"+i)로 받음)
         for (var i = 0; i < answers.length; i++) {
             var inp = document.createElement('input');
             inp.type = 'hidden';
@@ -149,7 +199,6 @@
         form.submit();
     }
 
-    // 최초 1회 렌더
     render();
 </script>
 </body>
