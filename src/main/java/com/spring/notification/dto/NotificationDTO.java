@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class NotificationDTO {
     int id, userId, requestUserId, relatedId, status;
-    String type, createdAt, readAt, path;
+    String type, createdAt, readAt, path, content;
 }

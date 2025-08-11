@@ -27,8 +27,7 @@
             </li>
             <li>
               <a role="button" onclick="toggleNotificationSidebar(true)">
-              <i class="fas fa-bell"></i> <span>알림</span></a
-              >
+              <i class="fas fa-bell"><div id="notification-count"></div></i> <span>알림</span></a>
             </li>
             <li>
               <a href="/group/list" role="button"
@@ -64,7 +63,7 @@
         id="message-btn"
         onclick="togglePopup('message-popup', true);"
       >
-        <i class="far fa-comments"></i>
+        <i class="far fa-comments"><div id="chat-unread-count"></div></i>
       </div>
 
       <div id="message-popup" class="common-popup hide">

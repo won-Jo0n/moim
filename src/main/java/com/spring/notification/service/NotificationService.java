@@ -1,30 +1,32 @@
 package com.spring.notification.service;
 
-import com.spring.chat.service.ChatService;
-import com.spring.friends.service.FriendsService;
 import com.spring.notification.dto.NotificationDTO;
 import com.spring.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-
-import javax.servlet.http.HttpSession;
-import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
     private final NotificationRepository notificationRepository;
-    private final ChatService chatService;
     private final SimpMessagingTemplate messagingTemplate;
 
-    public void createFriendNotification(NotificationDTO notificationDTO){
-        messagingTemplate.convertAndSendToUser(String.valueOf(notificationDTO.getUserId()),
-                "/queue/main",
-                notificationDTO,
-                Map.of("type", "AA"));
+    public void createNotification(NotificationDTO notificationDTO){
         notificationRepository.createNotification(notificationDTO);
+        messagingTemplate.convertAndSendToUser(String.valueOf(notificationDTO.getUserId()), "/queue/main", notificationDTO, Map.of("type", "RECEIVE_NOTIFICATION"));
+    }
+
+    public void readNotification(int userId, int notificationId){
+        if(notificationRepository.readNotification(notificationId) > 0){
+            messagingTemplate.convertAndSendToUser(String.valueOf(userId), "/queue/main", Map.of("notificationId", notificationId), Map.of("type", "READ_NOTIFICATION"));
+        }
+    }
+
+    public List<NotificationDTO> findAllByUserId(int userId){
+        return notificationRepository.findAllByUserId(userId);
     }
 
     public void createBoardNotification() {
