@@ -7,6 +7,7 @@ import com.spring.groupboard.dto.GroupBoardDTO;
 import com.spring.groupboard.service.GroupBoardService;
 import com.spring.mbti.dto.MbtiDTO;
 import com.spring.mbti.service.MbtiService;
+import com.spring.page.dto.PageInfoDTO;
 import com.spring.schedule.dto.ScheduleDTO;
 import com.spring.user.dto.UserDTO;
 import com.spring.user.dto.UserScheduleDTO;
@@ -92,8 +93,28 @@ public class GroupController {
 
     // 그룹 목록 보기
     @GetMapping("/list")
-    public String groupList(@RequestParam(value = "keyword", required = false) String keyword, Model model) {
+    public String groupList(@RequestParam(value = "keyword", required = false) String keyword, Model model,
+                            @RequestParam(value = "page", defaultValue = "1") int page,
+                            @RequestParam(value="size", defaultValue = "10") int size) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("limit", size);
+        params.put("offset", (page - 1) * size);
         List<GroupDTO> groupList = groupService.searchGroups(keyword);  // 검색어 없으면 전체 리스트 , 있다면 필터링 된 리스트
+        List<GroupDTO> pageGroupList = groupService.getPaginationGroups(params);
+        long totalGroup = groupList.size();
+        int totalPages = (int) Math.ceil((double) totalGroup / size);
+
+        PageInfoDTO pageInfo = new PageInfoDTO();
+        pageInfo.setTotalPage(totalPages);
+        pageInfo.setCurrentPage(page);
+        pageInfo.setPageSize(size);
+        pageInfo.setTotalItems(totalGroup);
+
+        model.addAttribute("pageGroupList", pageGroupList);
+        model.addAttribute("pageInfo", pageInfo);
+
+
+
         model.addAttribute("groupList", groupList);
         return "group/list";
     }
