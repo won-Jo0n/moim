@@ -54,6 +54,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Function to create and append a single post card
     const createPostElement = (post) => {
+        $.ajax({
+            type : "get",
+            url : "/homeFeed/getFeedList",
+            contentType : "application/json",
+            success : function(data){
+              console.log("피드 불러오기 성공");
+              console.log(data);
+            },error : function(xhr, status, error, err){
+                console.log("에러 발생!");
+                console.log("상태 코드: " + xhr.status); // HTTP 상태 코드 (예: 404, 500)
+                console.log("에러 메시지: " + error); // 에러 메시지 (예: Not Found, Internal Server Error)
+                console.log("응답 본문: " + xhr.responseText); // 서버에서 보낸 응답 본문
+                console.log(err);
+            }
+        });
         const postCard = document.createElement("div");
         postCard.classList.add("post-card");
         postCard.innerHTML = `

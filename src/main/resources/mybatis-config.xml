@@ -31,5 +31,6 @@
         <typeAlias type="com.spring.admin.dto.MbtiGroupActivityAverageDTO" alias="mbtiActivity"></typeAlias>
         <typeAlias type="com.spring.friends.dto.FriendsDTO" alias="friends"></typeAlias>
         <typeAlias type="com.spring.notification.dto.NotificationDTO" alias="notification"></typeAlias>
+        <typeAlias type="com.spring.homefeed.dto.HomeFeedDTO" alias="homeFeed"></typeAlias>
     </typeAliases>
 </configuration>
