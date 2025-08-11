@@ -13,6 +13,23 @@
 </head>
 <body>
 
+<%-- 시간 문자열 사전 계산 (LocalDateTime 대비 try→fallback) --%>
+<c:set var="startStr" value=""/>
+<c:catch>
+  <fmt:formatDate value="${groupScheduleDTO.startTime}" pattern="yyyy.MM.dd HH:mm" var="startStr"/>
+</c:catch>
+<c:if test="${empty startStr}">
+  <c:set var="startStr" value="${fn:replace(groupScheduleDTO.startTime, 'T', ' ')}"/>
+</c:if>
+
+<c:set var="endStr" value=""/>
+<c:catch>
+  <fmt:formatDate value="${groupScheduleDTO.endTime}" pattern="yyyy.MM.dd HH:mm" var="endStr"/>
+</c:catch>
+<c:if test="${empty endStr}">
+  <c:set var="endStr" value="${fn:replace(groupScheduleDTO.endTime, 'T', ' ')}"/>
+</c:if>
+
 <div class="page">
   <header class="page__header">
     <h2 class="page__title">모임 일정 상세보기</h2>
@@ -26,86 +43,62 @@
       <p class="card__subtitle">일정의 주정보와 상태</p>
     </div>
 
-    <div class="info">
-      <div class="info__row">
-        <span class="label-small">리더</span>
-        <span class="badge">${leaderNickName}</span>
+    <!-- table-like grid -->
+    <div class="info-table">
+      <div class="info-row">
+        <div class="info-th">리더</div>
+        <div class="info-td"><span class="badge">${leaderNickName}</span></div>
       </div>
 
-      <div class="info__row">
-        <span class="label-small">제목</span>
-        <p class="info__title">${groupScheduleDTO.title}</p>
+      <div class="info-row">
+        <div class="info-th">제목</div>
+        <div class="info-td"><p class="info__title">${groupScheduleDTO.title}</p></div>
       </div>
 
-      <div class="info__row">
-        <span class="label-small">설명</span>
-        <p class="info__desc">${groupScheduleDTO.description}</p>
+      <div class="info-row info-row--desc">
+        <div class="info-th">설명</div>
+        <div class="info-td"><p class="info__desc">${groupScheduleDTO.description}</p></div>
       </div>
 
-      <div class="info__grid">
-        <div class="info__cell">
-          <span class="label-small">시작</span>
-          <p class="info__time">
-            <!-- 시작 시간 -->
-            <c:set var="startStr" value=""/>
-            <c:catch var="startErr">
-              <fmt:formatDate value="${groupScheduleDTO.startTime}" pattern="yyyy.MM.dd HH:mm" var="startStr"/>
-            </c:catch>
-            <c:if test="${empty startStr}">
-              <c:set var="startStr" value="${fn:replace(groupScheduleDTO.startTime, 'T', ' ')}"/>
-            </c:if>
-            <p class="info__time">${startStr}</p>
-          </p>
-        </div>
-        <div class="info__cell">
-          <span class="label-small">종료</span>
-          <p class="info__time">
-            <!-- 종료 시간 -->
-            <c:set var="endStr" value=""/>
-            <c:catch var="endErr">
-              <fmt:formatDate value="${groupScheduleDTO.endTime}" pattern="yyyy.MM.dd HH:mm" var="endStr"/>
-            </c:catch>
-            <c:if test="${empty endStr}">
-              <c:set var="endStr" value="${fn:replace(groupScheduleDTO.endTime, 'T', ' ')}"/>
-            </c:if>
-            <p class="info__time">${endStr}</p>
-          </p>
-        </div>
-        <div class="info__cell">
-          <span class="label-small">정원</span>
-          <p class="info__quota"><strong>${groupScheduleDTO.maxUserNum}</strong> 명</p>
-        </div>
+      <div class="info-row">
+        <div class="info-th">시작</div>
+        <div class="info-td"><p class="info__time">${startStr}</p></div>
       </div>
 
-      <!-- 상태/참여 영역 -->
-      <div class="info__row">
+      <div class="info-row">
+        <div class="info-th">종료</div>
+        <div class="info-td"><p class="info__time">${endStr}</p></div>
+      </div>
+
+      <div class="info-row">
+        <div class="info-th">정원</div>
+        <div class="info-td"><p class="info__quota"><strong>${groupScheduleDTO.maxUserNum}</strong> 명</p></div>
+      </div>
+    </div>
+
+    <!-- 상태/참여 영역 -->
+    <div class="info-status <c:if test='${groupScheduleDTO.status eq 1}'>closed</c:if>">
+      <div class="status-left">
         <c:choose>
           <c:when test="${groupScheduleDTO.status eq 0}">
-            <div class="c-status c-status--open">
-              <span class="c-status__dot"></span>
-              모집중
-            </div>
-            <c:if test="${sessionScope.userId ne groupScheduleDTO.scheduleLeader}">
-              <div class="actions">
-                <button class="btn btn--ghost"
-                        onclick="clickJoinSchedule(${sessionScope.userId}, ${groupScheduleDTO.id})">
-                  참여 신청
-                </button>
-              </div>
-            </c:if>
+            <div class="c-status c-status--open"><span class="c-status__dot"></span> 모집중</div>
           </c:when>
           <c:when test="${groupScheduleDTO.status eq 1}">
-            <div class="c-status c-status--closed">
-              <span class="c-status__dot"></span>
-              모집 완료
-            </div>
+            <div class="c-status c-status--closed"><span class="c-status__dot"></span> 모집 완료</div>
           </c:when>
         </c:choose>
+      </div>
+
+      <div class="status-right actions">
+        <c:if test="${sessionScope.userId ne groupScheduleDTO.scheduleLeader && groupScheduleDTO.status eq 0}">
+          <button class="btn btn--ghost"
+                  onclick="clickJoinSchedule(${sessionScope.userId}, ${groupScheduleDTO.id})">
+            참여 신청
+          </button>
+        </c:if>
 
         <c:if test="${sessionScope.userId eq groupScheduleDTO.scheduleLeader && groupScheduleDTO.status eq 0}">
-          <div class="actions">
-            <button class="btn btn--danger" onclick="endRecruit(${groupScheduleDTO.id})">모집 종료</button>
-          </div>
+          <button class="btn btn--danger" onclick="endRecruit(${groupScheduleDTO.id})">모집 종료</button>
         </c:if>
       </div>
     </div>
@@ -119,36 +112,47 @@
         <p class="card__subtitle">대기/수락 상태를 관리하세요</p>
       </div>
 
-      <c:forEach var="schedule" items="${scheduleList}">
-        <div class="applicant">
-          <div class="applicant__main">
-            <div class="applicant__meta">
-              <span class="badge">${schedule.nickName}</span>
-              <span class="muted">★ ${schedule.rating}</span>
-              <span class="muted">${schedule.region}</span>
-              <span class="muted">${schedule.mbti}</span>
-            </div>
-
-            <c:choose>
-              <c:when test="${schedule.status eq 0}">
-                <div class="actions">
-                  <button class="btn btn--primary"
-                          onclick="acceptHandler(${schedule.userId}, ${schedule.groupScheduleId})">
-                    수락
-                  </button>
-                  <button class="btn btn--ghost"
-                          onclick="refuseHandler(${schedule.userId}, ${schedule.groupScheduleId})">
-                    거절
-                  </button>
-                </div>
-              </c:when>
-              <c:when test="${schedule.status eq 1}">
-                <div class="c-tag c-tag--approved">수락됨</div>
-              </c:when>
-            </c:choose>
-          </div>
+      <div class="applicant-table">
+        <div class="applicant-thead">
+          <div class="applicant-th">신청자</div>
+          <div class="applicant-th">정보</div>
+          <div class="applicant-th th-actions">처리</div>
         </div>
-      </c:forEach>
+
+        <c:forEach var="schedule" items="${scheduleList}">
+          <div class="applicant-tr">
+            <div class="applicant-td">
+              <span class="badge">${schedule.nickName}</span>
+            </div>
+            <div class="applicant-td">
+              <div class="applicant__meta">
+                <span class="muted">★ ${schedule.rating}</span>
+                <span class="muted">${schedule.region}</span>
+                <span class="muted">${schedule.mbti}</span>
+              </div>
+            </div>
+            <div class="applicant-td">
+              <c:choose>
+                <c:when test="${schedule.status eq 0}">
+                  <div class="actions">
+                    <button class="btn btn--primary"
+                            onclick="acceptHandler(${schedule.userId}, ${schedule.groupScheduleId})">
+                      수락
+                    </button>
+                    <button class="btn btn--ghost"
+                            onclick="refuseHandler(${schedule.userId}, ${schedule.groupScheduleId})">
+                      거절
+                    </button>
+                  </div>
+                </c:when>
+                <c:when test="${schedule.status eq 1}">
+                  <div class="c-tag c-tag--approved">수락됨</div>
+                </c:when>
+              </c:choose>
+            </div>
+          </div>
+        </c:forEach>
+      </div>
     </section>
   </c:if>
 

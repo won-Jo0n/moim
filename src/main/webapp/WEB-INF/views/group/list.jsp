@@ -14,10 +14,15 @@
     <div class="group-list-wrap">
         <h2>모임 목록</h2>
 
+
+    <div class="controls">
+        <a href="/group/create" class="btn-create">모임 만들기</a>
+
         <form action="/group/list" method="get" class="search-form">
-            <input type="text" name="keyword" placeholder="검색어를 입력하세요" value="${param.keyword}"/>
-            <button type="submit">검색</button>
+          <input type="text" name="keyword" placeholder="검색어를 입력하세요" value="${param.keyword}"/>
+          <button type="submit">검색</button>
         </form>
+      </div>
 
         <table>
             <thead>
