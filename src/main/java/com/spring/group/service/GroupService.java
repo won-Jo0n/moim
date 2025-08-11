@@ -148,6 +148,11 @@ public class GroupService {
 
 
     public List<GroupDTO> getPaginationGroups(Map<String, Object> params) {
-        return groupRepository.getPaginationGroups(params);
+        if(params.get("keyword") == null){
+            return groupRepository.getPaginationGroups(params);
+        }else{
+            return groupRepository.searchByPaginationGroups(params);
+        }
+
     }
 }

@@ -120,5 +120,12 @@
         ORDER BY createdAt DESC
         LIMIT #{limit} OFFSET #{offset};
     </select>
+    <select id="searchByPaginationGroups" resultType="group">
+        SELECT * FROM `group`
+        WHERE (title LIKE CONCAT('%', #{keyword}, '%')
+        OR location LIKE CONCAT('%', #{keyword}, '%'))
+        ORDER BY createdAt DESC
+        LIMIT #{limit} OFFSET #{offset};
+    </select>
 
 </mapper>
