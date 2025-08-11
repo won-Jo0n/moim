@@ -179,8 +179,15 @@ public class GroupController {
 
     // 그룹 수정 작성폼 // update.jsp
     @GetMapping("/update")
-    public String updateForm(@RequestParam("id") int id, Model model) {
-        GroupDTO group = groupService.findById(id);
+    public String updateForm(@RequestParam(value = "groupId", required = false) Integer groupId,
+                             @RequestParam(value = "id", required = false) Integer id,
+                             Model model) {
+        Integer key = (groupId != null) ? groupId : id;
+        if (key == null) {
+            // 잘못 들어오면 리스트로 돌려보내기(선택)
+            return "redirect:/group/list";
+        }
+        GroupDTO group = groupService.findById(key);
         model.addAttribute("group", group);
         return "group/update";
     }

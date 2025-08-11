@@ -1,5 +1,5 @@
 /* ============================
-   groupDetail.css (refined grid/layout)
+   groupDetail.css (final)
    모던 · 미니멀 · 따뜻한 퍼플 톤
    ============================ */
 :root{
@@ -30,12 +30,49 @@ body{
   background:linear-gradient(180deg, var(--color-bg), #FFF);
 }
 
+/* ====== 상단 액션 영역 (예: 그룹 일정 생성 버튼) ====== */
+.page-actions{
+  max-width:980px;
+  margin:24px auto 8px;
+  padding:0 2px;
+  display:flex;
+  align-items:center;
+  gap:10px 12px;
+}
+.page-actions--in{
+  margin: -4px 0 12px; /* 필요 시 -6~8px 범위로 미세조정 */
+  padding-left: 0;
+}
+
+/* ====== 공통 컨테이너 ====== */
+.group-info-container{
+  --container-pad: 24px;
+  max-width:980px;
+  margin:24px auto 28px;
+  padding:var(--container-pad);
+  background:var(--color-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius-xl);
+  box-shadow:var(--shadow-md);
+  display:grid;
+  gap:14px;
+}
+
+/* inline style로 내려오는 버튼/폼 줄맞춤 보정 */
+.group-info-container > div[style]{
+  display:flex !important;
+  flex-wrap:wrap;
+  gap:10px 12px;
+  align-items:center;
+}
+form{display:inline}
+
 /* ====== Group hero (img left, table right) ====== */
 .group-hero{
   --img-col-min: 220px;
   --img-col-max: 260px;
-  max-width:980px;
-  margin:40px auto 24px;
+  width:100%;
+  margin:0;                 /* 컨테이너 안에서 왼쪽 라인 맞춤 */
   padding:22px;
   display:grid;
   grid-template-columns: minmax(var(--img-col-min), var(--img-col-max)) 1fr;
@@ -44,20 +81,20 @@ body{
   border:1px solid var(--border);
   border-radius:var(--radius-xl);
   box-shadow:var(--shadow-md);
-  align-items:stretch; /* 좌우 높이 맞춤 */
+  align-items:stretch;
 }
 
 .group-hero__media{
   display:grid;
-  align-items:stretch;       /* 내부 컨텐츠도 부모 높이에 맞춤 */
+  align-items:stretch;
   justify-items:stretch;
-  min-height:220px;          /* 너무 낮아지지 않도록 기본 높이 */
+  min-height:220px;
 }
 
 .group-hero__img{
   width:100%;
   height:auto;
-  aspect-ratio:1/1;          /* 정사각 유지 */
+  aspect-ratio:1/1;
   object-fit:cover;
   border-radius:16px;
   border:1px solid var(--border);
@@ -75,7 +112,7 @@ body{
   overflow:hidden;
   text-overflow:ellipsis;
   display:-webkit-box;
-  -webkit-line-clamp:2;      /* 제목 2줄 clamp */
+  -webkit-line-clamp:2;
   -webkit-box-orient:vertical;
 }
 
@@ -99,7 +136,7 @@ body{
 .info-table tr:last-child th,
 .info-table tr:last-child td{border-bottom:none}
 .info-table th{
-  width:128px;               /* 조금 더 넉넉하게 */
+  width:128px;
   font-weight:700;
   color:var(--color-accent);
   background:linear-gradient(180deg,#FBF9FF,#FFF);
@@ -110,57 +147,8 @@ body{
   word-break:keep-all;
 }
 
-/* ====== 공통 컨테이너 / 섹션 ====== */
-.group-info-container{
-  --container-pad: 24px;
-  max-width:980px;
-  margin:40px auto 28px;
-  padding:var(--container-pad);
-  background:var(--color-card);
-  border:1px solid var(--border);
-  border-radius:var(--radius-xl);
-  box-shadow:var(--shadow-md);
-  display:grid;
-  gap:14px;
-}
-
-.group-info-container > h2{
-  margin:0;
-  font-size:28px;
-  font-weight:800;
-  color:var(--color-accent);
-  letter-spacing:-0.2px;
-}
-
-/* 대표 이미지 (상단 단독) */
-.group-info-container > img{
-  width:100%;
-  max-height:320px;
-  object-fit:cover;
-  border-radius:16px;
-  border:1px solid var(--border);
-  box-shadow:var(--shadow-sm);
-  margin:4px 0 2px;
-}
-
-/* 정보 텍스트 */
-.group-info-container p{
-  margin:6px 0;
-  line-height:1.7;
-}
-.group-info-container strong{color:var(--color-accent)}
-
-/* 액션 버튼 영역 (inline style로 오는 경우 대비) */
-.group-info-container > div[style]{
-  display:flex !important;
-  flex-wrap:wrap;
-  gap:10px 12px;
-  align-items:center;
-}
-form{display:inline}
-
 /* ====== 버튼 ====== */
-button, .btn-link{
+button{
   appearance:none;
   border:none;
   padding:10px 14px;
@@ -171,7 +159,7 @@ button, .btn-link{
   box-shadow:0 4px 10px rgba(0,0,0,0.04);
 }
 button:active{transform:translateY(1px)}
-button:focus-visible, .btn-link:focus-visible{outline:none; box-shadow:var(--focus)}
+button:focus-visible{outline:none; box-shadow:var(--focus)}
 
 .btn-primary{
   background:linear-gradient(180deg, var(--color-main), var(--color-accent));
@@ -192,14 +180,6 @@ button:focus-visible, .btn-link:focus-visible{outline:none; box-shadow:var(--foc
   border:1px solid #F1C7C7;
 }
 .btn-danger:hover{filter:brightness(0.98)}
-
-.btn-link{
-  background:rgba(126,87,194,0.08);
-  color:var(--color-main);
-  text-decoration:none;
-  display:inline-block;
-}
-.btn-link:hover{background:rgba(126,87,194,0.14)}
 
 /* ====== 섹션 타이틀 ====== */
 h3{
@@ -321,44 +301,44 @@ tbody tr:hover td{background:#FAF8FF}
 /* ====== 반응형 ====== */
 @media (max-width: 900px){
   .group-hero{
-    grid-template-columns: minmax(180px, 200px) 1fr; /* 이미지 칼럼 자연 축소 */
+    grid-template-columns: minmax(180px, 200px) 1fr;
     gap:14px;
   }
   .info-table th{width:112px}
 }
 
 @media (max-width: 760px){
-  .group-info-container{margin:24px 14px; padding:18px}
+  .group-info-container{margin:16px 14px; padding:18px}
+  .group-hero{
+    grid-template-columns:1fr;
+    padding:16px;
+  }
+  .group-hero__media{min-height:auto; justify-items:start}
+  .group-hero__img{width:160px; aspect-ratio:1/1}
+
   .post-card{
     grid-template-columns: 1fr;
     align-items:start;
   }
   .post-card img{width:100%; height:auto; aspect-ratio:16/9}
 
-  /* 표를 카드형으로 재배치 */
+  /* 표를 간소화 */
   thead{display:none}
   table, tbody, tr, td{display:block; width:100%}
   tbody tr{border-bottom:1px solid var(--border)}
   tbody td{border:none; padding:10px 14px}
-  tbody td::before{
-    content: attr(data-label);
-    display:block; font-size:12px; color:var(--color-muted); margin-bottom:4px;
-  }
+}
 
-  /* Group hero 모바일 오버라이드 */
-  .group-hero{
-    grid-template-columns:1fr;
-    padding:16px;
-  }
-  .group-hero__media{
-    min-height:auto;
-    justify-items:start;
-  }
-  .group-hero__img{
-    width:160px;
-    aspect-ratio:1/1;
-  }
-  .info-table th{width:auto}
+/* 매니저 관리: 빈 상태 메시지도 제목(h3)과 같은 그리드에 정렬 */
+.manager-empty{
+  max-width:980px;
+  margin:0 auto 12px;          /* h3와 동일 축 */
+  padding:12px 16px;
+  color:var(--color-muted);
+  background:#fff;
+  border:1px dashed var(--border);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-sm);
 }
 
 /* ====== 접근성 & 모션 선호 ====== */
