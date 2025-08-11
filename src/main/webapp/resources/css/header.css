@@ -376,7 +376,7 @@ body {
   font-size: 0.9rem;
   align-self: flex-end;
   text-align: center;
-  background-color: #0095f6;
+  background-color: var(--sub-color);
   border-radius: 5px;
   padding: 1px;
   color: white;
@@ -536,7 +536,7 @@ body {
       }
 
       .chat-message-wrapper.sent .read-status i{
-        color:#efefef;
+        color:#ccc;
       }
 
       .chat-message-wrapper.received .read-status i{
@@ -544,6 +544,46 @@ body {
       }
 
     /* 알림 사이드바 스타일 */
+
+        .fas.fa-bell {
+          position: relative;
+          display: inline-block;
+        }
+
+      #notification-count {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: var(--sub-color);
+        color: white;
+        border-radius: 50%;
+        padding: 2px 6px;
+        font-size: 12px;
+        line-height: 1;
+        transform: translate(50%, -50%);
+      }
+
+      #notification-count:empty {
+        display: none;
+      }
+
+      #chat-unread-count {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: var(--sub-color);
+        color: white;
+        border-radius: 50%;
+        padding: 2px 6px;
+        font-size: 12px;
+        line-height: 1;
+        transform: translate(50%, -50%);
+      }
+
+      #chat-unread-count:empty {
+          display: none;
+        }
+
       .notification-sidebar {
         position: fixed;
         top: 0;

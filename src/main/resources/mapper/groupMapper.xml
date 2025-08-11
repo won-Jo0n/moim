@@ -101,7 +101,7 @@
     </select>
 
     <select id="getScheduleGroupByGroup" parameterType="int" resultType="userSchedule">
-        SELECT * FROM userschedule WHERE groupScheduleId = #{groupScheduleId};
+        SELECT * FROM userschedule WHERE groupScheduleId = #{groupScheduleId} AND status = 0;
     </select>
 
     <update id="acceptSchedule" parameterType="schedule">
