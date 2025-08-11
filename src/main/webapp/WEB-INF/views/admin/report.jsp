@@ -7,139 +7,17 @@
 <head>
     <meta charset="UTF-8">
     <title>관리자 신고함</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f7f6;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-
-        h2 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 25px;
-        }
-
-        .table-container {
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 0;
-        }
-
-        thead th {
-            background-color: #007bff;
-            color: white;
-            padding: 15px 12px;
-            text-align: left;
-            font-weight: bold;
-        }
-
-        tbody tr {
-            border-bottom: 1px solid #ddd;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-
-        tbody tr:last-child {
-            border-bottom: none;
-        }
-
-        tbody tr:hover:not(.status-processed) {
-            background-color: #e6f2ff;
-        }
-
-        tbody td {
-            padding: 12px;
-            vertical-align: middle;
-        }
-
-        .status-processed {
-            background-color: #e9ecef;
-            color: #888;
-            cursor: default;
-        }
-
-        .status-processed:hover {
-             background-color: #e9ecef;
-        }
-
-        .status-pending {
-            color: #dc3545; /* Red for pending */
-            font-weight: bold;
-        }
-
-        .status-completed {
-            color: #28a745; /* Green for completed */
-            font-weight: bold;
-        }
-
-        .action-button {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.2s ease;
-        }
-
-        .action-button:hover {
-            background-color: #218838;
-        }
-
-        .action-button:disabled {
-            background-color: #6c757d;
-            cursor: not-allowed;
-        }
-
-        .pagination {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .pagination a {
-            display: inline-block;
-            padding: 8px 16px;
-            text-decoration: none;
-            color: #007bff;
-            border: 1px solid #ddd;
-            margin: 0 4px;
-            border-radius: 4px;
-            transition: background-color 0.2s ease;
-        }
-
-        .pagination a:hover:not(.active) {
-            background-color: #e9ecef;
-        }
-
-        .pagination a.active {
-            background-color: #007bff;
-            color: white;
-            border: 1px solid #007bff;
-        }
-    </style>
+    <link rel="stylesheet" href="/resources/css/report.css"
 </head>
 <body>
-
+<jsp:include page="adminSidebar.jsp" />
 <div class="container">
-    <h2>신고 내역 관리</h2>
+    <div class="header-container">
+        <h2>신고 내역 관리</h2>
+        <div class="top-button-container">
+            <button onclick="window.history.back()" class="back-to-home-button">돌아가기</button>
+        </div>
+    </div>
 
     <div class="table-container">
         <table>

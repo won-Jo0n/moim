@@ -2,11 +2,11 @@
 
 /* --- 기본 설정 --- */
 :root {
-    --bg-color: #1a1a2e;
-    --sidebar-color: #16213e;
-    --card-bg-color: #2b2b48;
-    --text-color: #e0e0e0;
-    --primary-color: #e94560; /* 강조 색상 (빨강 계열) */
+    --bg-color: #F5F5F5;
+    --sidebar-color: #E0E0E0;
+    --card-bg-color: #E0E0E0;
+    --text-color: #333333;
+    --primary-color: #1A1A1A; /* 강조 색상 (빨강 계열) */
     --secondary-color: #537d9d; /* 보조 강조 색상 (파랑 계열) */
     --pending-color: #ffc107; /* 처리 대기 (노랑) */
     --completed-color: #28a745; /* 처리 완료 (초록) */
@@ -21,44 +21,6 @@ body {
     min-height: 100vh;
 }
 
-/* --- 사이드바 --- */
-.sidebar {
-    width: 250px;
-    background-color: var(--sidebar-color);
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
-}
-
-.logo {
-    text-align: center;
-    margin-bottom: 30px;
-}
-.logo h2 {
-    color: var(--primary-color);
-    margin: 0;
-    font-size: 28px;
-}
-
-.main-nav a {
-    display: block;
-    color: var(--text-color);
-    text-decoration: none;
-    padding: 15px 20px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    transition: background-color 0.3s, color 0.3s;
-    font-size: 16px;
-}
-.main-nav a i {
-    margin-right: 15px;
-    width: 20px;
-}
-.main-nav a:hover, .main-nav a.active {
-    background-color: rgba(233, 69, 96, 0.1);
-    color: var(--primary-color);
-}
 
 /* --- 메인 콘텐츠 영역 --- */
 .main-content {
@@ -122,7 +84,7 @@ body {
 .card-info h4 {
     margin: 0;
     font-size: 16px;
-    color: #b0b0d0;
+    color: #3d3d49;
 }
 .card-info .count {
     font-size: 32px;
@@ -169,13 +131,24 @@ body {
     text-align: left;
     padding: 12px 15px;
     background-color: #3f3f61;
-    color: #fff;
-    border-bottom: 1px solid #555;
+    color: #F5F5F5;
 }
+
+.data-table .first-th{
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.data-table .last-th{
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
 .data-table tbody td {
     padding: 12px 15px;
     border-bottom: 1px solid #3f3f61;
 }
+
 .data-table tbody tr:last-child td {
     border-bottom: none;
 }
@@ -195,7 +168,7 @@ body {
 }
 .status.completed {
     background-color: var(--completed-color);
-    color: #fff;
+    color: #F5F5F5;
 }
 
 .placeholder-chart {

@@ -1,6 +1,7 @@
 package com.spring.userjoingroup.service;
 
 
+import com.spring.group.service.GroupService;
 import com.spring.userjoingroup.dto.UserJoinGroupDTO;
 import com.spring.userjoingroup.repository.UserJoinGroupRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import java.util.List;
 public class UserJoinGroupService {
 
     private final UserJoinGroupRepository userJoinGroupRepository;
+    private final GroupService groupService;
 
     // 모임 참여 신청
     public void applyToGroup(int userId, int groupId,
@@ -73,4 +75,40 @@ public class UserJoinGroupService {
         UserJoinGroupDTO dto = userJoinGroupRepository.findOneByGroupIdAndUserId(groupId, userId);
         return dto != null && "approved".equals(dto.getStatus());
     }
+
+    public boolean isLeader(int userId, int groupId) {
+        return groupService.findById(groupId).getLeader() == userId;
+    }
+
+    public boolean isManager(int userId, int groupId) {
+        return userJoinGroupRepository.isManager(userId, groupId);
+    }
+
+    public boolean canCreateSchedule(int userId, int groupId) {
+        return isLeader(userId, groupId) || isManager(userId, groupId);
+    }
+
+    // 리더만 매니저 부여/해제 가능
+    public void grantManager(int leaderId, int groupId, int targetUserId) {
+        if (!isLeader(leaderId, groupId)) {
+            throw new IllegalStateException("권한 없음: 리더만 매니저를 지정할 수 있습니다.");
+        }
+        if (!userJoinGroupRepository.isApprovedMember(targetUserId, groupId)) {
+            throw new IllegalStateException("승인된 멤버에게만 매니저를 부여할 수 있습니다.");
+        }
+        // 리더 자신에게 매니저 부여 방지
+        if (groupService.findById(groupId).getLeader() == targetUserId) {
+            throw new IllegalStateException("리더는 별도 매니저 지정이 필요 없습니다.");
+        }
+        userJoinGroupRepository.updateRole(groupId, targetUserId, "manager");
+    }
+
+    public void revokeManager(int leaderId, int groupId, int targetUserId) {
+        if (!isLeader(leaderId, groupId)) {
+            throw new IllegalStateException("권한 없음: 리더만 매니저를 해제할 수 있습니다.");
+        }
+        userJoinGroupRepository.updateRole(groupId, targetUserId, "member");
+    }
+
+
 }

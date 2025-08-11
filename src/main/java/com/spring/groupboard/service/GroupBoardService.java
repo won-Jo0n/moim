@@ -38,5 +38,10 @@ public class GroupBoardService {
         groupBoardRepository.delete(id);
     }
 
+    // 조회수 증가
+    public void increaseHits(int id) {
+        groupBoardRepository.increaseHits(id);
+    }
+
 
 }

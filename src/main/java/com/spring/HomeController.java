@@ -1,5 +1,7 @@
 package com.spring;
 
+import com.spring.mbti.dto.MbtiBoardDTO;
+import com.spring.mbti.service.MbtiBoardService;
 import com.spring.user.dto.UserDTO;
 import com.spring.user.service.UserService;
 import com.spring.userdetails.CustomerUserDetails;
@@ -15,10 +17,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
 public class HomeController {
+    private final MbtiBoardService mbtiBoardService;
     private final UserService userService;
     @GetMapping("/")
     public String index(){
@@ -50,6 +54,11 @@ public class HomeController {
         session.setAttribute("userId", loginUser.getId());
 
         model.addAttribute("loginUser", loginUser);
+
+
+        //List<MbtiBoardDTO> boardList = mbtiBoardService.findAll();
+        //model.addAttribute("boardList", boardList);
+
         return "home";
     }
 

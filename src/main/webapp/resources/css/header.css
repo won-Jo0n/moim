@@ -3,6 +3,9 @@
   --sidebar-width-tablet: 72px;
   --sidebar-nav-icon-size: 30px;
   --sidebar-height-mobile: 80px;
+
+  --main-color: #7e57c2;
+  --sub-color: #b18fcf;
 }
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
@@ -15,7 +18,7 @@ body {
 .sidebar {
   width: var(--sidebar-width-desktop);
   height: 100vh;
-  background-color: #ffffff;
+  background: #fafafa;
   border-right: 1px solid #dbdbdb;
   position: fixed;
   top: 0;
@@ -71,7 +74,8 @@ body {
 }
 
 .sidebar-nav a.active {
-  background-color: #dbdbdb;
+  background-color: var(--main-color);
+  color:#fafafa;
 }
 
 .sidebar-nav a i {
@@ -92,17 +96,6 @@ body {
 .logo-svg {
   width: 100px;
   height: auto;
-  animation: logo-bounce 2s ease-in-out infinite;
-}
-
-@keyframes logo-bounce {
-  0%,
-  100% {
-    transform: translateY(3px);
-  }
-  50% {
-    transform: translateY(-3px);
-  }
 }
 
 /* 메시지 컨테이너 */
@@ -132,7 +125,8 @@ body {
 }
 
 #message-btn {
-  background-color: #ffffff;
+  background-color: var(--main-color);
+  color:#ffffff;
   border: 1px solid #dbdbdb;
   border-radius: 30px;
   width: 60px;
@@ -147,12 +141,12 @@ body {
 }
 
 #message-btn:hover {
-  background-color: #f0f0f0;
+  background-color: var(--sub-color);
 }
 
 #message-btn i {
   font-size: 1.5rem;
-  color: #262626;
+  color: #fafafa;
 }
 
 /* 헤더 스타일 */
@@ -232,7 +226,7 @@ body {
 .tab-button.active {
   color: #262626;
   background-color: #ffffff;
-  border-bottom: 2px solid #0095f6;
+  border-bottom: 2px solid var(--main-color);
 }
 .tab-content {
   flex: 1;
@@ -419,7 +413,7 @@ body {
 .random-match-btn {
   width: 100%;
   padding: 10px;
-  background-color: #0095f6;
+  background-color: var(--main-color);
   color: white;
   border: none;
   border-radius: 8px;
@@ -477,7 +471,7 @@ body {
 .chat-footer button {
   background-color: transparent;
   border: none;
-  color: #0095f6;
+  color: var(--main-color);
   font-size: 1.2rem;
   margin-left: 10px;
   cursor: pointer;
@@ -507,7 +501,7 @@ body {
       }
 
       .chat-message-wrapper.sent .chat-message {
-        background-color: #0095f6;
+        background-color: var(--sub-color);
         color: white;
         border-bottom-right-radius: 5px;
       }
@@ -530,7 +524,6 @@ body {
 
       .read-status {
         font-weight: bold;
-        color: #0095f6;
         display:none;
       }
 
@@ -540,6 +533,14 @@ body {
 
       .chat-message-wrapper.read .read-status{
         display:inline-block;
+      }
+
+      .chat-message-wrapper.sent .read-status i{
+        color:#efefef;
+      }
+
+      .chat-message-wrapper.received .read-status i{
+        color:var(--main-color);
       }
 
     /* 알림 사이드바 스타일 */
@@ -553,6 +554,7 @@ body {
         box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
         transform: translateX(-100%);
         transition: transform 0.3s ease-in-out;
+        overflow-y:auto;
         z-index: 999;
       }
 
@@ -587,21 +589,69 @@ body {
         color: #333;
       }
 
-      .notification-list ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
+      .notification-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 15px;
+          border-bottom: 1px solid #eee;
+          font-size: 0.9rem;
+          color: #555;
       }
 
-      .notification-list li {
-        padding: 15px;
-        border-bottom: 1px solid #eee;
-        font-size: 0.9rem;
-        color: #555;
+      .notification-item:last-child {
+          border-bottom: none;
       }
 
-      .notification-list li:last-child {
-        border-bottom: none;
+      .notification-item.notification-btn{
+        cursor:pointer;
+      }
+      .notification-item.notification-btn:hover{
+        background-color: #f0f0f0;
+      }
+
+      .notification-content {
+          display: flex;
+          align-items: center;
+          flex-grow: 1;
+      }
+
+      .notification-icon {
+          font-size: 1.2rem;
+          color: var(--main-color); /* 아이콘 색상 */
+          margin-right: 10px;
+          width: 20px; /* 아이콘 너비 고정 */
+          text-align: center;
+      }
+
+      .notification-text strong {
+          font-weight: bold;
+          color: #333;
+      }
+
+      .notification-actions {
+          display: flex;
+          gap: 5px;
+          flex-shrink: 0;
+      }
+
+      .notification-actions button {
+          padding: 5px 10px;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          font-size: 0.8rem;
+          white-space: nowrap;
+      }
+
+      .notification-actions .accept-btn {
+          background-color: var(--main-color);
+          color: white;
+      }
+
+      .notification-actions .decline-btn {
+          background-color: var(--sub-color);
+          color: white;
       }
 
 @media (min-width: 768px) and (max-width: 1023px) {
@@ -644,7 +694,9 @@ body {
 
   .notification-sidebar{
     left : 0;
+    padding-bottom:var(--sidebar-height-mobile);
    }
+
 
   #message-container {
     width: 60px;

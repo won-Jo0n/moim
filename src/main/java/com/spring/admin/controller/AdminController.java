@@ -89,7 +89,7 @@ public class AdminController {
         ObjectMapper objectMapper = new ObjectMapper();
         String statsJson = objectMapper.writeValueAsString(statsList);
         model.addAttribute("statsJson", statsJson);
-
+        model.addAttribute("activeMenu", "admin");
 
 
         return "/admin/admin";
@@ -140,6 +140,8 @@ public class AdminController {
         model.addAttribute("pageInfo", pageInfo);
         model.addAttribute("formattedDates", formattedDates);
 
+        model.addAttribute("activeMenu", "report");
+
         return "/admin/report";
     }
 
@@ -177,6 +179,7 @@ public class AdminController {
         model.addAttribute("pageInfo", pageInfo);
         model.addAttribute("formattedTime", formattedTime);
 
+        model.addAttribute("activeMenu", "penalties");
         return "/admin/penalties";
     }
 
@@ -345,7 +348,7 @@ public class AdminController {
 
         model.addAttribute("statsList", statsList);
         model.addAttribute("statsJson", statsJson);
-
+        model.addAttribute("activeMenu", "chart");
 
         // JSP 페이지로 이동
         return "/admin/chart";
