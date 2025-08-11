@@ -22,6 +22,7 @@ public class MbtiBoardDTO {
     private String authorInfo;
     private Integer hits;
 
+
     public Date getCreatedAtAsDate() {
         return Timestamp.valueOf(createdAt);
     }

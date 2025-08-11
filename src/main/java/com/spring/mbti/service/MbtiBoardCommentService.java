@@ -33,5 +33,10 @@ public class MbtiBoardCommentService {
         commentRepository.delete(id);
     }
 
+    public List<MbtiBoardCommentDTO> getComments(int boardId) {
+        return commentRepository.findCommentsByBoardId(boardId);
+    }
+
+
 
 }
