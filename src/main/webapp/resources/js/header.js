@@ -348,7 +348,7 @@ function createNotificationItem(notification) {
   if (notification.type != "FRIEND_REQUEST") {
     notificationItem.on("click", () => {
       readNotification(notification.id);
-      window.location.href = notification.path;
+      if(notification.path) window.location.href = notification.path;
     });
   }
   notificationList.prepend(notificationItem);

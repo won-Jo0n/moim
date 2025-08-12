@@ -130,7 +130,7 @@ public class GroupService {
             notificationDTO.setRelatedId(groupScheduleDTO.getId());
             notificationDTO.setType("NEW_SCHEDULE");
             notificationDTO.setContent(groupScheduleDTO.getTitle());
-            notificationDTO.setPath(null);
+            notificationDTO.setPath("/group/groupScheduleDetail?id=" + groupScheduleDTO.getId());
             notificationService.createNotification(notificationDTO);
         }
     }
