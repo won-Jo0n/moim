@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +31,9 @@ public class HomeFeedController {
     private final FileService fileService;
 
     @GetMapping("/getFeedList")
-    public @ResponseBody List<HomeFeedDTO> getFeedList(){
-        List<HomeFeedDTO> homeFeedList = homeFeedService.getFeedList();
+    public @ResponseBody List<HomeFeedDTO> getFeedList(HttpSession session){
+        UserDTO user = userService.getUserById((int) session.getAttribute("userId"));
+        List<HomeFeedDTO> homeFeedList = homeFeedService.getFeedList(user.getMbtiId());
         return homeFeedList;
     }
 }

@@ -62,9 +62,9 @@
 
     <!-- 댓글 단일 조회 (권한 체크/수정용) -->
     <select id="findById" parameterType="long" resultType="com.spring.mbti.dto.MbtiBoardCommentDTO">
-        SELECT id, boardId, parentId, author, content, createdAt, status
-        FROM mbtiboardcomment
-        WHERE id = #{id}
+        SELECT mbc.id, mbc.boardId, mbc.parentId, mbc.author, mbc.content, mbc.createdAt, mbc.status, u.nickName AS authorNickname
+        FROM mbtiboardcomment mbc JOIN user u ON mbc.author = u.id
+        WHERE mbc.id = #{id}
     </select>
 
     <!-- 댓글 수정 -->

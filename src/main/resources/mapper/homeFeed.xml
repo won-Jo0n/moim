@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="HomeFeed">
-   <select id="getFeedList" resultType="homeFeed">
+   <select id="getFeedList" parameterType="int" resultType="homeFeed">
        SELECT
        b.id,
        b.author,
@@ -17,7 +17,7 @@
        m.mbti,
        COUNT(c.id) AS commentCount,
        CASE
-       WHEN m.id IN (SELECT compatible FROM mbti WHERE mbti = '내_MBTI_유형') THEN 1
+       WHEN m.id IN (SELECT compatible FROM mbti WHERE id = #{mbtiId}) THEN 1
        ELSE 0
        END AS isCompatible
        FROM

@@ -39,7 +39,7 @@ public class ReportController {
             reportService.reportComment(reportDTO);
         }
 
-        return "redirect:/" + reportDTO.getType()+"/detail?id="+reportDTO.getBoardId();
+        return "redirect:/home";
     }
 
     @GetMapping("/detail")

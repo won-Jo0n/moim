@@ -71,7 +71,7 @@ public class MbtiBoardController {
         mbtiBoardService.increaseHitsIfFirstView(session, id);
 
         MbtiBoardDTO board = mbtiBoardService.findById(id);
-        if (board == null) return "redirect:/mbti/board";
+        if (board == null) return "redirect:/home";
 
         List<MbtiBoardCommentDTO> commentList = commentService.findAllByBoardId(id);
 
@@ -93,7 +93,7 @@ public class MbtiBoardController {
         MbtiBoardDTO board = mbtiBoardService.findById(id);
 
         if (board == null) {
-            return "redirect:/mbti/board";
+            return "redirect:/home";
         }
 
         Object sessionUserIdObj = session.getAttribute("userId");
@@ -117,7 +117,7 @@ public class MbtiBoardController {
                          @RequestParam(value = "mbtiBoardFile", required = false) MultipartFile mbtiBoardFile) throws IOException {
 
         MbtiBoardDTO origin = mbtiBoardService.findById((long) boardDTO.getId());
-        if (origin == null) return "redirect:/mbti/board";
+        if (origin == null) return "redirect:/home";
 
         Object sessionUserIdObj = session.getAttribute("userId");
         if (sessionUserIdObj == null) return "redirect:/user/login";
@@ -146,7 +146,7 @@ public class MbtiBoardController {
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable Long id, HttpSession session) {
         MbtiBoardDTO board = mbtiBoardService.findById(id);
-        if (board == null) return "redirect:/mbti/board";
+        if (board == null) return "redirect:/home";
 
         Object sessionUserIdObj = session.getAttribute("userId");
         if (sessionUserIdObj == null) return "redirect:/user/login";
@@ -157,7 +157,7 @@ public class MbtiBoardController {
         }
 
         mbtiBoardService.delete(id);
-        return "redirect:/mbti/board";
+        return "redirect:/home";
     }
 
     @PostMapping(value = "/{id}/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
