@@ -84,7 +84,8 @@
         <input type="text" name="title" required/>
 
         <label>내용:</label>
-        <textarea name="content" required></textarea>
+        <!-- ▼ 내용 textarea만 사이즈 확대 -->
+        <textarea name="content" required rows="14" style="min-height:260px;"></textarea>
 
         <label for="mbtiBoardFile" class="file-label">파일 선택</label>
         <span id="file-name" class="file-name">선택된 파일 없음</span>

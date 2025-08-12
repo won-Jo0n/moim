@@ -5,25 +5,66 @@
 
 <mapper namespace="MbtiBoardComment">
 
-
     <!-- 댓글 저장 -->
     <insert id="save" parameterType="com.spring.mbti.dto.MbtiBoardCommentDTO">
         INSERT INTO mbtiboardcomment (boardId, parentId, author, content, createdAt, status)
         VALUES (#{boardId}, #{parentId}, #{author}, #{content}, NOW(), 0)
     </insert>
 
-    <!-- 댓글 전체 조회 (댓글 + 대댓글 포함), 작성자 닉네임 JOIN -->
-    <select id="findAllByBoardId" resultType="com.spring.mbti.dto.MbtiBoardCommentDTO">
-        SELECT c.*, u.nickname AS authorNickname
+    <!-- 공통 결과 매핑 -->
+    <resultMap id="CommentResultMap" type="com.spring.mbti.dto.MbtiBoardCommentDTO">
+        <id     property="id"        column="id"/>
+        <result property="boardId"   column="boardId"/>
+        <result property="parentId"  column="parentId"/>
+        <result property="author"    column="author"/>
+        <result property="content"   column="content"/>
+        <result property="createdAt" column="createdAt"/>
+        <!-- JSP에서 사용하는 필드 -->
+        <result property="authorNickname" column="authorNickname"/>
+        <result property="profileFileId"  column="profileFileId"/>
+    </resultMap>
+
+    <!-- 댓글 전체 조회 (댓글 + 대댓글, 프로필/닉네임 포함) -->
+    <select id="findAllByBoardId" parameterType="long" resultMap="CommentResultMap">
+        SELECT
+        c.id,
+        c.boardId,
+        c.parentId,
+        c.author,
+        c.content,
+        c.createdAt,
+        u.nickName              AS authorNickname,
+        IFNULL(u.fileId, 0)     AS profileFileId
         FROM mbtiboardcomment c
-        JOIN user u ON c.author = u.id
-        WHERE c.boardId = #{boardId} AND c.status = 0
+        JOIN `user` u ON u.id = c.author
+        WHERE c.boardId = #{boardId}
+        AND c.status  = 0
         ORDER BY c.parentId ASC, c.id ASC
     </select>
 
-    <!-- 댓글 단일 조회 -->
-    <select id="findById" resultType="com.spring.mbti.dto.MbtiBoardCommentDTO">
-        SELECT * FROM mbtiboardcomment WHERE id = #{id}
+    <!-- 동일 기능: 서비스에서 이 id를 쓰는 경우 대비 -->
+    <select id="findByBoardId" parameterType="long" resultMap="CommentResultMap">
+        SELECT
+        c.id,
+        c.boardId,
+        c.parentId,
+        c.author,
+        c.content,
+        c.createdAt,
+        u.nickName              AS authorNickname,
+        IFNULL(u.fileId, 0)     AS profileFileId
+        FROM mbtiboardcomment c
+        JOIN `user` u ON u.id = c.author
+        WHERE c.boardId = #{boardId}
+        AND c.status  = 0
+        ORDER BY c.parentId ASC, c.id ASC
+    </select>
+
+    <!-- 댓글 단일 조회 (권한 체크/수정용) -->
+    <select id="findById" parameterType="long" resultType="com.spring.mbti.dto.MbtiBoardCommentDTO">
+        SELECT id, boardId, parentId, author, content, createdAt, status
+        FROM mbtiboardcomment
+        WHERE id = #{id}
     </select>
 
     <!-- 댓글 수정 -->
@@ -34,23 +75,10 @@
     </update>
 
     <!-- 댓글 논리 삭제 -->
-    <update id="delete">
+    <update id="delete" parameterType="long">
         UPDATE mbtiboardcomment
         SET status = 1
         WHERE id = #{id}
     </update>
-    <select id="findCommentsByBoardId" resultType="com.spring.mbti.dto.MbtiBoardCommentDTO">
-        SELECT
-        c.id,
-        c.board_id      AS boardId,
-        c.parent_id     AS parentId,
-        c.author,
-        c.content,
-        c.created_at    AS createdAt,
-        u.fileId        AS profileFileId   <!-- 추가 -->
-        FROM mbtiboardcomment c
-        JOIN user u ON u.id = c.author       <!-- 추가 -->
-        WHERE c.board_id = #{boardId}
-        ORDER BY c.parent_id ASC, c.created_at ASC, c.id ASC
-    </select>
+
 </mapper>

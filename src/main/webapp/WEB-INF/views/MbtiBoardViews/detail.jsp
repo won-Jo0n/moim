@@ -77,6 +77,19 @@
     .form .submit{margin-top:10px; padding:10px 14px; border:none; border-radius:999px; cursor:pointer; color:#fff; font-weight:900; background:linear-gradient(90deg, var(--lavender), var(--royal), var(--deep)); box-shadow:0 10px 26px rgba(69,39,160,.22)}
     .inline{display:inline}
 
+    /* ▼ 삭제 버튼 살짝 아래로 (기본 유지) */
+    .c-actions {
+        display: flex
+        align-items: center;  /* ← 모든 자식 버튼/폼을 수직 가운데 정렬 */
+        gap: 6px;             /* 버튼 간격 일정하게 */
+    }
+
+    .c-actions form {
+        display: flex;
+        align-items: center;  /* 폼 내부 버튼도 가운데 정렬 */
+        margin: 0;            /* 브라우저 기본 마진 제거 */
+    }
+
     @media (max-width:640px){
       .wrap,.comments-wrap{padding:22px}
       .avatar{flex-basis:32px; height:32px}
@@ -107,7 +120,7 @@
   </div>
 
   <div class="meta">
-    작성자: ${board.authorInfo}
+    작성자: ${board.nickName}
     <span aria-hidden="true">·</span>
     작성일: ${board.formattedCreatedAt}
   </div>
@@ -138,14 +151,25 @@
         <div class="comment-block" id="block-${comment.id}">
           <article class="c-item" id="c-${comment.id}">
             <div class="avatar">
-              <img src="/file/preview?fileId=${comment.profileFileId}"
-                   alt="프로필"
-                   onerror="this.onerror=null;this.src='/resources/images/default-profile.jpg'">
+              <c:choose>
+                <c:when test="${not empty comment.profileFileId and comment.profileFileId ne 0}">
+                  <img src="/file/preview?fileId=${comment.profileFileId}"
+                       alt="프로필"
+                       loading="lazy"
+                       style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
+                </c:when>
+                <c:otherwise>
+                  <img src="/resources/images/default-profile.jpg"
+                       alt="기본 프로필"
+                       loading="lazy"
+                       style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
+                </c:otherwise>
+              </c:choose>
             </div>
             <div class="c-body">
               <div class="c-row">
                 <span class="c-name">${comment.authorNickname}</span>
-                <span class="c-time">${comment.createdAt}</span>
+                <span class="c-time">${comment.formattedCreatedAt}</span>
               </div>
 
               <div id="content-${comment.id}" class="c-text">${comment.content}</div>
@@ -156,7 +180,8 @@
                   <form action="/mbti/board/comment/delete/${comment.id}" method="post" class="inline comment-form">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                     <input type="hidden" name="boardId" value="${board.id}" />
-                    <input type="submit" class="btn-link" value="삭제"/>
+                    <!-- 변경: input → button -->
+                    <button type="submit" class="btn-link">삭제</button>
                   </form>
                 </c:if>
                 <button type="button" class="btn-link" data-action="reply" data-id="${comment.id}">답글</button>
@@ -196,14 +221,25 @@
               <c:if test="${reply.parentId == comment.id}">
                 <article class="c-item" id="c-${reply.id}" style="border-top:none; padding-top:12px;">
                   <div class="avatar">
-                    <img src="/file/preview?fileId=${reply.profileFileId}"
-                         alt="프로필"
-                         onerror="this.onerror=null;this.src='/resources/images/default-profile.png'">
+                    <c:choose>
+                      <c:when test="${not empty reply.profileFileId and reply.profileFileId ne 0}">
+                        <img src="/file/preview?fileId=${reply.profileFileId}"
+                             alt="프로필"
+                             loading="lazy"
+                             style="width:36px;height:36px;border-radius:50%;object-fit:cover;">
+                      </c:when>
+                      <c:otherwise>
+                        <img src="/resources/images/default-profile.jpg"
+                             alt="기본 프로필"
+                             loading="lazy"
+                             style="width:36px;height:36px;border-radius:50%;object-fit:cover;">
+                      </c:otherwise>
+                    </c:choose>
                   </div>
                   <div class="c-body">
                     <div class="c-row">
                       <span class="c-name">${reply.authorNickname}</span>
-                      <span class="c-time">${reply.createdAt}</span>
+                      <span class="c-time">${reply.formattedCreatedAt}</span>
                     </div>
                     <div id="content-${reply.id}" class="c-text">${reply.content}</div>
                     <div class="c-actions">
@@ -212,7 +248,8 @@
                         <form action="/mbti/board/comment/delete/${reply.id}" method="post" class="inline comment-form">
                           <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                           <input type="hidden" name="boardId" value="${board.id}" />
-                          <input type="submit" class="btn-link" value="삭제"/>
+                          <!-- 변경: input → button -->
+                          <button type="submit" class="btn-link">삭제</button>
                         </form>
                       </c:if>
                     </div>
