@@ -20,13 +20,13 @@
       font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", Arial;
     }
     .wrap{
-      width:min(960px, 92vw); background:var(--paper); border-radius:var(--r-xl);
+      width:600px; background:var(--paper); border-radius:var(--r-xl);
       box-shadow:var(--shadow-md); padding:28px 28px 36px;
       height:auto; max-height:none; overflow:visible;
     }
     /* 댓글 전용 컨테이너 */
     .comments-wrap{
-      width:min(960px, 92vw); background:var(--paper); border-radius:var(--r-xl);
+      width:600px; background:var(--paper); border-radius:var(--r-xl);
       box-shadow:var(--shadow-md); padding:24px 24px 32px; margin-top:18px;
     }
 

@@ -13,8 +13,8 @@ import java.util.List;
 public class HomeFeedRepository {
     private final SqlSessionTemplate sql;
 
-    public List<HomeFeedDTO> getFeedList() {
-        return sql.selectList("HomeFeed.getFeedList");
+    public List<HomeFeedDTO> getFeedList(int mbtiId) {
+        return sql.selectList("HomeFeed.getFeedList", mbtiId);
     }
 
 }

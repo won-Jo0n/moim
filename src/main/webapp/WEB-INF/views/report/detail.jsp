@@ -46,7 +46,7 @@
         </div>
 
         <div class="section" style="text-align: center;">
-            <a class="action-link" href="/${report.type}/detail?id=${report.boardId}">
+            <a class="action-link" href="/${report.type}/board/detail/${report.boardId}">
                 신고된 페이지로 이동
             </a>
         </div>

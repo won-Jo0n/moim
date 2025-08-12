@@ -120,17 +120,20 @@ public class GroupService {
 
 
     public void createGroupSchedule(GroupScheduleDTO groupScheduleDTO) {
+        System.out.println("groupScheduleDTO: " + groupScheduleDTO);
         groupRepository.createGroupSchedule(groupScheduleDTO);
         //모임 일정 등록하면 모임의 구성원들에게 알림이 가도록 하는 코드
         List<UserJoinGroupDTO> approvedMembers = userJoinGroupRepository.findApprovedMembersByGroupId(groupScheduleDTO.getGroupId());
         for(UserJoinGroupDTO member : approvedMembers){
+            System.out.println("member: " + member);
             NotificationDTO notificationDTO = new NotificationDTO();
             notificationDTO.setUserId(member.getUserId());
             notificationDTO.setRequestUserId(groupScheduleDTO.getScheduleLeader());
             notificationDTO.setRelatedId(groupScheduleDTO.getId());
             notificationDTO.setType("NEW_SCHEDULE");
             notificationDTO.setContent(groupScheduleDTO.getTitle());
-            notificationDTO.setPath("/group/groupScheduleDetail?id=" + groupScheduleDTO.getId());
+            notificationDTO.setPath("/group/detail?groupId=" + groupScheduleDTO.getGroupId());
+            System.out.println("notificationDTO: " + notificationDTO);
             notificationService.createNotification(notificationDTO);
         }
     }

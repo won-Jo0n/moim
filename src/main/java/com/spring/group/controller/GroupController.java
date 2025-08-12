@@ -95,7 +95,7 @@ public class GroupController {
     @GetMapping("/list")
     public String groupList(@RequestParam(value = "keyword", required = false) String keyword, Model model,
                             @RequestParam(value = "page", defaultValue = "1") int page,
-                            @RequestParam(value="size", defaultValue = "10") int size) {
+                            @RequestParam(value="size", defaultValue = "4") int size) {
         Map<String, Object> params = new HashMap<>();
         params.put("limit", size);
         params.put("offset", (page - 1) * size);
@@ -262,6 +262,7 @@ public class GroupController {
                                  HttpSession session,
                                  Model model) {
 
+
         int loginUserId = (int) session.getAttribute("userId");
         GroupDTO group = groupService.findById(groupScheduleDTO.getGroupId());
 
@@ -305,6 +306,7 @@ public class GroupController {
                                       Model model,
                                       HttpSession session){
         GroupScheduleDTO groupScheduleDTO = groupService.getGroupScheduleDetail(groupScheduleId);
+        System.out.println("groupScheduleDTO >>>>" + groupScheduleDTO);
         List<UserScheduleDTO> scheduleList = groupService.getScheduleGroupByGroup(groupScheduleId);
 
         List<ScheduleDTO> scheduleDTOList = new ArrayList<>();
@@ -324,7 +326,10 @@ public class GroupController {
             scheduleDTOList.add(schedule);
         }
 
+
+        System.out.println(groupScheduleDTO);
         UserDTO user = userService.getUserById(groupScheduleDTO.getScheduleLeader());
+
         model.addAttribute("groupScheduleDTO", groupScheduleDTO);
         model.addAttribute("leaderNickName", user.getNickName());
         model.addAttribute("scheduleList", scheduleDTOList);

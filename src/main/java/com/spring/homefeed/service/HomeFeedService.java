@@ -13,8 +13,8 @@ import java.util.List;
 public class HomeFeedService {
     private final HomeFeedRepository homeFeedRepository;
 
-    public List<HomeFeedDTO> getFeedList(){
-        return homeFeedRepository.getFeedList();
+    public List<HomeFeedDTO> getFeedList(int mbtiId){
+        return homeFeedRepository.getFeedList(mbtiId);
     }
 
 }
