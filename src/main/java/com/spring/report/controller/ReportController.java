@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.time.format.DateTimeFormatter;
 
 @Controller
@@ -19,7 +20,8 @@ public class ReportController {
     private final UserService userService;
 
     @GetMapping("/")
-    public String reportForm(@ModelAttribute ReportDTO reportDTO,Model model){
+    public String reportForm(@ModelAttribute ReportDTO reportDTO, Model model, HttpSession session){
+        reportDTO.setReportUser((int) session.getAttribute("userId"));
         UserDTO reportUser = userService.getUserById(reportDTO.getReportUser());
         UserDTO reportedUser = userService.getUserById(reportDTO.getReportedUser());
         model.addAttribute("reportDTO", reportDTO);
