@@ -34,11 +34,6 @@
                 ><i class="fas fa-users"></i> <span>모임</span></a
               >
             </li>
-            <li>
-              <a href="/mbti/board" role="button"
-                ><i class="fas fa-clipboard"></i> <span>게시판</span></a
-              >
-            </li>
           </ul>
         </nav>
       </div>

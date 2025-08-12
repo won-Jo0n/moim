@@ -45,7 +45,7 @@
         SELECT
         b.id, b.mbtiId, b.author, b.title, b.content, b.fileId,
         b.hits, b.createdAt, b.status,
-        u.nickname AS authorinfo
+        u.nickname AS nickName
         FROM mbtiboard b
         LEFT JOIN user u ON b.author = u.id
         WHERE b.id = #{id}
