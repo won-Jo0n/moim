@@ -34,8 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
 function createPostItem(post){
     const postContainer = $("#post-container");
     const postCard = $(`
-        <div class="post-card" onclick="window.location.href='#'">
-            <div class="post-header" onclick="window.location.href='/profile/view/${post.author}'">
+        <div class="post-card" onclick="window.location.href='/mbti/board/detail/${post.id}'">
+            <div class="post-header" onclick="event.stopPropagation();window.location.href='/profile/view/${post.author}'">
                 <img class="post-avatar" src="/file/preview?fileId=${post.authorFileId}">
                 <div class="user-info">
                     <span class="post-user">${post.authorNickName} (${post.mbti})</span>
