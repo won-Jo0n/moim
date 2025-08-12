@@ -25,7 +25,6 @@ import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 import java.security.Principal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Controller
@@ -69,20 +68,27 @@ public class WebSocketController {
      */
 
     @MessageMapping("/match")
-    public void matchMaking(@Payload String s, Principal principal){
+    public void matchMaking(@Header("type") String type, @Payload Map<String, Object> data, Principal principal){
         String userId = principal.getName();
-        if(matchingQueue.contains(userId)) return;
-        String opponentId = matchingQueue.poll();
-        if(opponentId != null){
-            //이미 친구여도 매칭이 되는 상태임. 고쳐야함
-            chatService.requestChat(Integer.parseInt(opponentId), Integer.parseInt(userId));
-            ChatUserDTO userDTO1 = chatService.getChatFriendById(Integer.parseInt(userId), Integer.parseInt(opponentId));
-            messagingTemplate.convertAndSendToUser(userId, "/queue/main", userDTO1, Map.of("type", "MATCH_FOUND"));
-            ChatUserDTO userDTO2 = chatService.getChatFriendById(Integer.parseInt(opponentId), Integer.parseInt(userId));
-            messagingTemplate.convertAndSendToUser(opponentId, "/queue/main", userDTO2, Map.of("type", "MATCH_FOUND"));
-        }else{
-            matchingQueue.add(userId);
-            messagingTemplate.convertAndSendToUser(userId, "/queue/main", "", Map.of("type", "MATCH_JOIN"));
+
+        if(type.equals("MATCH_JOIN")){
+            if(matchingQueue.contains(userId)) return;
+            String opponentId = matchingQueue.poll();
+            if(opponentId != null){
+                //이미 친구여도 매칭이 되는 상태임. 고쳐야함
+                chatService.requestChat(Integer.parseInt(opponentId), Integer.parseInt(userId));
+                chatService.acceptChat(Integer.parseInt(opponentId), Integer.parseInt(userId));
+                ChatUserDTO userDTO1 = chatService.getChatFriendById(Integer.parseInt(userId), Integer.parseInt(opponentId));
+                messagingTemplate.convertAndSendToUser(userId, "/queue/main", userDTO1, Map.of("type", "MATCH_FOUND"));
+                ChatUserDTO userDTO2 = chatService.getChatFriendById(Integer.parseInt(opponentId), Integer.parseInt(userId));
+                messagingTemplate.convertAndSendToUser(opponentId, "/queue/main", userDTO2, Map.of("type", "MATCH_FOUND"));
+            }else{
+                matchingQueue.add(userId);
+                messagingTemplate.convertAndSendToUser(userId, "/queue/main", Map.of("", ""), Map.of("type", type));
+            }
+        }else if(type.equals("MATCH_CANCEL")){
+            matchingQueue.remove(userId);
+            messagingTemplate.convertAndSendToUser(userId, "/queue/main", Map.of("", ""), Map.of("type", type));
         }
     }
 

@@ -84,9 +84,13 @@ stompClient.onConnect = (frame) => {
         createMessageItem(data);
         break;
       case "MATCH_JOIN":
-        console.log("MATCH JOIN");
+        $("#loading-indicator").addClass("visible");
+        break;
+      case "MATCH_CANCEL":
+        $("#loading-indicator").removeClass("visible");
         break;
       case "MATCH_FOUND":
+        $("#loading-indicator").removeClass("visible");
         openChat(createMessageItem(data));
         break;
       case "RECEIVE_NOTIFICATION":
@@ -411,10 +415,12 @@ function closeChat() {
   togglePopup("message-popup", true);
 }
 
-function matching(){
+function matching(state){
     stompClient.publish({
       destination: "/app/match",
-      body: "asdf"
+      headers: { type: state ? "MATCH_JOIN" : "MATCH_CANCEL" },
+      body: JSON.stringify({
+        })
     });
 }
 
