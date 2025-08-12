@@ -99,7 +99,7 @@
         // ✅ 1/24 포맷 갱신
         stepText.textContent = (idx + 1) + ' / ' + questions.length;
 
-        var labels = ['전혀','때때로','그렇다','주로 그렇다','매우 그렇다'];
+        var labels = ['전혀','별로 그렇지 않음','보통','주로 그렇다','매우 그렇다'];
         var optsHtml = labels.map(function(label, i){
             return '<li>'
                  +   '<label class="opt">'
