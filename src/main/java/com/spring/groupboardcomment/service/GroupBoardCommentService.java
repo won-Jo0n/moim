@@ -28,7 +28,7 @@ public class GroupBoardCommentService {
         notificationDTO.setRelatedId(dto.getBoardId());
         notificationDTO.setType("NEW_COMMENT");
         notificationDTO.setContent(groupBoardDTO.getAuthorNickName());
-        notificationDTO.setPath(null);
+        notificationDTO.setPath("/groupboard/detail?id=" + dto.getBoardId());
         notificationService.createNotification(notificationDTO);
     }
 
