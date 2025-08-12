@@ -15,7 +15,7 @@
     <div id="loading-indicator">
       <div class="loading-spinner"></div>
     </div>
-    <button id="fixed-add-post-button" onclick="window.location.href='/post/create'">
+    <button id="fixed-add-post-button" onclick="window.location.href='/mbti/board/write'">
         +
     </button>
 </body>

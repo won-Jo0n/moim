@@ -51,4 +51,8 @@ public class MbtiBoardService {
             session.setAttribute(key, Boolean.TRUE);
         }
     }
+
+    public void updateFileId(MbtiBoardDTO dto) {
+        sqlSession.update("MbtiBoard.updateFileId", dto);
+    }
 }
