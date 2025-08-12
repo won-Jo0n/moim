@@ -1,13 +1,7 @@
-/* ============================
-   groupUpdate.css
-   (Group Update Form – 퍼플 톤)
-   ============================ */
-
-/* ---- Design tokens (네가 준 값 그대로) ---- */
 :root{
-  --color-main:#7E57C2;      /* 세련된 중간톤 퍼플 */
-  --color-sub:#B18FCF;       /* 부드러운 라벤더 */
-  --color-accent:#4527A0;    /* 깊은 퍼플 */
+  --color-main:#7E57C2;
+  --color-sub:#B18FCF;
+  --color-accent:#4527A0;
   --color-bg:#F7F6FB;
   --color-card:#FFFFFF;
   --color-text:#2F2A3B;
@@ -30,7 +24,7 @@ body{
   background:linear-gradient(180deg, var(--color-bg), #FFF);
 }
 
-/* ---- Page shell (공통) ---- */
+
 .page{
   max-width:980px;
   margin:40px auto 80px;
@@ -62,7 +56,7 @@ body{
 .link-back:active{transform:translateY(1px)}
 .link-back:focus-visible{outline:none; box-shadow:var(--focus)}
 
-/* ---- Card ---- */
+
 .card{
   background:var(--color-card);
   border:1px solid var(--border);
@@ -90,7 +84,7 @@ body{
   color:var(--color-muted);
 }
 
-/* ---- Form ---- */
+
 .form{
   display:grid;
   gap:16px;
@@ -144,14 +138,14 @@ body{
   line-height:1.5;
 }
 
-/* ---- Helper text ---- */
+
 .help{
   margin-top:6px;
   font-size:12px;
   color:var(--color-muted);
 }
 
-/* ---- Actions ---- */
+
 .actions{
   display:flex;
   gap:10px;
@@ -187,7 +181,7 @@ body{
 }
 .btn--ghost:hover{background:#FBF8FF}
 
-/* ---- Inline validation (옵션) ---- */
+
 .input.is-invalid,
 .select.is-invalid,
 .textarea.is-invalid{
@@ -196,7 +190,7 @@ body{
 }
 .help--error{color:#A13232}
 
-/* ---- Small utils ---- */
+
 .row-inline{
   display:flex;
   gap:12px;

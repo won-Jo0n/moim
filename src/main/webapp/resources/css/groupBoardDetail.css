@@ -1,8 +1,3 @@
-/* ============================
-   groupBoardDetail.css
-   (글 상세/댓글 – 퍼플 톤)
-   ============================ */
-
 :root{
   --color-main:#7E57C2;
   --color-sub:#B18FCF;
@@ -29,7 +24,7 @@ body{
   background:linear-gradient(180deg, var(--color-bg), #FFF);
 }
 
-/* Page */
+
 .page{max-width:980px; margin:40px auto 80px; padding:0 20px}
 .page__header{display:flex; align-items:center; justify-content:space-between; gap:12px}
 .page__title{
@@ -45,7 +40,7 @@ body{
 .link-back:hover{background:rgba(126,87,194,0.14)}
 .link-back:focus-visible{outline:none; box-shadow:var(--focus)}
 
-/* Card */
+
 .card{
   background:var(--color-card);
   border:1px solid var(--border);
@@ -55,320 +50,116 @@ body{
 }
 .card__title{margin:0 0 8px; font-size:20px; font-weight:700; color:var(--color-accent)}
 
-/* Post */
+
 .post__header{display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap}
 .post__title{margin:0; font-size:24px; font-weight:800}
 .post__meta{display:flex; align-items:center; gap:10px}
 .badge{display:inline-block; padding:6px 10px; font-size:12px; border-radius:999px; border:1px solid var(--border); background:#fff}
 .muted{color:var(--color-muted); font-size:13px}
 
-/* Post Body Layout (Image & Content) */
-.post__body-layout {
-    display: flex;
-    align-items: flex-start; /* 이미지와 텍스트를 상단에 정렬 */
-    gap: 20px; /* 이미지와 텍스트 사이 간격 */
-    flex-wrap: wrap; /* 작은 화면에서 줄바꿈 허용 */
-    margin-top: 14px; /* 헤더 아래 여백 */
+
+.post__body-layout{
+  display:flex; align-items:flex-start; gap:20px; flex-wrap:wrap; margin-top:14px;
+}
+.post__media{
+  flex-shrink:0; width:200px; height:200px; margin:0;
+  display:flex; justify-content:center; align-items:center;
+}
+.post__media img{
+  width:100%; height:100%; object-fit:cover;
+  border-radius:14px; border:1px solid var(--border); box-shadow:var(--shadow-sm);
+}
+.post__content{
+  flex-grow:1; line-height:1.75; white-space:pre-line;
+  overflow-wrap:anywhere; word-break:break-word;
+  margin-top:0;
+}
+.post__content > *:first-child{margin-top:0; padding-top:0}
+
+
+@media (max-width:720px){
+  .post__media{width:100%; height:auto; max-height:250px; margin-bottom:12px}
+  .post__media img{max-width:100%; height:auto}
+  .page__title{font-size:24px; padding:14px 16px}
+  .post__title{font-size:20px}
 }
 
-.post__media {
-    flex-shrink: 0; /* 이미지가 줄어들지 않도록 함 */
-    width: 200px; /* 데스크탑에서 정사각형 너비 */
-    height: 200px; /* 데스크탑에서 정사각형 높이 */
-    margin: 0; /* 기존 마진 제거 */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 
-.post__media img {
-    width: 100%; /* 부모 .post__media에 꽉 채우기 */
-    height: 100%; /* 부모 .post__media에 꽉 채우기 */
-    object-fit: cover; /* 이미지를 잘라내어 비율 유지하며 채움 */
-    border-radius: 14px; /* 둥근 모서리 유지 */
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow-sm);
-}
-
-.post__content {
-    flex-grow: 1; /* 남은 공간을 글 내용이 모두 차지하도록 함 */
-    line-height: 1.75;
-    white-space: pre-wrap;
-    margin-top: 0; /* 새로운 레이아웃에서 마진 제거 */
-}
-
-/* post__content 내부의 첫 번째 요소의 상단 여백 제거 */
-.post__content > *:first-child {
-    margin-top: 0;
-    padding-top: 0;
-}
-
-@media (max-width: 720px) {
-    .post__media {
-        width: 100%; /* 모바일에서 이미지 전체 너비 */
-        height: auto; /* 모바일에서 높이 자동 조절 */
-        max-height: 250px; /* 너무 커지지 않도록 최대 높이 제한 */
-        margin-bottom: 12px; /* 모바일에서 이미지 아래 여백 */
-    }
-    .post__media img {
-        max-width: 100%;
-        height: auto;
-    }
-}
-
-.actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:flex-end; margin-top:12px}
-
-.inline-form{display:inline}
 .btn{
   appearance:none; border:none; border-radius:12px; font-weight:800; cursor:pointer;
   background:#EEE; box-shadow:0 4px 10px rgba(0,0,0,0.04);
   transition:transform .06s ease, box-shadow .2s ease, background .2s ease, color .2s ease;
-  font-size: 13px; /* 모든 기본 버튼 폰트 크기 13px로 통일 */
-  padding: 8px 12px; /* 모든 기본 버튼 패딩 축소 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+  font-size:13px; padding:8px 12px;
+  display:flex; justify-content:center; align-items:center; text-align:center;
 }
 .btn:active{transform:translateY(1px)}
 .btn:focus-visible{outline:none; box-shadow:var(--focus)}
 
-.btn--ghost{background:#fff; color:var(--color-accent); border:1px solid var(--color-sub)}
-.btn--ghost:hover{background:#FBF8FF}
-.btn--danger{background:#FCE4EC; color:#AD1457; border:1px solid #F8BBD0}
-
-/* Comments */
-.comment-section{
-  display: grid;
-  gap: 12px;
-}
-.comment{
-  border:1px solid var(--border); border-radius:14px; background:#fff; box-shadow:var(--shadow-sm);
-  padding: 10px 16px;
-}
-
-/* Reply */
-.reply{
-  margin-top:10px; margin-left:14px; padding-left:10px;
-  border-left: 2px solid rgba(126,87,194,0.18);
-}
-
-
-/* Forms (edit/reply/new) */
-.textarea{
-  width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:12px; background:#fff;
-  font-size:14px; line-height:1.6; resize:vertical; min-height:100px;
-  box-shadow:0 2px 6px rgba(0,0,0,0.02) inset;
-}
-.textarea:focus{outline:none; border-color:var(--color-sub); box-shadow:var(--focus)}
-.edit-form, .reply-form, .comment-form{margin-top:10px}
-
-/* Responsive */
-@media (max-width:720px){
-  .page__title{font-size:24px; padding:14px 16px}
-  .post__title{font-size:20px}
-  .reply{margin-left:14px}
-}
-
-/* === 상단 액션 버튼(수정/삭제/신고) 통일 & 간격 === */
-.actions{
-  gap:12px;
-  justify-content:flex-end;
-}
-.actions .btn,
-.actions input[type="submit"].btn{
-  min-width: unset;
-  padding:10px 14px;
-  border-radius:12px;
-  font-size: 13px;
-  text-decoration: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-/* === 버튼 스타일 보강(폼 submit도 동일하게 보이게) === */
-input[type="submit"].btn{appearance:none; border:none}
 .btn--primary{background:linear-gradient(180deg, var(--color-main), var(--color-accent)); color:#fff}
 .btn--primary:hover{filter:brightness(1.05)}
 .btn--ghost{background:#fff; color:var(--color-accent); border:1px solid var(--color-sub)}
 .btn--ghost:hover{background:#FBF8FF}
 .btn--danger{background:#FCE4EC; color:#AD1457; border:1px solid #F8BBD0}
 
-/* ===== 상단 액션 버튼: 행 정렬/간격/높이 통일 ===== */
-.actions{
-  display:flex;
-  align-items:center;
-  justify-content:flex-end;
-  gap:12px;
-  flex-wrap:wrap;
-  margin-top:12px;
-}
 
-/* 폼도 버튼처럼 한 줄 배치 */
+.actions,
+.actions--compact{
+  display:flex; align-items:center; justify-content:flex-end; gap:12px; flex-wrap:wrap; margin-top:12px;
+}
+.actions--compact{ gap:8px; margin-top:8px }
+
 .actions form,
+.actions a.btn,
+.actions button.btn,
+.actions input[type="submit"].btn,
 .inline-form{
-  display:inline-flex;
-  align-items:center;
-  margin:0;
+  display:inline-flex; align-items:center; margin:0;
 }
 
-/* 버튼 크기 통일 (a, button, input 모두) */
 .actions .btn,
 .actions a.btn,
 .actions button.btn,
 .actions input[type="submit"].btn{
-  min-width: unset;
-  padding:10px 14px;
-  border-radius:12px;
-  line-height:1;
-  font-size: 13px;
-  text-decoration: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+  min-width:unset; padding:10px 14px; border-radius:12px; line-height:1; font-size:13px; text-decoration:none;
 }
 
-/* 삭제/신고 등 submit이 .btn 없을 때도 모양 맞춤 (세이프가드) */
-.actions input[type="submit"]{
-  appearance:none;
-  border:none;
-  padding:10px 14px;
-  border-radius:12px;
-  background:#FCE4EC;
-  color:#AD1457;
-  border:1px solid #F8BBD0;
-  font-weight:800;
-  cursor:pointer;
-  font-size: 13px;
-  text-decoration: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+
+.actions--compact .btn,
+.actions--compact a.btn,
+.actions--compact button.btn,
+.actions--compact input[type="submit"].btn{
+  height:30px; padding:6px 12px; border-radius:10px; font-size:12px;
 }
 
+
+input[type="submit"].btn{appearance:none; border:none}
+
+
+.comment-section{display:grid; gap:12px}
 .comment{
-  padding: 10px 16px;
-  border:1px solid var(--border);
-  border-radius:14px;
-  background:#fff;
-  box-shadow:var(--shadow-sm);
+  padding:10px 16px; border:1px solid var(--border); border-radius:14px;
+  background:#fff; box-shadow:var(--shadow-sm);
 }
-.comment__meta{
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 2px;
-}
+.comment__meta{display:flex; align-items:center; gap:8px; margin-bottom:2px}
 .comment__content{
-  line-height: 1.6;
-  white-space: pre-line;
-  overflow-wrap: anywhere;
-  word-break: break-word;
-  word-break: break-all;
-  hyphens: auto;
-  margin: 4px 0 2px;
+  line-height:1.6; white-space:pre-line;
+  overflow-wrap:anywhere; word-break:break-word;
+  margin:4px 0 2px;
 }
-
-/* 댓글 액션: 항상 오른쪽 정렬 + 촘촘한 버튼 */
-.actions--compact{
-  display:flex;
-  align-items:center;
-  justify-content:flex-end;
-  gap:8px;
-  margin-top:8px;
+.reply{
+  margin-top:10px; margin-left:14px; padding-left:10px;
+  border-left:2px solid rgba(126,87,194,0.18);
 }
+.reply .actions--compact{justify-content:flex-end}
 
 
-
-/* 대댓글 내부 액션도 오른쪽 정렬 */
-.reply .actions--compact{
-  justify-content:flex-end;
-}
-
-/* 배지, 회색 글씨 재사용 */
-.badge{display:inline-block; padding:6px 10px; font-size:12px; border-radius:999px; border:1px solid var(--border); background:#fff}
-.muted{color:var(--color-muted); font-size:13px}
-
-/* 텍스트 영역 통일 (수정/대댓글 폼) */
 .textarea{
-  width:100%;
-  padding:12px 14px;
-  border:1px solid var(--border);
-  border-radius:12px;
-  background:#fff;
-  font-size:14px;
-  line-height:1.6;
-  resize:vertical;
-  min-height:100px;
+  width:100%; min-height:100px;
+  padding:12px 14px; border:1px solid var(--border); border-radius:12px; background:#fff;
+  font-size:14px; line-height:1.6; resize:vertical;
   box-shadow:0 2px 6px rgba(0,0,0,0.02) inset;
 }
 .textarea:focus{outline:none; border-color:var(--color-sub); box-shadow:var(--focus)}
 
-/* 이미지·내용 레이아웃에서도 텍스트가 무한 확장되지 않도록 안전장치 */
-.post__content{
-  flex-grow: 1;
-  line-height: 1.75;
-  white-space: pre-line;        /* 본문도 동일 정책 적용 */
-  overflow-wrap: anywhere;
-  word-break: break-word;
-  word-break: break-all;
-}
-
-/* 버튼/폼 주위 불필요한 상단여백 방지(브라우저 기본 스타일 견제) */
-.edit-form, .reply-form, .comment-form{
-  margin-top: 8px;
-}
-
-/* === 댓글/대댓글 버튼 규격 ‘완전 동일’ 강제 === */
-.actions--compact {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-/* a, button, input 모두 동일한 버튼 규격 */
-.actions--compact .btn,
-.actions--compact a.btn,
-.actions--compact button.btn,
-.actions--compact input.btn,
-.actions--compact input[type="submit"],
-.actions--compact button,
-.actions--compact a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-
-  height: 30px;          /* 동일 높이 */
-  padding: 6px 12px;     /* 동일 패딩 */
-  border-radius: 10px;   /* 동일 라운드 */
-  font-size: 12px;       /* 동일 폰트 */
-  line-height: 1;        /* 높이 계산 안정화 */
-  font-weight: 700;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-/* 색상/테마 (기존과 동일) */
-.actions--compact .btn--primary,
-.actions--compact button.btn--primary { background: linear-gradient(180deg, var(--color-main), var(--color-accent)); color:#fff; }
-.actions--compact .btn--primary:hover { filter: brightness(1.05); }
-
-.actions--compact .btn--ghost,
-.actions--compact button.btn--ghost { background:#fff; color:var(--color-accent); border:1px solid var(--color-sub); }
-.actions--compact .btn--ghost:hover { background:#FBF8FF; }
-
-.actions--compact .btn--danger,
-.actions--compact button.btn--danger,
-.actions--compact input[type="submit"] { background:#FCE4EC; color:#AD1457; border:1px solid #F8BBD0; }
-.actions--compact .btn--danger:hover,
-.actions--compact input[type="submit"]:hover { background:#F8BBD0; }
-
-/* 폼 안의 버튼도 한 줄 정렬 */
-.inline-form { display:inline-flex; align-items:center; margin:0; }
+.edit-form, .reply-form, .comment-form{margin-top:8px}
+.inline-form{display:inline-flex; align-items:center; margin:0}

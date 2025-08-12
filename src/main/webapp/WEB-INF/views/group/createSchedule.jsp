@@ -10,7 +10,6 @@
 </head>
 <body>
 
-
 <form id="scheduleForm" action="/group/createSchedule" method="post" novalidate>
     <input type="hidden" name="scheduleLeader" value="${scheduleLeader}"/>
     <input type="hidden" name="groupId" value="${groupId}"/>

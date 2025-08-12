@@ -1,7 +1,3 @@
-/* ============================
-   review.css
-   모던 · 미니멀 · 따뜻한 퍼플 톤 (groupDetail과 결 통일)
-   ============================ */
 :root{
   --color-main:#7E57C2;
   --color-sub:#B18FCF;
@@ -31,15 +27,13 @@ body{
   -webkit-font-smoothing: antialiased;
 }
 
-/* ====== 빈 상태 ====== */
 p{
   color:var(--color-text);
   line-height:1.6;
 }
 p + button{ margin-top:10px; }
 
-/* ====== 카드(폼) ====== */
-/* 현재 페이지엔 폼이 하나뿐이라 form 자체를 카드처럼 스타일 */
+
 form{
   max-width: 720px;
   margin: 40px auto;
@@ -52,7 +46,7 @@ form{
   gap: 16px;
 }
 
-/* 라벨/인풋 공통 */
+
 label{
   font-weight: 700;
   color: var(--color-accent);
@@ -75,16 +69,14 @@ select:focus, textarea:focus, input[type="text"]:focus{
   box-shadow: var(--focus);
 }
 
-/* 텍스트영역 */
+
 textarea{
   min-height: 120px;
   resize: vertical;
 }
 
-/* ====== 별점(라디오 그룹) ====== */
-/* 기존 마크업 그대로: <div> 안에 label>input[type=radio] 구조 */
+
 div label input[type="radio"]{
-  /* 접근성 위해 라디오 자체는 유지하고 살짝만 줄임 */
   transform: scale(1.05);
   margin-right: 8px;
 }
@@ -105,7 +97,7 @@ div label{
 div label:hover{
   background:#EFE6FF;
 }
-/* Chrome/Edge/Safari에서 지원되는 :has로 선택 상태 하이라이트 */
+
 div label:has(input[type="radio"]:checked){
   background: linear-gradient(180deg, var(--color-main), var(--color-accent));
   color: #fff;
@@ -113,7 +105,7 @@ div label:has(input[type="radio"]:checked){
   box-shadow: 0 6px 16px rgba(69,39,160,0.18);
 }
 
-/* ====== 버튼 세트 (다른 페이지와 통일) ====== */
+
 button, input[type="submit"], .btn{
   appearance:none;
   display:inline-flex;
@@ -142,7 +134,7 @@ button:active, input[type="submit"]:active, .btn:active{
   transform: translateY(1px);
 }
 
-/* 기본 제출 버튼을 프라이머리 룩으로 */
+
 input[type="submit"]{
   background: linear-gradient(180deg, var(--color-main), var(--color-accent));
   color:#fff;
@@ -151,7 +143,7 @@ input[type="submit"]:hover{
   filter: brightness(1.05);
 }
 
-/* 일반 버튼은 아웃라인 */
+
 button{
   background: transparent;
   color: var(--color-accent);
@@ -159,20 +151,20 @@ button{
 }
 button:hover{ background:#F6F0FF; }
 
-/* ====== 페이지 바깥 여백/중앙 정렬 ====== */
+
 .review-wrap{
-  max-width: 980px;     /* 페이지 전체 폭 */
-  margin: 40px auto 56px; /* 위/좌우/아래 여백 */
-  padding: 0 20px;      /* 좌우 내부 패딩(모바일에서 특히 효과적) */
+  max-width: 980px;
+  margin: 40px auto 56px;
+  padding: 0 20px;
 }
 
-/* 폼 바깥 여백을 약간 줄여서 래퍼와 균형 맞춤 */
+
 form{
   max-width: 720px;
-  margin: 24px auto;    /* 기존 40px → 24px로 살짝 축소 */
+  margin: 24px auto;
 }
 
-/* 빈 상태 문구도 가운데 폭 안에서 여유 있게 보이도록 */
+
 p + button{
   margin-top: 10px;
 }
@@ -182,7 +174,7 @@ p + button{
   padding: 0 2px;
 }
 
-/* 반응형: 좁은 화면에서 좌우 패딩 확대 */
+
 @media (max-width: 760px){
   .review-wrap{ padding: 0 16px; margin: 28px auto 40px; }
   form{ margin: 20px auto; padding: 18px; }
