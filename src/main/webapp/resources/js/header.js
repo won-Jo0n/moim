@@ -84,9 +84,13 @@ stompClient.onConnect = (frame) => {
         createMessageItem(data);
         break;
       case "MATCH_JOIN":
-        console.log("MATCH JOIN");
+        $("#loading-indicator").addClass("visible");
+        break;
+      case "MATCH_CANCEL":
+        $("#loading-indicator").removeClass("visible");
         break;
       case "MATCH_FOUND":
+        $("#loading-indicator").removeClass("visible");
         openChat(createMessageItem(data));
         break;
       case "RECEIVE_NOTIFICATION":
@@ -122,7 +126,8 @@ $(function () {
     const navLinks = $(".sidebar-nav li > a");
     const currentPath = window.location.pathname;
     navLinks.each((index, element) => {
-        if ($(element).attr("href") == currentPath) {
+        const attr = $(element).attr("href");
+        if(attr && attr.substring(1).split("/")[0] == currentPath.substring(1).split("/")[0]){
             $(element).addClass('active');
         }else{
             $(element).removeClass('active');
@@ -172,85 +177,6 @@ $(function () {
         sendMessage();
       }
     });
-// 목업 데이터
-    const mockNotifications = [
-      {
-        id: 1,
-        userId: 101,
-        requestUserId: 201,
-        type: 'FRIEND_REQUEST',
-        relatedId: 201,
-        content: '권택준',
-        createdAt: '2025-08-10T10:00:00Z',
-        readAt: null,
-        path: null,
-        status: 1
-      },
-      /*
-      친구 요청을 할 경우
-      userId에는 세션
-      requestUserId에는 요청을 한 상대 id
-      type는 FRIEND_REQUEST
-      relatedId에도 똑같이 요청을 한 상대 id
-      content에는 상대의 nickName,
-      path에는 아무것도 안들어감(null)
-      */
-      {
-        id: 2,
-        userId: 101,
-        type: 'NEW_SCHEDULE',
-        relatedId: 301,
-        content: '스터디 모임',
-        createdAt: '2025-08-10T11:30:00Z',
-        readAt: '2025-08-10T12:00:00Z',
-        path: '/groups/301/schedule',
-        status: 1
-      },
-      /*
-        모임 일정이 등록될 경우
-        userId에는 세션
-        requestUserId에는 요청을 한 상대 id
-        type는 FRIEND_REQUEST
-        relatedId에도 똑같이 요청을 한 상대 id
-        content에는 상대의 nickName,
-        path에는 아무것도 안들어감(null)
-        */
-
-      {
-        id: 3,
-        userId: 101,
-        requestUserId: 401,
-        type: 'NEW_COMMENT',
-        relatedId: 501,
-        content: '권택준',
-        createdAt: '2025-08-10T14:20:00Z',
-        readAt: null,
-        path: '/feed/501',
-        status: 1
-      },
-      {
-        id: 4,
-        userId: 101,
-        type: 'REPORT_COMPLETED',
-        relatedId: 601,
-        content: '회원님께서 신고하신 건에 대한 처리가 완료되었습니다.',
-        createdAt: '2025-08-10T09:00:00Z',
-        readAt: '2025-08-10T09:10:00Z',
-        path: '/report/601',
-        status: 1
-      },
-      {
-        id: 5,
-        userId: 101,
-        type: 'FRIEND_REQUEST',
-        relatedId: 202,
-        content: '홍길동',
-        createdAt: '2025-08-10T16:00:00Z',
-        readAt: null,
-        path: null,
-        status: 1
-      }
-    ];
   });
 
 function togglePopup(popupId, show) {
@@ -274,7 +200,7 @@ function createMessageItem(user) {
            ${user.status == 1 || user.status == 2 ? " onclick='openChat(this)'" : ""}
          >
            <div class="avatar">
-             <img src="/file/preview/?id=${user.fileId}" />
+             <img src="/file/preview?fileId=${user.fileId}" />
              ${user.status == 1 ? "<div class='online-indicator'></div>" : ""}
            </div>
            <div class="user-info">
@@ -426,7 +352,7 @@ function createNotificationItem(notification) {
   if (notification.type != "FRIEND_REQUEST") {
     notificationItem.on("click", () => {
       readNotification(notification.id);
-      window.location.href = notification.path;
+      if(notification.path) window.location.href = notification.path;
     });
   }
   notificationList.prepend(notificationItem);
@@ -489,10 +415,12 @@ function closeChat() {
   togglePopup("message-popup", true);
 }
 
-function matching(){
+function matching(state){
     stompClient.publish({
       destination: "/app/match",
-      body: "asdf"
+      headers: { type: state ? "MATCH_JOIN" : "MATCH_CANCEL" },
+      body: JSON.stringify({
+        })
     });
 }
 

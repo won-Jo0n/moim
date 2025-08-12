@@ -34,11 +34,6 @@
                 ><i class="fas fa-users"></i> <span>모임</span></a
               >
             </li>
-            <li>
-              <a href="/mbti/board" role="button"
-                ><i class="fas fa-clipboard"></i> <span>게시판</span></a
-              >
-            </li>
           </ul>
         </nav>
       </div>
@@ -109,7 +104,7 @@
         </div>
         <div id="tab-2" class="tab-content hide">
           <div class="search-controls">
-            <button class="random-match-btn" onclick="matching()">랜덤 매칭 시작</button>
+            <button class="random-match-btn" onclick="matching(true)">랜덤 매칭 시작</button>
             <div class="search-box">
               <input type="text" placeholder="닉네임으로 검색..." onkeyup="searchUserList(this.value)"/>
               <i class="fas fa-search search-icon"></i>
@@ -120,6 +115,14 @@
               검색어를 입력하거나 랜덤 매칭을 시작하세요.
             </p>
           </div>
+        </div>
+        <div id="loading-indicator">
+            <div class="loading-content">
+              <div class="loading-spinner"></div>
+              <button class="cancel-match-btn" onclick="matching(false)">
+                매칭 취소
+              </button>
+            </div>
         </div>
       </div>
 

@@ -15,7 +15,7 @@
     }
     html,body{height:100%}
     body{
-      margin:0; padding:60px 12px; display:flex; justify-content:center;
+      margin:0; padding:60px 12px; display:flex; flex-direction:column; align-items:center;
       background:var(--bg); color:var(--ink);
       font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", Arial;
     }
@@ -24,46 +24,37 @@
       box-shadow:var(--shadow-md); padding:28px 28px 36px;
       height:auto; max-height:none; overflow:visible;
     }
+    /* 댓글 전용 컨테이너 */
+    .comments-wrap{
+      width:min(960px, 92vw); background:var(--paper); border-radius:var(--r-xl);
+      box-shadow:var(--shadow-md); padding:24px 24px 32px; margin-top:18px;
+    }
 
-    /* 상단 */
     .top{display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:8px}
     .title{margin:0; font-size:26px; line-height:1.35; color:var(--royal); word-break:break-word}
     .meta{margin:8px 0 16px; color:var(--muted); font-size:14px}
 
-    .menu-btn{
-      width:40px; height:40px; border:none; border-radius:12px; cursor:pointer;
-      color:#fff; background:linear-gradient(90deg, var(--lavender), var(--royal), var(--deep));
-      box-shadow:0 10px 26px rgba(69,39,160,.20);
-    }
-    .dropdown{
-      position:fixed; display:none; z-index:2000; min-width:180px; padding:8px;
-      background:var(--paper); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow-md);
-    }
+    .menu-btn{width:40px; height:40px; border:none; border-radius:12px; cursor:pointer; color:#fff;
+      background:linear-gradient(90deg, var(--lavender), var(--royal), var(--deep));
+      box-shadow:0 10px 26px rgba(69,39,160,.20)}
+    .dropdown{position:fixed; display:none; z-index:2000; min-width:180px; padding:8px;
+      background:var(--paper); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow-md)}
     .dropdown a,.dropdown button{display:block; width:100%; text-align:left; padding:10px 12px; border:none; background:transparent; color:var(--ink); font-weight:700; border-radius:8px; cursor:pointer}
     .dropdown a:hover,.dropdown button:hover{background:rgba(193,168,211,.16)}
 
-    /* 본문/이미지 */
     .media{margin:12px 0 18px}
     .media img{width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:16px; background:#efe8f6; box-shadow:var(--shadow-sm)}
     .content{white-space:pre-wrap; line-height:1.75; font-size:16px}
     .divider{height:1px; background:var(--line); margin:24px 0 8px}
 
-    /* 댓글 */
     .c-head{font-size:18px; font-weight:900; color:var(--purple); margin:0 0 10px}
     .c-list{margin-top:4px}
-
     .comment-block{margin:0 0 16px; border-radius:16px; overflow:visible; position:relative; z-index:1}
-
     .c-item{display:flex; gap:12px; padding:16px 8px; border-top:1px solid var(--line)}
     .comment-block .c-item:first-of-type{border-top:none}
 
-    /* 아바타: 이미지 + 안전한 기본 이미지 폴백 */
     .avatar{flex:0 0 40px; height:40px}
-    .avatar img{
-      width:40px; height:40px; display:block;
-      border-radius:50%; object-fit:cover;
-      background:#efe8f6; box-shadow:var(--shadow-sm);
-    }
+    .avatar img{width:40px; height:40px; display:block; border-radius:50%; object-fit:cover; background:#efe8f6; box-shadow:var(--shadow-sm)}
 
     .c-body{flex:1 1 auto; min-width:0}
     .c-row{display:flex; align-items:center; gap:8px; font-weight:900}
@@ -75,45 +66,43 @@
     .btn-link{background:transparent; border:none; padding:6px 8px; border-radius:8px; cursor:pointer; color:var(--royal); font-weight:900}
     .btn-link:hover{background:#efe8f6}
 
-    .reply-toggle{
-      margin:6px 0 0; display:inline-flex; align-items:center; gap:6px;
-      padding:6px 10px; border-radius:999px; border:1px solid var(--line);
-      background:#f3eefc; color:var(--deep); font-weight:900; cursor:pointer; position:relative; z-index:3;
-    }
+    .reply-toggle{margin:6px 0 0; display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; border:1px solid var(--line); background:#f3eefc; color:var(--deep); font-weight:900; cursor:pointer}
     .reply-toggle[aria-expanded="true"] .caret{transform:rotate(180deg)}
     .caret{transition:transform .15s ease}
 
-    .children{
-      display:none; margin-left:52px; border-left:2px solid rgba(126,87,194,.25);
-      padding:10px 0 0 12px; border-radius:0 0 0 8px; position:relative; z-index:2; overflow:visible;
-    }
+    .children{display:none; margin-left:52px; border-left:2px solid rgba(126,87,194,.25); padding:10px 0 0 12px; border-radius:0 0 0 8px}
     .children.open{display:block}
 
-    .form textarea{
-      width:100%; min-height:90px; resize:vertical; font-size:14px; line-height:1.6;
-      border:1px solid var(--line); border-radius:12px; padding:12px; background:#fff; box-sizing:border-box
-    }
-    .form .submit{
-      margin-top:10px; padding:10px 14px; border:none; border-radius:999px; cursor:pointer; color:#fff; font-weight:900;
-      background:linear-gradient(90deg, var(--lavender), var(--royal), var(--deep));
-      box-shadow:0 10px 26px rgba(69,39,160,.22)
-    }
+    .form textarea{width:100%; min-height:90px; resize:vertical; font-size:14px; line-height:1.6; border:1px solid var(--line); border-radius:12px; padding:12px; background:#fff; box-sizing:border-box}
+    .form .submit{margin-top:10px; padding:10px 14px; border:none; border-radius:999px; cursor:pointer; color:#fff; font-weight:900; background:linear-gradient(90deg, var(--lavender), var(--royal), var(--deep)); box-shadow:0 10px 26px rgba(69,39,160,.22)}
     .inline{display:inline}
 
+    /* ▼ 삭제 버튼 살짝 아래로 (기본 유지) */
+    .c-actions {
+        display: flex
+        align-items: center;  /* ← 모든 자식 버튼/폼을 수직 가운데 정렬 */
+        gap: 6px;             /* 버튼 간격 일정하게 */
+    }
+
+    .c-actions form {
+        display: flex;
+        align-items: center;  /* 폼 내부 버튼도 가운데 정렬 */
+        margin: 0;            /* 브라우저 기본 마진 제거 */
+    }
+
     @media (max-width:640px){
-      .wrap{padding:22px}
+      .wrap,.comments-wrap{padding:22px}
       .avatar{flex-basis:32px; height:32px}
       .avatar img{width:32px; height:32px}
       .children{margin-left:44px}
     }
-
-    /* 펼친 블록만 위로 올려 겹침/잘림 방지 */
     .comment-block.is-open{z-index:100}
   </style>
 </head>
 <body>
-<div class="wrap">
 
+<!-- ===== 게시글 본문 ===== -->
+<div class="wrap">
   <div class="top">
     <h1 class="title">${board.title}</h1>
 
@@ -131,7 +120,7 @@
   </div>
 
   <div class="meta">
-    작성자: ${board.authorInfo}
+    작성자: ${board.nickName}
     <span aria-hidden="true">·</span>
     작성일: ${board.formattedCreatedAt}
   </div>
@@ -143,9 +132,10 @@
   </c:if>
 
   <div class="content">${board.content}</div>
+</div>
 
-  <div class="divider"></div>
-
+<!-- ===== 댓글 영역(분리) ===== -->
+<div class="comments-wrap">
   <h2 class="c-head">댓글</h2>
 
   <div class="c-list">
@@ -158,19 +148,28 @@
           </c:if>
         </c:forEach>
 
-        <!-- 부모댓글 + 대댓글 묶음 -->
         <div class="comment-block" id="block-${comment.id}">
           <article class="c-item" id="c-${comment.id}">
             <div class="avatar">
-                <img src="/file/preview?fileId=${comment.profileFileId}"
-                     alt="프로필"
-                     onerror="this.onerror=null;this.src='/resources/images/default-profile.jpg'"
-                     style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
+              <c:choose>
+                <c:when test="${not empty comment.profileFileId and comment.profileFileId ne 0}">
+                  <img src="/file/preview?fileId=${comment.profileFileId}"
+                       alt="프로필"
+                       loading="lazy"
+                       style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
+                </c:when>
+                <c:otherwise>
+                  <img src="/resources/images/default-profile.jpg"
+                       alt="기본 프로필"
+                       loading="lazy"
+                       style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
+                </c:otherwise>
+              </c:choose>
             </div>
             <div class="c-body">
               <div class="c-row">
                 <span class="c-name">${comment.authorNickname}</span>
-                <span class="c-time">${comment.createdAt}</span>
+                <span class="c-time">${comment.formattedCreatedAt}</span>
               </div>
 
               <div id="content-${comment.id}" class="c-text">${comment.content}</div>
@@ -178,16 +177,18 @@
               <div class="c-actions">
                 <c:if test="${sessionScope.userId == comment.author}">
                   <button type="button" class="btn-link" data-action="edit" data-id="${comment.id}">수정</button>
-                  <form action="/mbti/board/comment/delete/${comment.id}" method="post" class="inline">
+                  <form action="/mbti/board/comment/delete/${comment.id}" method="post" class="inline comment-form">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                     <input type="hidden" name="boardId" value="${board.id}" />
-                    <input type="submit" class="btn-link" value="삭제"/>
+                    <!-- 변경: input → button -->
+                    <button type="submit" class="btn-link">삭제</button>
                   </form>
                 </c:if>
                 <button type="button" class="btn-link" data-action="reply" data-id="${comment.id}">답글</button>
               </div>
 
-              <form id="edit-form-${comment.id}" action="/mbti/board/comment/update" method="post" class="form" style="display:none; margin-top:8px;">
+              <!-- 수정폼 -->
+              <form id="edit-form-${comment.id}" action="/mbti/board/comment/update" method="post" class="form comment-form" style="display:none; margin-top:8px;">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                 <input type="hidden" name="id" value="${comment.id}" />
                 <input type="hidden" name="boardId" value="${board.id}" />
@@ -195,7 +196,8 @@
                 <input type="submit" class="submit" value="수정 완료" />
               </form>
 
-              <form id="reply-form-${comment.id}" action="/mbti/board/comment/save" method="post" class="form" style="display:none; margin-top:8px;">
+              <!-- 대댓글폼 -->
+              <form id="reply-form-${comment.id}" action="/mbti/board/comment/save" method="post" class="form comment-form" style="display:none; margin-top:8px;">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                 <input type="hidden" name="boardId" value="${board.id}" />
                 <input type="hidden" name="parentId" value="${comment.id}" />
@@ -204,11 +206,7 @@
               </form>
 
               <c:if test="${replyCount > 0}">
-                <button type="button"
-                        class="reply-toggle"
-                        data-toggle="replies"
-                        data-target="children-${comment.id}"
-                        aria-expanded="false">
+                <button type="button" class="reply-toggle" data-toggle="replies" data-target="children-${comment.id}" aria-expanded="false">
                   <svg class="caret" width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path d="M5.23 7.21a.75.75 0 011.06.02L10 11.06l3.71-3.83a.75.75 0 111.08 1.04l-4.24 4.38a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z"/>
                   </svg>
@@ -223,28 +221,41 @@
               <c:if test="${reply.parentId == comment.id}">
                 <article class="c-item" id="c-${reply.id}" style="border-top:none; padding-top:12px;">
                   <div class="avatar">
-                    <img src="/file/preview?fileId=${reply.profileFileId}"
-                         alt="프로필"
-                         onerror="this.onerror=null;this.src='/resources/images/default-profile.png'">
+                    <c:choose>
+                      <c:when test="${not empty reply.profileFileId and reply.profileFileId ne 0}">
+                        <img src="/file/preview?fileId=${reply.profileFileId}"
+                             alt="프로필"
+                             loading="lazy"
+                             style="width:36px;height:36px;border-radius:50%;object-fit:cover;">
+                      </c:when>
+                      <c:otherwise>
+                        <img src="/resources/images/default-profile.jpg"
+                             alt="기본 프로필"
+                             loading="lazy"
+                             style="width:36px;height:36px;border-radius:50%;object-fit:cover;">
+                      </c:otherwise>
+                    </c:choose>
                   </div>
                   <div class="c-body">
                     <div class="c-row">
                       <span class="c-name">${reply.authorNickname}</span>
-                      <span class="c-time">${reply.createdAt}</span>
+                      <span class="c-time">${reply.formattedCreatedAt}</span>
                     </div>
                     <div id="content-${reply.id}" class="c-text">${reply.content}</div>
                     <div class="c-actions">
                       <c:if test="${sessionScope.userId == reply.author}">
                         <button type="button" class="btn-link" data-action="edit" data-id="${reply.id}">수정</button>
-                        <form action="/mbti/board/comment/delete/${reply.id}" method="post" class="inline">
+                        <form action="/mbti/board/comment/delete/${reply.id}" method="post" class="inline comment-form">
                           <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                           <input type="hidden" name="boardId" value="${board.id}" />
-                          <input type="submit" class="btn-link" value="삭제"/>
+                          <!-- 변경: input → button -->
+                          <button type="submit" class="btn-link">삭제</button>
                         </form>
                       </c:if>
                     </div>
 
-                    <form id="edit-form-${reply.id}" action="/mbti/board/comment/update" method="post" class="form" style="display:none; margin-top:8px;">
+                    <!-- 대댓글 수정폼 -->
+                    <form id="edit-form-${reply.id}" action="/mbti/board/comment/update" method="post" class="form comment-form" style="display:none; margin-top:8px;">
                       <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                       <input type="hidden" name="id" value="${reply.id}" />
                       <input type="hidden" name="boardId" value="${board.id}" />
@@ -256,20 +267,19 @@
               </c:if>
             </c:forEach>
           </div>
-        </div><!-- /.comment-block -->
-
+        </div>
       </c:if>
     </c:forEach>
   </div>
 
-  <form action="/mbti/board/comment/save" method="post" class="form" style="margin-top:16px;">
+  <!-- 일반 댓글 작성 -->
+  <form action="/mbti/board/comment/save" method="post" class="form comment-form" style="margin-top:16px;">
     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
     <input type="hidden" name="boardId" value="${board.id}" />
     <input type="hidden" name="parentId" value="0" />
     <textarea name="content" placeholder="댓글을 입력하세요" required></textarea>
     <input type="submit" class="submit" value="댓글 작성" />
   </form>
-
 </div>
 
 <script>
@@ -279,70 +289,78 @@
     const open = menu.dataset.open === 'true';
     if(!open){
       const r = btn.getBoundingClientRect(); const w = Math.max(180, menu.offsetWidth || 180);
-      menu.style.position = 'fixed';
-      menu.style.top = (r.bottom + 8) + 'px';
-      menu.style.left = Math.max(12, Math.min(window.innerWidth - w - 12, r.right - w)) + 'px';
-      menu.style.display = 'block'; menu.dataset.open = 'true'; btn.setAttribute('aria-expanded','true');
+      menu.style.position='fixed';
+      menu.style.top=(r.bottom+8)+'px';
+      menu.style.left=Math.max(12, Math.min(window.innerWidth - w - 12, r.right - w))+'px';
+      menu.style.display='block'; menu.dataset.open='true'; btn.setAttribute('aria-expanded','true');
     }else{
-      menu.style.display = 'none'; menu.dataset.open = 'false'; btn.setAttribute('aria-expanded','false');
+      menu.style.display='none'; menu.dataset.open='false'; btn.setAttribute('aria-expanded','false');
     }
   }
   document.addEventListener('click', function(e){
-    const menu = document.getElementById('post-menu'); const btn = document.querySelector('.menu-btn');
-    if(menu && btn && menu.dataset.open === 'true' && !menu.contains(e.target) && !btn.contains(e.target)){
+    const menu=document.getElementById('post-menu'); const btn=document.querySelector('.menu-btn');
+    if(menu && btn && menu.dataset.open==='true' && !menu.contains(e.target) && !btn.contains(e.target)){
       menu.style.display='none'; menu.dataset.open='false'; btn.setAttribute('aria-expanded','false');
     }
   });
   document.addEventListener('keydown', function(e){
-    if(e.key === 'Escape'){
-      const menu = document.getElementById('post-menu'); const btn = document.querySelector('.menu-btn');
-      if(menu && menu.dataset.open === 'true'){ menu.style.display='none'; menu.dataset.open='false'; btn && btn.focus(); btn && btn.setAttribute('aria-expanded','false'); }
+    if(e.key==='Escape'){
+      const menu=document.getElementById('post-menu'); const btn=document.querySelector('.menu-btn');
+      if(menu && menu.dataset.open==='true'){ menu.style.display='none'; menu.dataset.open='false'; btn && btn.focus(); btn && btn.setAttribute('aria-expanded','false'); }
     }
   });
 
   // 댓글/답글/수정 폼 토글 (델리게이션)
   document.addEventListener('click', function(e){
-    const replyBtn = e.target.closest('[data-action="reply"]');
+    const replyBtn=e.target.closest('[data-action="reply"]');
     if(replyBtn){
       e.preventDefault();
-      const id = replyBtn.getAttribute('data-id');
-      const form = document.getElementById('reply-form-' + id);
+      const id=replyBtn.getAttribute('data-id');
+      const form=document.getElementById('reply-form-'+id);
       if(form){
-        const hidden = getComputedStyle(form).display === 'none';
+        const hidden=getComputedStyle(form).display==='none';
         form.style.setProperty('display', hidden ? 'block' : 'none', 'important');
       }
       return;
     }
 
-    const editBtn = e.target.closest('[data-action="edit"]');
+    const editBtn=e.target.closest('[data-action="edit"]');
     if(editBtn){
       e.preventDefault();
-      const id = editBtn.getAttribute('data-id');
-      const form = document.getElementById('edit-form-' + id);
+      const id=editBtn.getAttribute('data-id');
+      const form=document.getElementById('edit-form-'+id);
       if(form){
-        const hidden = getComputedStyle(form).display === 'none';
+        const hidden=getComputedStyle(form).display==='none';
         form.style.setProperty('display', hidden ? 'block' : 'none', 'important');
       }
       return;
     }
 
-    const toggleBtn = e.target.closest('[data-toggle="replies"]');
+    const toggleBtn=e.target.closest('[data-toggle="replies"]');
     if(toggleBtn){
       e.preventDefault();
-      const targetId = toggleBtn.getAttribute('data-target');
-      const box = document.getElementById(targetId);
-      const card = toggleBtn.closest('.comment-block');
+      const targetId=toggleBtn.getAttribute('data-target');
+      const box=document.getElementById(targetId);
+      const card=toggleBtn.closest('.comment-block');
       if(!box || !card) return;
 
-      const willOpen = getComputedStyle(box).display === 'none';
+      const willOpen=getComputedStyle(box).display==='none';
       box.classList.toggle('open', willOpen);
       box.style.setProperty('display', willOpen ? 'block' : 'none', 'important');
       toggleBtn.setAttribute('aria-expanded', String(willOpen));
-
-      // 펼친 묶음만 최상단으로 올려 겹침/잘림 방지
       card.classList.toggle('is-open', willOpen);
       return;
     }
+  });
+
+  // 🔒 JSP만으로 content null 방지: 제출 직전 기본 문구/트림 처리
+  document.querySelectorAll('form.comment-form').forEach(function(form){
+    form.addEventListener('submit', function(){
+      var ta=form.querySelector('textarea[name="content"]');
+      if(!ta) return;
+      var v=(ta.value||'').replace(/\s+/g,' ').trim();
+      ta.value = v ? v : '새 댓글이 달렸습니다.'; // 비어있으면 기본 문구
+    });
   });
 </script>
 </body>

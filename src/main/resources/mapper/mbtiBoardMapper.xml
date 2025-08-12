@@ -19,7 +19,6 @@
         )
     </insert>
 
-    <!-- 전체 게시글 조회 (닉네임 포함) -->
     <select id="findAll" resultType="com.spring.mbti.dto.MbtiBoardDTO">
         SELECT
         b.id, b.mbtiId, b.author, b.title, b.content, b.fileId,
@@ -31,8 +30,6 @@
         ORDER BY b.id DESC
     </select>
 
-    <!-- MBTI별 게시글 조회 (닉네임 포함)
-         *호출부에서 @Param("mbtiId") 사용 중이면 그대로 동작함 -->
     <select id="findAllByMbtiId" parameterType="int" resultType="com.spring.mbti.dto.MbtiBoardDTO">
         SELECT
         b.id, b.mbtiId, b.author, b.title, b.content, b.fileId,
@@ -44,39 +41,38 @@
         ORDER BY b.createdAt DESC
     </select>
 
-    <!-- 단일 게시글 조회 (닉네임 포함) -->
     <select id="findById" parameterType="long" resultType="com.spring.mbti.dto.MbtiBoardDTO">
         SELECT
         b.id, b.mbtiId, b.author, b.title, b.content, b.fileId,
         b.hits, b.createdAt, b.status,
-        u.nickname AS authorinfo
+        u.nickname AS nickName
         FROM mbtiboard b
         LEFT JOIN user u ON b.author = u.id
         WHERE b.id = #{id}
     </select>
 
-    <!-- 게시글 수정 (파일 변경은 별도 로직일 때 그대로 유지) -->
+    <!-- ✨ 게시글 수정: fileId가 전달된 경우에만 교체(없으면 기존 파일 유지) -->
     <update id="update" parameterType="com.spring.mbti.dto.MbtiBoardDTO">
         UPDATE mbtiboard
         SET
         title = #{title},
         content = #{content}
+        <if test="fileId != null">
+            , fileId = #{fileId}
+        </if>
         WHERE id = #{id}
     </update>
 
-    <!-- 게시글 삭제 -->
     <delete id="delete" parameterType="long">
         DELETE FROM mbtiboard WHERE id = #{id}
     </delete>
 
-    <!-- 댓글 저장: 통일된 테이블명 'mbtiboardcomment' 사용 -->
     <insert id="saveComment" parameterType="com.spring.mbti.dto.MbtiBoardCommentDTO"
             useGeneratedKeys="true" keyProperty="id">
         INSERT INTO mbtiboardcomment (boardId, parentId, author, content, createdAt, status)
         VALUES (#{boardId}, #{parentId}, #{author}, #{content}, NOW(), #{status})
     </insert>
 
-    <!-- ✅ 댓글 목록 조회 (오타 수정: b.hits 제거) -->
     <select id="findCommentsByBoardId" resultType="com.spring.mbti.dto.MbtiBoardCommentDTO">
         SELECT
         id, boardId, parentId, author, content, createdAt, status
@@ -85,14 +81,20 @@
         ORDER BY parentId ASC, id ASC
     </select>
 
-    <!-- 댓글 삭제 (상태 변경) -->
     <update id="deleteComment" parameterType="int">
         UPDATE mbtiboardcomment
         SET status = 0
         WHERE id = #{id}
     </update>
 
-    <!-- 작성자 기준 게시글 목록 (마이페이지용) -->
+    <!-- mbtiBoardMapper.xml (추가) -->
+    <update id="updateFileId" parameterType="com.spring.mbti.dto.MbtiBoardDTO">
+        UPDATE mbtiboard
+        SET fileId = #{fileId}
+        WHERE id = #{id}
+    </update>
+
+
     <select id="findByAuthor" parameterType="long" resultType="com.spring.mbti.dto.MbtiBoardDTO">
         SELECT
         b.id,
@@ -112,11 +114,12 @@
         ORDER BY b.createdAt DESC
     </select>
 
-    <!-- 조회수 +1 -->
     <update id="incrementHits" parameterType="long">
         UPDATE mbtiboard
         SET hits = hits + 1
         WHERE id = #{id}
     </update>
+
+
 
 </mapper>

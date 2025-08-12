@@ -25,8 +25,8 @@ public class MbtiBoardCommentService {
         notificationDTO.setRequestUserId(dto.getAuthor());
         notificationDTO.setRelatedId(dto.getBoardId().intValue());
         notificationDTO.setType("NEW_COMMENT");
-        notificationDTO.setContent(dto.getAuthorNickname());
-        notificationDTO.setPath(null);
+        notificationDTO.setContent(mbtiBoardDTO.getNickName());
+        notificationDTO.setPath("/mbti/board/detail/" + dto.getBoardId().intValue());
         notificationService.createNotification(notificationDTO);
     }
 
