@@ -2,6 +2,7 @@ package com.spring.mbti.controller;
 
 import com.spring.mbti.dto.MbtiTestDTO;
 import com.spring.mbti.service.MbtiTestService;
+import com.spring.user.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -92,8 +93,10 @@ public class MbtiTestController {
         Object userIdObj = session.getAttribute("userId");
         if (userIdObj != null) {
             int userId = (userIdObj instanceof Integer) ? (int) userIdObj : Integer.parseInt(userIdObj.toString());
-            mbtiTestService.calculateMbti(userId, scoreList);
+            mbtiTestService.calculateMbti(userId, scoreList, session);
         }
+
+
 
         model.addAttribute("mbtiResult", mbtiResult);
         return "MbtiFormViews/mbtiFormHome";

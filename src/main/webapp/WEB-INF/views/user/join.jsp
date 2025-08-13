@@ -52,16 +52,6 @@
         <input type="file" id="profile-upload" name="profile" onchange="displayFileName(this)">
     </div>
 
-    <label for="mbti">당신의 MBTI를 선택하세요:</label>
-    <select name="mbtiId" id="mbti" required>
-        <%-- mbtiList의 각 요소를 반복하여 <option> 태그를 동적으로 생성 --%>
-        <c:forEach var="mbti" items="${mbtiList}">
-            <option value="${mbti.id}" ${mbti.id == 0 ? 'selected' : ''}>
-                ${mbti.id}. ${mbti.mbti}
-            </option>
-        </c:forEach>
-    </select>
-
     <label for="city">시/도 선택:</label>
     <select id="city" name="city" required>
       <option value="">-- 시/도 선택 --</option>

@@ -54,9 +54,10 @@ public class HomeController {
         userService.updateLastLogin(loginUser);
 
         session.setAttribute("userId", loginUser.getId());
+        session.setAttribute("mbtiId", loginUser.getMbtiId());
 
         model.addAttribute("loginUser", loginUser);
-
+        System.out.println(loginUser);
 
         //List<MbtiBoardDTO> boardList = mbtiBoardService.findAll();
         //model.addAttribute("boardList", boardList);

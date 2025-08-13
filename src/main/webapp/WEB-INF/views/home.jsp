@@ -18,5 +18,38 @@
     <button id="fixed-add-post-button" onclick="window.location.href='/mbti/board/write'">
         +
     </button>
+    <script>
+        const userMbtiId = "<c:out value="${sessionScope.mbtiId}"/>";
+
+                document.addEventListener('DOMContentLoaded', function() {
+                    if (userMbtiId === "0") {
+                        showMbtiModal();
+                    }
+                });
+
+                function showMbtiModal() {
+                    const modalHTML = `
+                        <div id="mbtiModal" class="modal-overlay">
+                            <div class="modal-content">
+                                <button class="modal-close-button" onclick="handleMbtiResponse('no')">&times;</button>
+                                <h3>MBTI 검사를 하시면 더 많은 서비스 이용이<br>가능하십니다!</h3>
+                                <p>검사하시겠습니까?</p>
+                                <div class="modal-buttons">
+                                    <button class="yes-button" onclick="handleMbtiResponse('yes')">검사하러가기</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    document.body.insertAdjacentHTML('beforeend', modalHTML);
+                }
+
+                function handleMbtiResponse(response) {
+                    const modal = document.getElementById('mbtiModal');
+                    if (response === 'yes') {
+                        window.location.href = '/mbti/test';
+                    }
+                    modal.remove();
+                }
+    </script>
 </body>
 </html>
