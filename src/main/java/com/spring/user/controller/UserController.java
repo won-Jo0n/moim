@@ -52,7 +52,6 @@ public class UserController {
 
         String region = city + " " + county;
         userDTO.setRegion(region);
-        System.out.println(userDTO.getMobile());
 
         if(!profile.isEmpty()){
             int fileId = fileUtil.fileSave(profile);

@@ -5,6 +5,7 @@ import com.spring.mbti.repository.MbtiTestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
 import java.util.*;
 
 @Service
@@ -23,7 +24,7 @@ public class MbtiTestService {
     }
 
     // 2. 점수로 MBTI 계산하고 DB 저장까지 처리
-    public String calculateMbti(int userId, List<Integer> answers) {
+    public String calculateMbti(int userId, List<Integer> answers, HttpSession session) {
         List<MbtiTestDTO> questions = findAllQuestions();
 
         // 점수 누적용 맵 (예: ei → 10점, ie → 5점)
@@ -53,6 +54,7 @@ public class MbtiTestService {
         // 3. MBTI 결과를 user 테이블에 반영
         int mbtiId = mbtiTestRepository.findMbtiIdByCode(mbtiCode);
         mbtiTestRepository.updateUserMbti(userId, mbtiId);
+        session.setAttribute("mbtiId", mbtiId);
         System.out.println(">> mbtiId: " + mbtiId);
 
         return mbtiCode;
