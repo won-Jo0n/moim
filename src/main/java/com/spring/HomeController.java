@@ -53,8 +53,12 @@ public class HomeController {
 
         userService.updateLastLogin(loginUser);
 
+
         session.setAttribute("userId", loginUser.getId());
-        session.setAttribute("mbtiId", loginUser.getMbtiId());
+        if(session.getAttribute("mbtiId") == null){
+            session.setAttribute("mbtiId", loginUser.getMbtiId());
+        }
+
 
         model.addAttribute("loginUser", loginUser);
         System.out.println(loginUser);
