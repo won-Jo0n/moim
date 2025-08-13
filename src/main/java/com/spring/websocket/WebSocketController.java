@@ -70,9 +70,11 @@ public class WebSocketController {
     @MessageMapping("/match")
     public void matchMaking(@Header("type") String type, @Payload Map<String, Object> data, Principal principal){
         String userId = principal.getName();
-
         if(type.equals("MATCH_JOIN")){
-            if(matchingQueue.contains(userId)) return;
+            if(userService.getUserById(Integer.parseInt(userId)).getMbtiId() == 0){
+                messagingTemplate.convertAndSendToUser(userId, "/queue/main", Map.of("hasMBTI", false), Map.of("type", "MATCH_FAIL"));
+                return;
+            }else if(matchingQueue.contains(userId)) return;
             String opponentId = matchingQueue.poll();
             if(opponentId != null){
                 //이미 친구여도 매칭이 되는 상태임. 고쳐야함
@@ -165,11 +167,9 @@ public class WebSocketController {
         if (userId != null) {
             sessionToUser.remove(sessionId);
             sessionCount.computeIfPresent(userId, (k, v) -> v > 1 ? v - 1 : null);
-
             synchronized (matchingLock) {
                 matchingQueue.remove(userId);
             }
-
             if(sessionCount.getOrDefault(userId, 0) <= 0){
                 List<ChatUserDTO> chatFriends = chatService.getChatFriends(Integer.parseInt(userId));
                 for(ChatUserDTO friend : chatFriends){

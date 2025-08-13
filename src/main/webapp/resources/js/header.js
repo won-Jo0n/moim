@@ -89,6 +89,10 @@ stompClient.onConnect = (frame) => {
       case "MATCH_CANCEL":
         $("#loading-indicator").removeClass("visible");
         break;
+      case "MATCH_FAIL":
+        $("#loading-indicator").removeClass("visible");
+        showMbtiModal();
+        break;
       case "MATCH_FOUND":
         $("#loading-indicator").removeClass("visible");
         openChat(createMessageItem(data));
@@ -121,6 +125,30 @@ function notificationUnreadCountAdd(add){
     const notificationUnreadCount = parseInt(notificationUnreadCountDiv.text() || "0") + add;
     notificationUnreadCountDiv.text(notificationUnreadCount > 0 ? notificationUnreadCount : "");
 }
+
+function showMbtiModal() {
+    const modalHTML =
+        `<div id="mbtiModal" class="modal-overlay">
+            <div class="modal-content">
+                <button class="modal-close-button" onclick="handleMbtiResponse('no')">&times;</button>
+                <h3>랜덤 매칭 서비스를 이용하시려면<br> MBTI 검사를 하셔야 합니다.</h3>
+                <p>검사하시겠습니까?</p>
+                <div class="modal-buttons">
+                    <button class="yes-button" onclick="handleMbtiResponse('yes')">검사하러가기</button>
+                </div>
+            </div>
+        </div>`;
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+}
+
+function handleMbtiResponse(response) {
+    const modal = document.getElementById('mbtiModal');
+    if (response === 'yes') {
+        window.location.href = '/mbti/test';
+    }
+    modal.remove();
+}
+
 
 $(function () {
     const navLinks = $(".sidebar-nav li > a");
