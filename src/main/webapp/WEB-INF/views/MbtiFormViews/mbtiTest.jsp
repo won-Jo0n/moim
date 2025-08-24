@@ -75,7 +75,8 @@
     // 서버에서 전달된 질문 목록
     var questions = [
         <c:forEach var="q" items="${questions}" varStatus="st">
-            { id: ${q.id}, text: '<c:out value="${fn:escapeXml(q.question)}"/>', type: '<c:out value="${fn:escapeXml(q.type)}"/>' }<c:if test="${!st.last}">,</c:if>
+            { id: ${q.id}, text: '<c:out value="${fn:escapeXml(q.question)}"/>', type: '<c:out value="${fn:escapeXml(q.type)}"/>' }
+            <c:if test="${!st.last}">,</c:if>
         </c:forEach>
     ];
 

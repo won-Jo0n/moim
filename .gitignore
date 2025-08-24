@@ -12,6 +12,10 @@ target/
 *.iml
 *.ipr
 
+# Spring 레거시 프로젝트 민감 정보
+/src/main/resources/application.properties
+
+
 ### Eclipse ###
 .apt_generated
 .classpath
