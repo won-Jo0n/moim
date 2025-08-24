@@ -21,9 +21,6 @@ public class CustomerUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
         UserDTO user = userRepository.getUserByLoginId(loginId);  // 아이디로 사용자 검색
-        System.out.println(user.getMbtiId());
-
-
 
         if (user == null) {
             throw new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + loginId);

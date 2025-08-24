@@ -1,12 +1,11 @@
 package com.spring.oauth.controller;
 
 import com.spring.oauth.service.OAuthService;
-import com.spring.user.dto.UserDTO;
-import com.spring.user.repository.UserRepository;
 import com.spring.user.service.UserService;
 import com.spring.userdetails.CustomerUserDetailService;
-import com.spring.userdetails.CustomerUserDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,21 +26,26 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 @Controller
 @RequiredArgsConstructor
+@PropertySource("classpath:application.properties")
 public class OAuthController {
     private final OAuthService oAuthService;
     private final UserService userService;
     private final CustomerUserDetailService customerUserDetailService;
 
+    @Value("${api.clientId}")
+    private String clientId;
+    @Value("${api.clientSecret}")
+    private String clientSecret;
+
     @GetMapping("/oauthLogin")
     public String naverLogin(HttpSession session) throws UnsupportedEncodingException {
-        String clientId = "BLDL0iNoSfM6b2JzShDS";
+
         String redirectURI = java.net.URLEncoder.encode("http://localhost:8080/naver/callback", "UTF-8");
         String state = UUID.randomUUID().toString();
         session.setAttribute("naver_state", state);
@@ -63,8 +67,6 @@ public class OAuthController {
         }
 
         // 1. Access Token 요청
-        String clientId = "BLDL0iNoSfM6b2JzShDS";
-        String clientSecret = "m8VmOxWdus";
         String redirectURI = URLEncoder.encode("http://localhost:8080/naver/callback", "UTF-8");
 
         String tokenURL = "https://nid.naver.com/oauth2.0/token?grant_type=authorization_code"
@@ -122,8 +124,6 @@ public class OAuthController {
 
             return "redirect:/home"; // 로그인 성공 후 홈 페이지로 리다이렉트
         } catch (UsernameNotFoundException e) {
-            // 사용자 정보가 DB에 없는 경우 회원가입 페이지로 이동
-            // 네이버에서 가져온 정보를 회원가입 폼에 미리 채워넣을 수 있습니다.
             model.addAttribute("OAuthData", oAuthData);
             return "forward:/user/join";
         } catch (DisabledException e) {
