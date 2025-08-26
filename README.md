@@ -1,4 +1,4 @@
-# 🌐 Moim
+# <img src="./images/small_logo.png" alt="작은로고"/> Moim
 > MBTI 기반 동네 친구 찾기 & 모임 매칭 플랫폼  
 > **“혼자가 아님을 느낄 수 있는 경험 제공”**
 
