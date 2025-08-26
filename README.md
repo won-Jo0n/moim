@@ -4,7 +4,7 @@
 
 [📄 프로젝트 문서 (PDF 보기)](https://github.com/won-Jo0n/moim/blob/master/docs/moim.pdf)
 
-<img src="./images/main.png" alt="로고" width="400" height="400"/>
+<img src="./images/main.png" alt="로고" width="400" height="400" margin = "0, auto"/>
 
 ---
 
