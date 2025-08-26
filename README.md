@@ -1,6 +1,7 @@
 # 🌐 Moim
 > MBTI 기반 동네 친구 찾기 & 모임 매칭 플랫폼  
 > **“혼자가 아님을 느낄 수 있는 경험 제공”**
+
 [📄 프로젝트 문서 (PDF 보기)](https://github.com/won-Jo0n/moim/blob/master/docs/moim.pdf)
 
 <img src="./images/main.png" alt="로고" width="400" height="400"/>
