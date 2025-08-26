@@ -3,7 +3,7 @@
 > **“혼자가 아님을 느낄 수 있는 경험 제공”**
 
 [📄 프로젝트 문서 (PDF 보기)](https://github.com/won-Jo0n/moim/blob/master/docs/moim.pdf)
-
+(./images/main.png)
 ---
 
 ## 📌 프로젝트 배경
@@ -47,26 +47,16 @@
 
 ---
 
-## 🏗 시스템 아키텍처
-(시스템 아키텍처 다이어그램 추가 예정)
-
----
-
-## 🗄 ERD
-(ERD 다이어그램 추가 예정)
-
----
-
 ## 🚀 프로젝트 수행 절차
 1. 프로젝트 준비 및 설계  
 2. 개발 착수 및 협업 (GitHub 활용)  
 3. 오류 검수와 서비스 구축  
-4. AWS 배포  
+4. AWS 배포 (예정)  
 
 ---
 
 ## 📺 시연 영상
-👉 [GitHub Repo](https://github.com/won-Jo0n/moim) 내 업로드 예정  
+👉 (https://drive.google.com/file/d/1IHb9xr6SdozYoE7-RIzYjYQZfTg79Qe0/view?usp=drive_link)
 
 ---
 
@@ -86,25 +76,5 @@
 - AI 기반 개인화 추천 적용  
 - 포인트·구독 기반 수익 모델 다각화  
 - 모바일 앱(iOS/Android) 출시  
-
----
-
-## 👨‍💻 팀원 역할
-- **지원준(팀장)**: 프로젝트 총괄, DB 설계, Git 협업  
-- **권택준**: 실시간 통신 구조(WebSocket), STOMP 구현  
-- **남궁찬**: 기능 오류 수정 및 문제 해결  
-- **유부미**: DB 설계 및 기능 연동, 테스트 반복  
-
----
-
-## 📝 느낀 점
-> 협업의 중요성과 문제 해결 능력을 키우며,  
-> 완성도 높은 서비스 개발을 위한 경험을 쌓을 수 있었습니다.  
-
----
-
-## 📎 관련 자료
-- [프로젝트 문서 PDF](https://github.com/won-Jo0n/moim/blob/master/docs/moim.pdf)  
-- [프로젝트 GitHub Repo](https://github.com/won-Jo0n/moim)
 
 ---
