@@ -210,7 +210,7 @@
 
   </dependencies>
   <build>
-    <finalName>mvc_test</finalName>
+    <finalName>프로젝트_팀_2차_3조_moim프로젝트</finalName>
     <pluginManagement>
       <plugins>
         <plugin>
